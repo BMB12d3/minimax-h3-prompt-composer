@@ -1,0 +1,106 @@
+H3 Prompt Composer V5.12.1
+Audited Release Build
+
+V5.12 FEATURE ADDITIONS
+
+1. Cleaner Insert Subject workflow
+- Removed the redundant synthetic "original environment" Subject.
+- Video 1 is now the authoritative source plate/environment for direct subject insertion.
+- Source-plate preservation language remains explicit without defining the same environment twice.
+
+2. Visual height / scale + optional placement
+- Visual scale references can remain scale-only (safest) or additionally preserve approximate placement/blocking.
+- Placement can be tied to a specific Shot.
+- Scale itself remains global while placement is Generation-specific.
+- Placement targets remap safely when Shots are duplicated, reordered, or deleted.
+
+3. Lighting / Integration Reference
+- Background Replacement + Relighting can optionally use a preferred relit/composited still as a lighting target.
+- Only lighting/integration attributes transfer: key/fill/rim relationships, reflected color, exposure balance, shadow density, contrast, and atmospheric integration.
+- Pose, framing, subject position, background geometry, and composition are explicitly excluded.
+
+4. Dialogue-free performance transfer
+- Performance / Camera Transfer now explicitly supports "No dialogue / no audio reference."
+- In that mode the Composer transfers acting, facial performance, gesture, body motion, timing, and/or camera movement without adding spoken dialogue.
+- The Add Dialogue control is disabled while this mode is active.
+
+5. Stronger camera-transfer language
+- When camera transfer is selected, the Shot description explicitly reinforces source camera path, timing, height, framing progression, and movement character.
+
+6. Guided Video Continuation workflow
+- Added "Continue an existing video" as a guided workflow and built-in example.
+- Continuation preserves selected ending-state information such as subject momentum, screen direction, camera trajectory, framing momentum, environment, lighting, and spatial continuity.
+- The prompt explicitly distinguishes continuation from editing: begin after the final source moment rather than replaying or modifying the source frames.
+
+V5.12.1 AUDIT FIXES
+
+1. No-dialogue mode now truly removes dialogue
+- Fixed a V5.12.0 edge case where choosing no dialogue disabled the Audio reference but existing Dialogue cards could still compile.
+- Existing Dialogue cards are now cleared when no-dialogue mode is selected.
+- Saved no-dialogue performance projects are cleaned during migration.
+- Prompt Check includes a safety guard against stale spoken dialogue in this mode.
+
+2. Scale placement is now Generation-specific
+- Fixed V5.12.0 placement state carrying into unrelated later Generations.
+- A fresh Generation returns the visual scale reference to scale-only behavior.
+- Duplicate Generation preserves the intended placement setting.
+
+3. Scale placement follows Shot edits correctly
+- Fixed placement targets after Shot duplication, reordering, and deletion.
+- If the actual target Shot is deleted, approximate placement is disabled rather than silently pointing to a different Shot.
+
+4. Workflow-specific references no longer bleed into fresh Generations
+- Lighting Integration references are automatically bypassed in a fresh Generation unless that Generation uses them.
+- Continuation-source references are automatically bypassed in a fresh Generation unless that Generation uses them.
+- Direct-edit source-video relationships are also scoped to the Generation performing the edit.
+- Duplicate Generation preserves these relationships as expected.
+
+5. Generation task labels no longer remain stale
+- Fixed inherited [audio reference], [audio reuse], [video editing], [video continuation], and [keyframe completion] task labels when the active Generation no longer has references supporting them.
+- Task labels are now re-derived from the references and workflow active in the current Generation.
+
+6. V5.11.1 / V5.12.0 migration safety
+- V5.11.1 built-in project structures migrate cleanly to V5.12.1.
+- The old Insert Subject dummy environment is removed during migration.
+- V5.12.0 local autosave and backup keys are recognized by V5.12.1.
+
+AUDIT / QA PERFORMED
+
+- JavaScript syntax validation: PASS
+- HTML structure/static ID check: PASS
+- Duplicate function declaration check: PASS
+- External dependency/network-code scan: PASS
+- Real Chromium boot/runtime test: PASS
+- Basic/Advanced UI mode test: PASS
+- Generated output matches build() output: PASS
+- All six current built-in examples generate with zero Prompt Check errors:
+  - Full reference scene
+  - Insert Subject
+  - Background Replacement + Relighting
+  - Performance + Camera Transfer
+  - Video Continuation
+  - T2VA
+- Dialogue-free performance transfer: PASS
+- Lighting reference Generation isolation: PASS
+- Continuation Generation isolation: PASS
+- Direct-edit source-video Generation isolation: PASS
+- Fresh-Generation task-label cleanup: PASS
+- Scale placement Shot remapping: PASS
+- V5.11.1 built-in examples migrated into V5.12.1 with zero Prompt Check errors: PASS
+
+SECURITY / LOCAL-ONLY CHECK
+
+The audited V5.12.1 HTML contains:
+- no external script sources
+- no external stylesheets
+- no fetch() calls
+- no XMLHttpRequest
+- no WebSocket
+- no EventSource
+- no sendBeacon
+- no eval()
+- no new Function()
+- no iframes
+- no HTTP/HTTPS URLs
+
+The application remains a standalone local HTML tool.
