@@ -1,6 +1,6 @@
 # H3 Prompt Composer
 
-**Version 5.11.1**
+**Version 5.12.1**
 
 A free, standalone prompt-building tool for **MiniMax H3 video generation**, designed primarily for **ComfyUI** workflows.
 
@@ -8,13 +8,26 @@ H3 Prompt Composer turns plain-language creative choices into structured H3 prom
 
 **Standalone HTML • No installation • Runs locally in your browser**
 
-![H3 Prompt Composer V5.11.1 interface](assets/composer-overview.png)
+![H3 Prompt Composer interface](assets/composer-overview.png)
+
+---
+
+## What's New in V5.12.1
+
+- **Cleaner Insert Subject workflow** — Video 1 now owns the original source plate/environment without a redundant synthetic Environment Subject.
+- **Visual height / scale + placement** — optionally use a rough composite to guide both apparent scale and approximate Shot-specific placement.
+- **Lighting / Integration Reference** — optionally provide a preferred relit still to guide foreground/background lighting integration without copying its pose or composition.
+- **Dialogue-free Performance Transfer** — transfer acting, movement, facial performance, gesture, timing, and camera motion with no dialogue or Audio reference.
+- **Guided Video Continuation** — continue naturally from the end of an existing source video while preserving selected motion, camera, environment, and spatial continuity.
+- **Generation-isolation fixes** — edit-only references and task labels no longer leak into unrelated fresh Generations.
+
+V5.12.1 is also an audit release with fixes for Shot remapping, stale dialogue in no-dialogue mode, and migration from earlier project versions.
 
 ---
 
 ## Quick Start
 
-1. Download `H3_Prompt_Composer_V5_11_1.html`.
+1. Download `H3_Prompt_Composer_V5_12_1.html`.
 2. Open it in a modern browser such as Chrome, Edge, or Firefox.
 3. Choose the H3 mode you are using.
 4. Set the target duration and visual style.
@@ -49,7 +62,7 @@ The Composer is designed around a simple principle: **give each reference one cl
 - Character/source images belong inside their reusable Subject.
 - Multiple views of one location can define a single Environment Subject.
 - Voice samples can be bound to a Subject once and resolved automatically when that Subject speaks.
-- Standalone Pictures are reserved for jobs such as frame anchors, storyboard references, wardrobe transfer, environment state, or character scale.
+- Standalone Pictures are reserved for jobs such as frame anchors, storyboard references, wardrobe transfer, environment state, visual height/scale/placement, or lighting-integration guidance.
 - The Identity and Voice Map shows how active H3 labels will be sent for the current Generation.
 
 ![Reference management in H3 Prompt Composer](assets/reference-management.png)
@@ -112,15 +125,18 @@ Overall soundscape and non-diegetic music are managed separately so persistent s
 The Composer includes guided starting points for several common Ref2VA tasks:
 
 ### Insert Subject Into Existing Footage
-Preserve a source plate and camera while integrating a generated Subject with grounding, occlusion, shadow, focus, and motion behavior.
+Preserve a source plate and camera while integrating a generated Subject with grounding, occlusion, shadow, focus, and motion behavior. An optional visual scale/placement guide can communicate approximate apparent size and blocking without replacing the source plate.
 
 ### Background Replacement + Relighting
-Keep a filmed performer while replacing the existing background and transferring the new environment's lighting and visual integration onto the Subject.
+Keep a filmed performer while replacing the existing background and transferring the new environment's lighting and visual integration onto the Subject. An optional Lighting / Integration Reference can show H3 a preferred relighting target.
 
 ### Performance + Camera Transfer
-Use a source video as a performance and/or camera-motion reference while applying that performance to the target Subject.
+Use a source video as a performance and/or camera-motion reference while applying that performance to the target Subject. Dialogue is optional; movement/acting-only transfer is supported.
 
-Built-in examples are included for these workflows.
+### Continue an Existing Video
+Treat the end of a source video as the handoff into a new generation, preserving selected subject motion, screen direction, camera trajectory, environment, lighting, and spatial continuity without replaying the source ending.
+
+Built-in examples are included for all four workflows.
 
 ---
 
@@ -160,13 +176,13 @@ Supported character Subjects can also use reusable Appearance States for changes
 
 The Composer automatically saves the active project locally in the browser.
 
-You can also save a project as a JSON file and reopen it later. Use **Save Project** when you want a portable backup, since browser storage can be lost if site data is cleared or you switch browsers.
+You can also save a project as a JSON file and reopen it later. Use **Save .json** when you want a portable backup, since browser storage can be lost if site data is cleared or you switch browsers.
 
 ---
 
 ## Privacy and Security
 
-H3 Prompt Composer V5.11.1 is designed to run locally.
+H3 Prompt Composer V5.12.1 is designed to run locally.
 
 This build:
 
@@ -192,6 +208,9 @@ The Composer does **not** load your ComfyUI images, videos, or audio files. It d
 ---
 
 ## Documentation
+
+> **Documentation note:** The currently included PDF guides were written for V5.11.1. The core workflow remains applicable, but they do not yet document the new V5.12.1 scale/placement, Lighting / Integration Reference, dialogue-free performance transfer, or guided Video Continuation features.
+
 
 ### Illustrated User Guide
 
@@ -236,6 +255,6 @@ If you find a bug or an H3 prompting case the Composer does not handle well, fee
 
 ## Version
 
-**H3 Prompt Composer V5.11.1**
+**H3 Prompt Composer V5.12.1**
 
 H3 Prompt Composer is an independent community tool and is not an official MiniMax or ComfyUI product.
