@@ -1,260 +1,216 @@
 # H3 Prompt Composer
 
-**Version 5.12.1**
+**Version 5.12.4**
 
-A free, standalone prompt-building tool for **MiniMax H3 video generation**, designed primarily for **ComfyUI** workflows.
+A free, standalone prompt-building tool for **MiniMax H3** video generation, designed primarily for **ComfyUI** reference workflows.
 
-H3 Prompt Composer turns plain-language creative choices into structured H3 prompts. Instead of manually tracking reference syntax, subject numbering, voice mapping, shot structure, timing, and camera terminology, you build the scene through a browser interface and the Composer assembles the prompt for you.
+**Single HTML file - no installation - runs locally in your browser**
 
-**Standalone HTML • No installation • Runs locally in your browser**
+![H3 Prompt Composer V5.12.4](assets/composer-overview.png)
 
-![H3 Prompt Composer interface](assets/composer-overview.png)
+H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
 
----
+## What It Supports
 
-## What's New in V5.12.1
+- **T2VA** - text-to-video
+- **I2VA** - start from an image
+- **FL2VA** - first-frame to last-frame generation
+- **L2VA** - generate toward a required final image
+- **Ref2VA** - character, environment, Picture, Video, and Audio reference workflows
 
-- **Cleaner Insert Subject workflow** — Video 1 now owns the original source plate/environment without a redundant synthetic Environment Subject.
-- **Visual height / scale + placement** — optionally use a rough composite to guide both apparent scale and approximate Shot-specific placement.
-- **Lighting / Integration Reference** — optionally provide a preferred relit still to guide foreground/background lighting integration without copying its pose or composition.
-- **Dialogue-free Performance Transfer** — transfer acting, movement, facial performance, gesture, timing, and camera motion with no dialogue or Audio reference.
-- **Guided Video Continuation** — continue naturally from the end of an existing source video while preserving selected motion, camera, environment, and spatial continuity.
-- **Generation-isolation fixes** — edit-only references and task labels no longer leak into unrelated fresh Generations.
-
-V5.12.1 is also an audit release with fixes for Shot remapping, stale dialogue in no-dialogue mode, and migration from earlier project versions.
-
----
+Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appearance continuity, visual scale/placement guidance, camera controls, Timed Action Beats, and guided source-video workflows.
 
 ## Quick Start
 
-1. Download `H3_Prompt_Composer_V5_12_1.html`.
-2. Open it in a modern browser such as Chrome, Edge, or Firefox.
-3. Choose the H3 mode you are using.
-4. Set the target duration and visual style.
-5. For Ref2VA, define the Subjects and references connected to your ComfyUI workflow.
-6. Build the Generation using one or more Shots.
-7. Add camera behavior, actions, dialogue, timing, sound, and music as needed.
-8. Read **Prompt Check** and resolve anything important.
-9. Click **Copy Prompt** and paste the result into the matching H3 conditioning node in ComfyUI.
+1. Open `H3_Prompt_Composer_V5_12_4.html` in a modern browser.
+2. Choose the H3 mode you are using.
+3. Set duration and style.
+4. In Ref2VA, add only the Subjects/references that have a clear job.
+5. Build the Generation from one or more Shots.
+6. Add Timed Action Beats, camera, dialogue, and sound as needed.
+7. Read **Prompt Check**.
+8. Click **Copy prompt** and paste the result into your H3 prompt field in ComfyUI.
 
-If you're new to the Composer, start with **Load example → Full reference scene** or open the included Illustrated User Guide.
+> **The Composer is not a media loader.** It does not load the images, videos, or audio connected to ComfyUI. It describes how those already-connected inputs should be interpreted.
 
----
+## The Timeline Model
 
-## Supported H3 Modes
+A **Generation** is one complete H3 output. A **Shot** is one continuous camera view inside that Generation. A **Timed Action Beat** is a timed action window inside one continuous Shot.
 
-- **T2VA** — text-only generation
-- **I2VA** — Picture 1 is the starting frame
-- **FL2VA** — Picture 1 is the first frame and Picture 2 is the last frame
-- **L2VA** — Picture 1 is the required final frame
-- **Ref2VA** — characters, environments, voices, videos, editing, and other multi-reference workflows
+Use a new Shot only when the camera actually cuts or transitions to another view. If the camera stays continuous and only the action pacing changes, use Timed Action Beats.
 
-The Composer changes its generated prompt structure automatically for the selected mode.
+## References: Give Every Input One Clear Job
 
----
+![Subject reference management](assets/subject-reference.png)
 
-## Reference Management
+A Subject is a reusable character/person, creature, vehicle, prop, Environment, or other visual element. Attach the image/video references that define that Subject inside the Subject card.
 
-Ref2VA projects can contain reusable characters, creatures, vehicles, props, environments, pictures, videos, and audio references.
+Standalone Pictures are reserved for jobs such as:
 
-The Composer is designed around a simple principle: **give each reference one clear job**.
+- composition anchors
+- storyboard references
+- wardrobe transfer
+- Environment-state continuity
+- visual height / scale / placement
+- lighting-integration guidance
+- exact first/key/last/edited keyframes
 
-- Character/source images belong inside their reusable Subject.
-- Multiple views of one location can define a single Environment Subject.
-- Voice samples can be bound to a Subject once and resolved automatically when that Subject speaks.
-- Standalone Pictures are reserved for jobs such as frame anchors, storyboard references, wardrobe transfer, environment state, visual height/scale/placement, or lighting-integration guidance.
-- The Identity and Voice Map shows how active H3 labels will be sent for the current Generation.
+The optional Subject source-video section is shown only when Video inputs are actually configured.
 
-![Reference management in H3 Prompt Composer](assets/reference-management.png)
+## Appearance and Wardrobe Continuity
 
----
+![Appearance for this Generation](assets/appearance-continuity.png)
 
-## Generations, Shots, and Timed Action Beats
+**Starting look for this Generation** is the authoritative opening appearance.
 
-The Composer separates the timeline into three levels:
+When wardrobe changes between clips, click **+ New look for this Generation**, give it a meaningful name, and define the wardrobe/temporary appearance with text or a dedicated Picture. Press **Enter** or click **Rename** to commit a new look name; the dropdown updates immediately.
 
-### Generation
-One complete H3 generation request/output. A project can contain multiple Generations so you can build a sequence while carrying useful continuity forward.
+The **Saved looks library / historical editing** section manages reusable looks, but it does not select the current Generation's appearance. Earlier Generations are protected when a shared look is edited later.
 
-### Shot
-One continuous camera setup inside a Generation. Create another Shot when there is an actual cut, transition, or new camera view.
+For a visible wardrobe change inside a Shot, describe the actual action in the Shot or Timed Action Beats - for example, *she removes her jacket and drapes it over the chair* - then use **Appearance after this Shot** to carry the resulting look into later Shots/Generations. The Composer avoids redundantly restating an obvious end state.
 
-### Timed Action Beat
-A timed action window inside one continuous Shot. Use these when actions need specific pacing without creating a cut.
+## Visual Height / Scale / Placement
 
-![Timed Action Beats](assets/timed-action-beats.png)
+![Visual scale and placement](assets/scale-placement.png)
 
-For example, a continuous 8-second Shot can spend the first four seconds on one action and the next four seconds on another while remaining a single camera setup.
+Use text-only height relationships when possible. When stronger visual guidance is needed, use a Visual height / scale / placement Picture.
 
----
+- **Height / scale only - safest** transfers size/proportion/floor-contact guidance without target blocking.
+- **Height / scale + approximate placement** can also use a rough composite to guide approximate placement/depth for one selected Shot.
 
-## Endpoint-First Camera Builder
+The Picture remains an attribute guide, not an exact target frame.
 
-The Camera Builder works from endpoints rather than vague movement commands:
-
-1. Define the **Start Frame**.
-2. Define the **End Frame**.
-3. Choose a **Camera Motion** that physically connects them.
-
-Controls include framing, Subjects, viewpoint, camera height, composition, movement, timing, speed, stabilization, lens behavior, depth of field, focus, and custom camera instructions.
+## Camera Builder
 
 ![Camera Builder](assets/camera-builder.png)
 
-The Composer can also flag incompatible or contradictory combinations instead of silently building them into the prompt.
+The Camera Builder is endpoint-first:
 
----
+1. **Start Frame** - opening framing, Subject(s), viewpoint, height, composition.
+2. **End Frame** - keep the same relationship or define a different endpoint.
+3. **Camera Motion** - choose a physically compatible move and timing.
 
-## Dialogue, Voices, and Audio
+Advanced controls include movement range/speed, stabilization, lens perspective, depth of field, focus behavior, rack focus, and custom camera instructions.
 
-Dialogue cards support:
+## Dialogue and Audio
 
-- Speaker assignment
-- Exact spoken words
-- Language
-- Delivery/performance direction
-- Automatic voice-reference resolution
-- Off-screen or voice-over behavior
-- Actions that happen immediately after a spoken line
+![Dialogue card](assets/dialogue-audio.png)
 
-Overall soundscape and non-diegetic music are managed separately so persistent scene ambience can carry forward while Generation-specific sounds remain local to that clip.
+Bind voice references once at the Subject level. Dialogue cards define the speaker, delivery, language, exact spoken words, optional voice behavior, and post-line action.
 
----
+Audio purposes include voice timbre, exact performed dialogue, exact/reused source audio, music style, and sound texture. Voice references can use Auto behavior so an unused voice is bypassed in a Generation without consuming an H3 `<Audio N>` label.
 
-## Guided Video Reference Workflows
+## Guided Video Workflows
 
-The Composer includes guided starting points for several common Ref2VA tasks:
+![Guided video workflows](assets/workflow-picker.png)
 
-### Insert Subject Into Existing Footage
-Preserve a source plate and camera while integrating a generated Subject with grounding, occlusion, shadow, focus, and motion behavior. An optional visual scale/placement guide can communicate approximate apparent size and blocking without replacing the source plate.
+### Insert a Subject Into Existing Footage
+
+![Insert Subject workflow](assets/insert-subject.png)
+
+Treat Video 1 as the source plate and preserve its timing, camera, parallax, Environment, and unaffected content while physically integrating the new Subject. Optional scale/placement guidance can communicate apparent size and rough blocking.
 
 ### Background Replacement + Relighting
-Keep a filmed performer while replacing the existing background and transferring the new environment's lighting and visual integration onto the Subject. An optional Lighting / Integration Reference can show H3 a preferred relighting target.
 
-### Performance + Camera Transfer
-Use a source video as a performance and/or camera-motion reference while applying that performance to the target Subject. Dialogue is optional; movement/acting-only transfer is supported.
+![Background replacement and relighting](assets/background-relight.png)
+
+Replace a green/blue/plain/existing background while preserving the performer and source framing, then rebuild the performer's directional lighting and reflected Environment color.
+
+An optional **Lighting / Integration Reference** can show a preferred relit still. It transfers lighting/integration relationships without copying pose, framing, placement, or background geometry.
+
+![Lighting integration reference](assets/lighting-integration.png)
+
+The workflow also supports **Relight existing composite only** for an After Effects/composited source whose background is already correct but whose performer still needs Environment-matched lighting.
+
+### Performance / Camera Transfer
+
+![Performance transfer](assets/performance-transfer.png)
+
+Transfer selected facial acting, mouth performance, head movement, eyeline, gesture, full-body motion, and/or camera movement from a filmed reference while the target Subject references remain authoritative for identity/appearance.
+
+**Dialogue is optional.** Choose **No dialogue / no audio reference** for movement/acting/camera transfer with no spoken line.
 
 ### Continue an Existing Video
-Treat the end of a source video as the handoff into a new generation, preserving selected subject motion, screen direction, camera trajectory, environment, lighting, and spatial continuity without replaying the source ending.
 
-Built-in examples are included for all four workflows.
+![Video continuation](assets/video-continuation.png)
 
----
+Use Video 1 as a temporal handoff. The source clip ends and the target begins immediately afterward - it is not a frame-for-frame edit.
+
+Continuation can preserve Subject momentum/screen direction, camera direction/speed/height/framing momentum, Environment/lighting/spatial continuity, and can explicitly prevent replaying or resetting the source ending.
+
+## Soundscape and Music
+
+The Composer separates scene sound from audience-only music.
+
+- **Base soundscape** can carry into a fresh Generation.
+- **Additional sounds this Generation** are clip-specific and do not automatically carry forward.
+- **No scene sound / silence** means no dialogue, ambience, or physical sound; non-diegetic music is controlled separately.
+- **Non-diegetic music** is the audience-only score.
 
 ## Prompt Check
 
-Prompt Check acts as a guardrail before generation. It can surface blocking errors, warnings, and informational guidance for issues such as stale references, invalid assignments, timing conflicts, reference limits, prompt length, voice mapping, and contradictory camera instructions.
-
 ![Prompt Check](assets/prompt-check.png)
 
-A warning does not necessarily mean the prompt is unusable; it means the Composer found something worth reviewing.
+Prompt Check is a preflight panel:
 
----
+- **Error** - fix before generating.
+- **Warning** - review the relationship/timing; change it when it is not intentional.
+- **Info** - useful context or guidance.
 
-## Structured Prompt Output
+A clean Prompt Check means the Composer does not see a structural conflict; it cannot guarantee that the generative model will follow every instruction perfectly.
 
-The Composer builds the H3 structure for you, including the appropriate reference labels and mode-specific sections.
+## Built-In Examples
 
-![Structured H3 prompt output](assets/structured-prompt-output.png)
+Use **Load example** for working templates:
 
-You do not need to manually renumber `<Subject>`, `<Picture>`, `<Video>`, or active `<Audio>` labels for normal Composer workflows.
-
----
-
-## Continuity Between Generations
-
-A project can contain multiple Generations.
-
-**New Generation** carries forward useful continuity such as the base soundscape, music choice, and supported Subject appearance state while resetting Generation-specific extra sounds.
-
-**Duplicate Generation** creates a variation from the same Shots and settings.
-
-Supported character Subjects can also use reusable Appearance States for changes such as wardrobe, wet clothing, injury state, or other persistent visual continuity.
-
----
+- Full reference scene
+- Insert a subject into existing footage
+- Background replacement + relighting
+- Performance + camera transfer
+- Continue an existing video
+- Simple T2VA shot
 
 ## Saving Projects
 
-The Composer automatically saves the active project locally in the browser.
-
-You can also save a project as a JSON file and reopen it later. Use **Save .json** when you want a portable backup, since browser storage can be lost if site data is cleared or you switch browsers.
-
----
+- **Auto-saved locally** stores the current project in browser local storage.
+- **Save .json** exports a portable editable project.
+- **Open** loads a saved project JSON.
+- **Restore previous** restores the safety backup made before destructive preset/example/reset changes.
+- **Copy prompt** copies the active Generation.
+- **Copy all generations** copies the complete multi-Generation sequence.
 
 ## Privacy and Security
 
-H3 Prompt Composer V5.12.1 is designed to run locally.
+H3 Prompt Composer V5.12.4 is designed to run locally.
 
-This build:
+The audited V5.12.4 HTML:
 
-- Does **not** require an account
-- Does **not** require installation
-- Does **not** require an internet connection
-- Does **not** load remote JavaScript libraries or stylesheets
-- Does **not** send prompts or project information to an external server
-- Does **not** contain `fetch`, XMLHttpRequest, WebSocket, or other network-request code
-- Does **not** use `eval()` or dynamically execute downloaded code
+- contains no external JavaScript or stylesheet dependencies
+- does not use `fetch()`, XMLHttpRequest, WebSockets, EventSource, or `sendBeacon`
+- does not use `eval()` or downloaded executable code
+- does not contain external HTTP/HTTPS URLs
+- does not require an account or server connection
 
-The complete application source is contained in the HTML file and can be inspected directly in this repository.
+Normal browser features are used for local project storage, clipboard copy, loading user-selected JSON files, and saving local project files.
 
-The application uses normal browser features for local functionality:
-
-- `localStorage` for autosave / restore
-- Clipboard access when you press **Copy Prompt**
-- `FileReader` when you explicitly open a saved project JSON file
-- Browser-generated local downloads when you save a project
-
-The Composer does **not** load your ComfyUI images, videos, or audio files. It describes how reference inputs already connected in ComfyUI should be interpreted by H3.
-
----
+The complete application source is contained in the HTML file and can be inspected directly on GitHub.
 
 ## Documentation
 
-> **Documentation note:** The currently included PDF guides were written for V5.11.1. The core workflow remains applicable, but they do not yet document the new V5.12.1 scale/placement, Lighting / Integration Reference, dialogue-free performance transfer, or guided Video Continuation features.
-
-
-### Illustrated User Guide
-
-`H3_Prompt_Composer_V5_11_1_Illustrated_User_Guide.pdf`
-
-A visual walkthrough with screenshots covering the core workflow, references, timeline model, Camera Builder, dialogue, Prompt Check, saving, and troubleshooting.
-
-### Full User Guide
-
-`H3_Prompt_Composer_V5_11_1_User_Guide.pdf`
-
-A more detailed reference for the complete Composer workflow and controls.
-
----
+- **[Full V5.12.4 User Guide](H3_Prompt_Composer_V5_12_4_User_Guide.pdf)** - detailed reference for every major workflow and continuity system.
+- **[V5.12.4 Illustrated User Guide](H3_Prompt_Composer_V5_12_4_Illustrated_User_Guide.pdf)** - visual quick-start guide using screenshots of the current interface.
+- `H3_Prompt_Composer_V5_12_4_CHANGELOG.txt` - release changes and QA notes.
 
 ## What the Composer Does Not Do
 
-H3 Prompt Composer is a **prompt authoring and organization tool**. It does not:
-
-- Run MiniMax H3 itself
-- Connect directly to ComfyUI
-- Upload or process your source media
-- Replace ComfyUI reference inputs
-- Guarantee that H3 will follow every instruction exactly
-
-The goal is to make H3 prompts clearer, more structured, and easier to manage. Final behavior still depends on the underlying model, references, generation settings, and normal experimentation.
-
----
-
-## Feedback
-
-If you find a bug or an H3 prompting case the Composer does not handle well, feel free to open a GitHub Issue. Helpful reports include:
-
-- What you were trying to create
-- Which H3 mode you were using
-- The relevant reference setup
-- The generated prompt, when possible
-- What you expected
-- What happened instead
-
----
+H3 Prompt Composer does not run MiniMax H3, upload your reference media, change your ComfyUI workflow, choose your model/sampler settings, or guarantee model compliance. Its job is to build a clear, internally consistent prompt from filmmaking-oriented controls and catch common structural mistakes before generation.
 
 ## Version
 
-**H3 Prompt Composer V5.12.1**
+**H3 Prompt Composer V5.12.4**
+
+V5.12 adds cleaner source-video editing, scale + placement guidance, lighting-integration references, dialogue-free performance transfer, guided Video Continuation, and redesigned appearance/wardrobe continuity. V5.12.4 also includes a UI copy/context audit so helper text and visible controls match the active reference/workflow state.
+
+## Disclaimer
 
 H3 Prompt Composer is an independent community tool and is not an official MiniMax or ComfyUI product.
