@@ -1,14 +1,32 @@
 # H3 Prompt Composer
 
-**Version 5.12.4**
+**Version 5.14.0**
 
 A free, standalone prompt-building tool for **MiniMax H3** video generation, designed primarily for **ComfyUI** reference workflows.
 
 **Single HTML file - no installation - runs locally in your browser**
 
-![H3 Prompt Composer V5.12.4](assets/composer-overview.png)
+![H3 Prompt Composer V5.14.0](assets/composer-overview.png)
 
 H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
+
+## What's New in V5.14.0
+
+V5.14.0 is an **audit-hardening and correctness release**. The multi-Subject scale/placement workflow introduced in V5.13 remains intact; this release tightens the implementation after an independent source/runtime review.
+
+- Fixed two built-in examples that stored an invalid camera-composition enum (`thirds`), which could silently drop composition language and desynchronize the UI from project state.
+- Fixed the generated English in multi-Subject scale/placement Shot cues by removing a broken possessive after lists of Subject labels.
+- Added camera-enum self-healing during project migration and **Auto-tidy**, so legacy or hand-edited JSON values that are not valid dropdown options are cleared safely instead of surviving as hidden state.
+- Auto-tidy now deduplicates multi-Subject scale/placement lists while preserving their first-occurrence left-to-right order.
+- Prompt Check now flags custom retention notes that incorrectly place speaker IDs such as `(S1)` inside `retention_analysis`.
+- The `detailed_description` advisory now counts the **actual complete detailed-description section**, including style and generated preambles, rather than approximating from Shot text alone.
+- Removed eight unreferenced helper functions and other maintenance-only drift identified by the audit.
+- Updated the minimum target duration to **4 seconds**, matching the current official H3 output specification. Local ComfyUI output still snaps to H3's 17k+5 frame grid at 24 fps.
+- Updated documentation and screenshots so examples match the application's real generated wording and valid camera controls.
+
+The core V5.13 feature remains: one Visual Height / Scale / Placement Picture can map an ordered list of multiple Subjects from left to right.
+
+![Multi-subject scale and placement](assets/scale-placement.png)
 
 ## What It Supports
 
@@ -22,16 +40,27 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Quick Start
 
-1. Open `H3_Prompt_Composer_V5_12_4.html` in a modern browser.
+1. Open `H3_Prompt_Composer_V5_14_0.html` in a modern browser.
 2. Choose the H3 mode you are using.
 3. Set duration and style.
-4. In Ref2VA, add only the Subjects/references that have a clear job.
-5. Build the Generation from one or more Shots.
-6. Add Timed Action Beats, camera, dialogue, and sound as needed.
-7. Read **Prompt Check**.
-8. Click **Copy prompt** and paste the result into your H3 prompt field in ComfyUI.
+4. In Ref2VA, set **Connected ComfyUI inputs** to match the physical Images / Videos / Audio sockets you connected.
+5. Add only the Subjects and references that have a clear job.
+6. Build the Generation from one or more Shots.
+7. Add Timed Action Beats, camera, dialogue, and sound as needed.
+8. Read **Prompt Check**.
+9. Click **Copy prompt** and paste the result into your H3 prompt field in ComfyUI.
 
 > **The Composer is not a media loader.** It does not load the images, videos, or audio connected to ComfyUI. It describes how those already-connected inputs should be interpreted.
+
+## Connected ComfyUI Inputs
+
+![Connected ComfyUI inputs](assets/connected-inputs.png)
+
+The Images / Videos / Audio counts represent the physical reference slots connected in ComfyUI. They make the corresponding Picture / Video / Audio choices available in the Composer.
+
+These counts are separate from Subject numbers. A single Environment Subject may use multiple Picture slots when those images are complementary views of the same location.
+
+Current H3 reference limits used by Prompt Check are up to **9 images, 3 videos, 3 standalone audio clips, and 12 mixed reference files total**. Reference video/audio clips are 2-15 seconds each, with a 15-second combined limit per modality; the prompt ceiling is 7,000 characters.
 
 ## The Timeline Model
 
@@ -57,6 +86,10 @@ Standalone Pictures are reserved for jobs such as:
 
 The optional Subject source-video section is shown only when Video inputs are actually configured.
 
+### Multi-view Environments
+
+If several Pictures show complementary angles of the same location, select them all inside **one Environment Subject**. The Environment reference defines the stable place and layout; Camera Builder still defines the target shot framing.
+
 ## Appearance and Wardrobe Continuity
 
 ![Appearance for this Generation](assets/appearance-continuity.png)
@@ -67,18 +100,33 @@ When wardrobe changes between clips, click **+ New look for this Generation**, g
 
 The **Saved looks library / historical editing** section manages reusable looks, but it does not select the current Generation's appearance. Earlier Generations are protected when a shared look is edited later.
 
-For a visible wardrobe change inside a Shot, describe the actual action in the Shot or Timed Action Beats - for example, *she removes her jacket and drapes it over the chair* - then use **Appearance after this Shot** to carry the resulting look into later Shots/Generations. The Composer avoids redundantly restating an obvious end state.
+For a visible wardrobe change inside a Shot, describe the actual action in the Shot or Timed Action Beats, then use **Appearance after this Shot** to carry the resulting look into later Shots/Generations. The Composer avoids redundantly restating an obvious end state.
 
 ## Visual Height / Scale / Placement
 
-![Visual scale and placement](assets/scale-placement.png)
+![Multi-subject scale and placement](assets/scale-placement.png)
 
-Use text-only height relationships when possible. When stronger visual guidance is needed, use a Visual height / scale / placement Picture.
+Use text-only height relationships when possible. When stronger visual guidance is needed, add a **Visual height / scale / placement** Picture.
 
-- **Height / scale only - safest** transfers size/proportion/floor-contact guidance without target blocking.
-- **Height / scale + approximate placement** can also use a rough composite to guide approximate placement/depth for one selected Shot.
+### Subjects shown in this reference - from left to right
 
-The Picture remains an attribute guide, not an exact target frame.
+List the visible Subjects in the same order they appear in the image. For example:
+
+1. Jane
+2. John
+3. T-Rex
+4. Jeep
+
+The Composer turns that into explicit mapping language such as:
+
+> Within this guide, from left to right, the subjects shown are `<Subject 1>` Jane, `<Subject 2>` John, `<Subject 4>` T-Rex, and `<Subject 3>` Jeep.
+
+The Subject numbers do **not** need to increase from left to right. They are the stable Subject labels assigned elsewhere in the project; the ordered list tells H3 where those already-defined Subjects appear in this particular guide. This prevents H3 from having to guess which figure corresponds to which Subject.
+
+- **Height / scale only - safest** transfers relative physical size, body/object scale, proportions, and shared floor-plane contact. The ordered list identifies the figures but does **not** define target blocking.
+- **Height / scale + approximate placement** also transfers approximate left-to-right order, spacing, depth, floor contact, and screen placement for one selected Shot.
+
+The guide remains an attribute source, not an exact target frame. Pose, wardrobe, lighting, image style, and rough-composite artifacts are explicitly excluded.
 
 ## Camera Builder
 
@@ -108,7 +156,7 @@ Audio purposes include voice timbre, exact performed dialogue, exact/reused sour
 
 ![Insert Subject workflow](assets/insert-subject.png)
 
-Treat Video 1 as the source plate and preserve its timing, camera, parallax, Environment, and unaffected content while physically integrating the new Subject. Optional scale/placement guidance can communicate apparent size and rough blocking.
+Treat Video 1 as the source plate and preserve its timing, camera, parallax, Environment, and unaffected content while physically integrating the new Subject. Optional multi-Subject scale/placement guidance can communicate apparent size and rough blocking.
 
 ### Background Replacement + Relighting
 
@@ -157,6 +205,8 @@ Prompt Check is a preflight panel:
 - **Warning** - review the relationship/timing; change it when it is not intentional.
 - **Info** - useful context or guidance.
 
+For multi-Subject scale/placement guides, Prompt Check also catches an empty Subject list, invalid Subjects, duplicate Subject assignments, and invalid placement-Shot targets.
+
 A clean Prompt Check means the Composer does not see a structural conflict; it cannot guarantee that the generative model will follow every instruction perfectly.
 
 ## Built-In Examples
@@ -168,7 +218,7 @@ Use **Load example** for working templates:
 - Background replacement + relighting
 - Performance + camera transfer
 - Continue an existing video
-- Simple T2VA shot
+- Simple text-to-video shot
 
 ## Saving Projects
 
@@ -179,11 +229,13 @@ Use **Load example** for working templates:
 - **Copy prompt** copies the active Generation.
 - **Copy all generations** copies the complete multi-Generation sequence.
 
+V5.14.0 migrates supported older projects forward. Existing two-Subject scale references are converted into the equivalent ordered left-to-right Subject list.
+
 ## Privacy and Security
 
-H3 Prompt Composer V5.12.4 is designed to run locally.
+H3 Prompt Composer V5.14.0 is designed to run locally.
 
-The audited V5.12.4 HTML:
+The audited V5.14.0 HTML:
 
 - contains no external JavaScript or stylesheet dependencies
 - does not use `fetch()`, XMLHttpRequest, WebSockets, EventSource, or `sendBeacon`
@@ -197,9 +249,10 @@ The complete application source is contained in the HTML file and can be inspect
 
 ## Documentation
 
-- **[Full V5.12.4 User Guide](H3_Prompt_Composer_V5_12_4_User_Guide.pdf)** - detailed reference for every major workflow and continuity system.
-- **[V5.12.4 Illustrated User Guide](H3_Prompt_Composer_V5_12_4_Illustrated_User_Guide.pdf)** - visual quick-start guide using screenshots of the current interface.
-- `H3_Prompt_Composer_V5_12_4_CHANGELOG.txt` - release changes and QA notes.
+- **[Full V5.14.0 User Guide](H3_Prompt_Composer_V5_14_0_User_Guide.pdf)** - detailed reference for every major workflow and continuity system.
+- **[V5.14.0 Illustrated User Guide](H3_Prompt_Composer_V5_14_0_Illustrated_User_Guide.pdf)** - visual quick-start guide using screenshots of the current interface.
+- `H3_Prompt_Composer_V5_14_0_CHANGELOG.txt` - release changes and QA notes.
+- `H3_Prompt_Composer_V5_14_0_SHA256.txt` - checksum for the standalone HTML.
 
 ## What the Composer Does Not Do
 
@@ -207,9 +260,9 @@ H3 Prompt Composer does not run MiniMax H3, upload your reference media, change 
 
 ## Version
 
-**H3 Prompt Composer V5.12.4**
+**H3 Prompt Composer V5.14.0**
 
-V5.12 adds cleaner source-video editing, scale + placement guidance, lighting-integration references, dialogue-free performance transfer, guided Video Continuation, and redesigned appearance/wardrobe continuity. V5.12.4 also includes a UI copy/context audit so helper text and visible controls match the active reference/workflow state.
+V5.14.0 is the audited maintenance release of the multi-Subject scale/placement build. It fixes example enum drift and generated-English grammar, adds migration/Auto-tidy enum self-healing, improves Prompt Check and word-count accuracy, removes dead code, and updates the supported target-duration floor to 4 seconds. It retains the V5.13 ordered left-to-right multi-Subject mapping and the V5.12 generation-isolation, appearance-continuity, relighting-reference, dialogue-free performance-transfer, video-continuation, and UI-copy improvements.
 
 ## Disclaimer
 
