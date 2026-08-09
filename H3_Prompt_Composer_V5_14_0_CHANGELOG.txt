@@ -1,0 +1,114 @@
+H3 Prompt Composer V5.14.0
+Audit-Hardening / Correctness Release
+
+OVERVIEW
+
+V5.14.0 preserves the V5.13 multi-Subject scale/placement workflow while implementing the relevant findings from an independent full-source and Chromium runtime audit. The update focuses on correctness, project self-healing, generated-language quality, maintainability, and documentation alignment.
+
+FIXES IMPLEMENTED
+
+1. Built-in camera composition enum repair
+- Fixed two built-in examples that stored the invalid camera composition value "thirds".
+- Full reference scene Shot 1 now uses the valid "left_third" enum.
+- Simple text-to-video uses the valid "centered" enum.
+- This prevents silent loss of composition language and UI/state desynchronization.
+
+2. Multi-Subject scale/placement grammar
+- Removed the broken possessive generated after a list of Subject labels.
+- Shot-level placement cues now use grammar such as:
+  "...the approximate apparent size, left-to-right order, spacing, depth, floor contact, and blocking of <Subject ...> in this Shot..."
+- Fallback wording consistently uses "the assigned subjects".
+
+3. Camera enum self-healing
+- Project migration now validates stored Camera Builder enums against the current dropdown option sets.
+- Invalid legacy or hand-edited values are safely cleared rather than surviving as invisible state.
+- Auto-tidy applies the same sanitation to the active project.
+- Covered fields include start/end framing, focus area, viewpoint, angle, composition, stability, lens, depth of field, focus behavior, movement, range, speed, and timing.
+
+4. Multi-Subject scale mapping cleanup
+- Migration deduplicates stale scaleSubjectUids while preserving first-seen left-to-right order.
+- Auto-tidy removes invalid/environment Subject IDs and deduplicates valid mappings while preserving order.
+
+5. Custom retention-note validation
+- Prompt Check now flags speaker IDs such as (S1) or (S1,S2) when manually entered into a custom retention note.
+- Speaker IDs belong to dialogue/action output, not retention_analysis.
+
+6. detailed_description word-count accuracy
+- The advisory now counts the actual generated detailed_description section.
+- Style, edit preambles, scale guidance, continuity preambles, and Shot text are all included.
+
+7. Dead-code cleanup
+Removed the following unreferenced helpers identified by the audit:
+- appearanceStateAfterShot
+- embeddedAudioRefs
+- resolvedVoiceRef
+- allSpeakingSubjects
+- cameraViewpointLocation
+- wiredLabels
+- parenFor
+- loadDemo
+
+This also removes the divergent dead scale-parenthetical implementation that could have become a future maintenance trap.
+
+8. Minor source cleanup
+- Removed the unused target parameter from angleSentence().
+- Removed a duplicated phrase-bank source comment.
+
+9. H3 duration floor updated
+- Target duration minimum changed from 5 seconds to 4 seconds.
+- This matches the current official MiniMax H3 output-duration specification of 4-15 seconds.
+- Existing ComfyUI effective-duration snapping remains based on the current 17k+5 frame grid at 24 fps.
+
+DOCUMENTATION UPDATES
+
+- README updated to V5.14.0.
+- Full User Guide updated to V5.14.0.
+- Illustrated User Guide updated to V5.14.0.
+- Camera and overview screenshots regenerated from the corrected V5.14.0 interface.
+- Multi-Subject example wording now exactly matches the generated prompt.
+- Documentation explicitly explains that stable Subject label numbers do not need to increase from left to right.
+- Built-in example name standardized to "Simple text-to-video shot."
+
+AUDIT OBSERVATIONS REVIEWED BUT INTENTIONALLY NOT CHANGED
+
+- Timed Action Beats continue to use the requested creative duration, while cut validation/effective duration can reflect the snapped model grid. This is intentional: beat entry remains human-friendly rather than exposing fractional grid tails.
+- Natural-English Camera Builder phrasing is retained instead of forcing canonical token ordering; the current prompt guides explicitly favor natural camera language.
+- Load-bearing edit/scale/continuity preambles remain before Shot 1 where needed even when that produces more than a single short style sentence.
+- The 17k+5 / 24 fps duration-grid behavior is retained after verification against current ComfyUI H3 documentation.
+- The current H3 reference limits were rechecked against MiniMax's current model card.
+
+QA / REGRESSION TESTS
+
+- JavaScript syntax validation: PASS
+- Headless Chromium boot: PASS
+- All six built-in workflows generate with zero blocking Prompt Check errors: PASS
+- Every built-in camera enum resolves to a current enum option: PASS
+- Reference-scene valid left-third composition: PASS
+- T2VA valid centered composition: PASS
+- Four-Subject left-to-right scale/placement mapping: PASS
+- Correct multi-Subject placement grammar: PASS
+- Scale-list migration deduplication: PASS
+- Auto-tidy scale-list cleanup: PASS
+- Corrupt/legacy camera enum migration self-healing: PASS
+- Live Auto-tidy camera enum self-healing: PASS
+- Custom retention-note speaker-ID lint: PASS
+- Full detailed_description word-count extraction: PASS
+- V5.13.0 -> V5.14.0 migration: PASS
+- Runtime page errors in targeted regression suite: 0
+- External/network dependency static scan: PASS
+- Duplicate static element ID scan: PASS
+
+SECURITY / LOCAL-ONLY CHECK
+
+V5.14.0 remains a standalone local HTML application. Static checks found:
+- external script src: 0
+- external stylesheet href: 0
+- fetch(): 0
+- XMLHttpRequest: 0
+- WebSocket: 0
+- EventSource: 0
+- sendBeacon: 0
+- eval(): 0
+- new Function(): 0
+- iframes: 0
+- HTTP/HTTPS URLs: 0
