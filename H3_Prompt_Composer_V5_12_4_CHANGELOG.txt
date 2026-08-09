@@ -1,0 +1,95 @@
+H3 Prompt Composer V5.12.4
+UI Copy / Context Audit
+
+This release focuses on making labels, helper text, placeholders, and visible controls match the section and workflow the user is actually working in.
+
+FIXES
+
+1. Subject source-media section
+- The optional Subject/Performance source-video section is now hidden when no Video inputs are configured.
+- When Video inputs do exist, it is labeled clearly as optional.
+- Character help now explicitly says that no Video source is needed when using still images only.
+- Empty media messages no longer tell Basic-mode users to change a count "above" when those counts are only visible in Advanced view.
+- "Appearance source images" was clarified to "Subject / appearance source images."
+
+2. Reference-contribution help
+- Removed wording that could sound as if every Subject card was using a source video.
+- The help now refers generically to references attached to the Subject and distinguishes normal Camera/Shot control from direct video-edit presets.
+
+3. Standalone Picture roles
+- Wardrobe references now show wardrobe-specific help instead of generic framing/composition help.
+- Environment-state references now explain that they control location state while the Shot controls framing.
+- Storyboard references have storyboard-specific help.
+- First/key/last/edited keyframes have frame-anchor-specific help.
+- Composition anchors retain composition-specific help.
+- Lighting-integration and scale/placement references retain their specialized help.
+- Short-name placeholders now match the selected Picture role.
+- The details-field label now changes with the Picture role (for example "Wardrobe details to transfer" or "Environment state to preserve").
+- The "Convert to Environment" utility is no longer shown on roles where it does not make conceptual sense, such as Wardrobe or exact frame anchors.
+
+4. Audio references
+- Music and sound-effect references no longer show the voice-only "Auto — only when the bound subject speaks" option.
+- Old non-voice references accidentally stored in Auto mode normalize to Active.
+- Audio-purpose helper text now changes for Voice, Exact Dialogue, Exact Soundtrack, Reuse Source Audio, Music Style, and Sound Texture.
+- Optional-audio-note placeholders now match the selected purpose instead of always describing a clean voice recording.
+- Reference-duration help is voice-specific only when the selected Audio role is actually a voice role.
+
+5. Performance / Camera Transfer
+- Camera-only mode now says "Camera-transfer notes" and gives a camera-specific placeholder.
+- Performance + Camera mode uses "Performance / camera-transfer notes."
+- Performance-only mode keeps "Performance notes."
+- The workflow introduction now makes clear that synchronized audio is optional and is not required for acting/movement/camera transfer.
+- Removed old workflow-version badges that could be mistaken for the application version.
+
+6. Insert Subject workflow
+- Fixed contradictory helper text beneath "What the inserted subject does."
+- That field is now clearly identified as the main path/blocking control.
+- The Shot Action field is described as the place for additional behavior/timing not already stated in the preset field.
+
+7. Video Continuation
+- The generic Video placeholder now says to continue from the final moment of the Video, not "the end of this Generation."
+- Workflow-scoped source Videos no longer show a misleading "Used in shots" selector.
+
+8. General Ref2VA guidance
+- The Ref2VA mode hint now reflects the current set of Picture/Video roles instead of saying standalone Pictures are only for shot planning/frame anchors.
+- General Step 4 now covers wardrobe, environment state, scale/placement, lighting integration, storyboard/framing, and exact frame anchors.
+- "Height / scale guidance" is now "Height / scale / placement guidance."
+
+9. Shot and sound wording
+- "Subject placement and action before dialogue" is now "Opening subject placement / action" so it also reads correctly in scenes with no dialogue.
+- Environment help now says "reference framing" rather than assuming the Environment was defined only by an image.
+- Soundscape "Complete silence" wording was changed to "No scene sound / silence" and now clearly states that non-diegetic music is controlled separately.
+
+QA
+
+- JavaScript syntax validation: PASS
+- Headless Chromium runtime boot: PASS
+- Screenshot-equivalent Subject card with 5 Pictures / 0 Videos: PASS
+- Optional Video subsection with configured Video inputs: PASS
+- Wardrobe Picture wording: PASS
+- Environment-state Picture wording: PASS
+- Music Audio wording and activation choices: PASS
+- Voice Audio Auto behavior: PASS
+- Camera-only Performance Transfer wording: PASS
+- Insert Subject workflow wording: PASS
+- Continuation source wording: PASS
+- Direct-edit / continuation source "Used in shots" suppression: PASS
+- Soundscape wording: PASS
+- All six built-in examples generate with zero Prompt Check errors: PASS
+- Runtime page errors across test scenarios: 0
+
+SECURITY / LOCAL-ONLY STATIC CHECK
+
+- External script src: 0
+- External stylesheet href: 0
+- fetch(): 0
+- XMLHttpRequest: 0
+- WebSocket: 0
+- EventSource: 0
+- sendBeacon: 0
+- eval(): 0
+- new Function(): 0
+- iframe: 0
+- HTTP/HTTPS URLs: 0
+- Duplicate static IDs: 0
+- Duplicate function declarations: 0
