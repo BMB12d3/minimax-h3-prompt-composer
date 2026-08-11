@@ -6,8 +6,6 @@ A free, standalone prompt-building tool for **MiniMax H3** video generation, des
 
 **Single HTML file - no installation - runs locally in your browser**
 
-![H3 Prompt Composer V5.18.5](assets/composer-overview.png)
-
 H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
 
 ## What's New in V5.18.5
@@ -23,8 +21,6 @@ V5.18.5 formalizes the difference between a persistent project-media identity an
 - All six built-in workflow prompts remain byte-for-byte identical to V5.18.4.
 
 The full audit and compatibility notes are in the [V5.18.5 changelog](H3_Prompt_Composer_V5_18_5_CHANGELOG.md).
-
-![Multi-subject scale and placement](assets/scale-placement.png)
 
 ## What It Supports
 
@@ -52,8 +48,6 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Connected ComfyUI Inputs
 
-![Connected ComfyUI inputs](assets/connected-inputs.png)
-
 The Images / Videos / Audio counts represent the physical reference slots connected in ComfyUI. They make the corresponding Picture / Video / Audio choices available in the Composer.
 
 These counts are separate from Subject numbers. A single Environment Subject may use multiple Picture slots when those images are complementary views of the same location.
@@ -67,8 +61,6 @@ A **Generation** is one complete H3 output. A **Shot** is one continuous camera 
 Use a new Shot only when the camera actually cuts or transitions to another view. If the camera stays continuous and only the action pacing changes, use Timed Action Beats.
 
 ## References: Give Every Input One Clear Job
-
-![Subject reference management](assets/subject-reference.png)
 
 A Subject is a reusable character/person, creature, vehicle, prop, Environment, or other visual element. Attach the image/video references that define that Subject inside the Subject card.
 
@@ -111,8 +103,6 @@ Upload order, a phrase such as "picture 10," or `ENV03/V03` in a filename does n
 
 ## Appearance and Wardrobe Continuity
 
-![Appearance for this Generation](assets/appearance-continuity.png)
-
 **Starting look for this Generation** is the authoritative opening appearance.
 
 When wardrobe changes between clips, click **+ New look for this Generation**, give it a meaningful name, and define the wardrobe/temporary appearance with text or a dedicated Picture. Press **Enter** or click **Rename** to commit a new look name; the dropdown updates immediately.
@@ -122,8 +112,6 @@ The **Saved looks library / historical editing** section manages reusable looks,
 For a visible wardrobe change inside a Shot, describe the actual action in the Shot or Timed Action Beats, then use **Appearance after this Shot** to carry the resulting look into later Shots/Generations. The Composer avoids redundantly restating an obvious end state.
 
 ## Visual Height / Scale / Placement
-
-![Multi-subject scale and placement](assets/scale-placement.png)
 
 Use text-only height relationships when possible. When stronger visual guidance is needed, add a **Visual height / scale / placement** Picture.
 
@@ -149,8 +137,6 @@ The guide remains an attribute source, not an exact target frame. Pose, wardrobe
 
 ## Camera Builder
 
-![Camera Builder](assets/camera-builder.png)
-
 The Camera Builder is endpoint-first:
 
 1. **Start Frame** - opening framing, Subject(s), viewpoint, height, composition.
@@ -161,45 +147,31 @@ Advanced controls include movement range/speed, stabilization, lens perspective,
 
 ## Dialogue and Audio
 
-![Dialogue card](assets/dialogue-audio.png)
-
 Bind voice references once at the Subject level. Dialogue cards define the speaker, delivery, language, exact spoken words, optional voice behavior, and post-line action.
 
 Audio purposes include voice timbre, exact performed dialogue, exact/reused source audio, music style, and sound texture. Voice references can use Auto behavior so an unused voice is bypassed in a Generation without consuming an H3 `<Audio N>` label.
 
 ## Guided Video Workflows
 
-![Guided video workflows](assets/workflow-picker.png)
-
 ### Insert a Subject Into Existing Footage
-
-![Insert Subject workflow](assets/insert-subject.png)
 
 Treat Video 1 as the source plate and preserve its timing, camera, parallax, Environment, and unaffected content while physically integrating the new Subject. Optional multi-Subject scale/placement guidance can communicate apparent size and rough blocking.
 
 ### Background Replacement + Relighting
 
-![Background replacement and relighting](assets/background-relight.png)
-
 Replace a green/blue/plain/existing background while preserving the performer and source framing, then rebuild the performer's directional lighting and reflected Environment color.
 
 An optional **Lighting / Integration Reference** can show a preferred relit still. It transfers lighting/integration relationships without copying pose, framing, placement, or background geometry.
 
-![Lighting integration reference](assets/lighting-integration.png)
-
 The workflow also supports **Relight existing composite only** for an After Effects/composited source whose background is already correct but whose performer still needs Environment-matched lighting.
 
 ### Performance / Camera Transfer
-
-![Performance transfer](assets/performance-transfer.png)
 
 Transfer selected facial acting, mouth performance, head movement, eyeline, gesture, full-body motion, and/or camera movement from a filmed reference while the target Subject references remain authoritative for identity/appearance.
 
 **Dialogue is optional.** Choose **No dialogue / no audio reference** for movement/acting/camera transfer with no spoken line.
 
 ### Continue an Existing Video
-
-![Video continuation](assets/video-continuation.png)
 
 Use Video 1 as a temporal handoff. The source clip ends and the target begins immediately afterward - it is not a frame-for-frame edit.
 
@@ -215,8 +187,6 @@ The Composer separates scene sound from audience-only music.
 - **Non-diegetic music** is the audience-only score.
 
 ## Prompt Check
-
-![Prompt Check](assets/prompt-check.png)
 
 Prompt Check is a preflight panel:
 
@@ -269,7 +239,7 @@ The complete application source is contained in the HTML file and can be inspect
 ## Documentation
 
 - **[Full V5.18.5 User Guide](H3_Prompt_Composer_V5_18_5_User_Guide.pdf)** - detailed reference for every major workflow, AI Setup, reusable Environment routing, and continuity system.
-- **[V5.18.5 Illustrated User Guide](H3_Prompt_Composer_V5_18_5_Illustrated_User_Guide.pdf)** - visual quick-start guide using interface screenshots and routing examples.
+- **[V5.18.5 Illustrated User Guide](H3_Prompt_Composer_V5_18_5_Illustrated_User_Guide.pdf)** - visual quick-start guide using current workflow diagrams and routing maps.
 - [`H3_Prompt_Composer_V5_18_5_CHANGELOG.md`](H3_Prompt_Composer_V5_18_5_CHANGELOG.md) - release changes and QA notes.
 - `H3_Prompt_Composer_V5_18_5_SHA256.txt` - checksum for the standalone HTML.
 
