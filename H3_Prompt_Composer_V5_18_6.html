@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>H3 Prompt Composer V5.18.5</title>
+<title>H3 Prompt Composer V5.18.6</title>
 <style>
 :root{
   --bg:#14161c; --panel:#1b1e26; --panel2:#212530; --line:#2c313d;
@@ -330,8 +330,8 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 .ai-code{font-family:var(--mono);font-size:10.5px;line-height:1.45;background:#0d1016;border:1px solid #2a3140;border-radius:6px;padding:9px;white-space:pre-wrap;color:#bfc7d8}
 .ai-import-text{min-height:210px;font-family:var(--mono);font-size:10.5px}
 .ai-preview{margin-top:9px}.ai-preview .okline{color:#a8e9cb}.ai-preview .errline{color:#ffb3b8}.ai-preview .warnline{color:#ffd89b}
-.ai-name-grid{display:grid;grid-template-columns:185px 1fr;gap:6px 10px;font-size:10.8px;align-items:start}
-.ai-name-grid code{color:#a8d3f7}.ai-pill{display:inline-block;font-family:var(--mono);font-size:9px;border:1px solid #4a4277;color:#d8d1ff;background:#201d31;padding:2px 5px;border-radius:3px;margin-right:4px}
+.ai-name-grid{display:grid;grid-template-columns:minmax(250px,max-content) minmax(0,1fr);gap:6px 14px;font-size:10.8px;align-items:start}
+.ai-name-grid code{color:#a8d3f7;white-space:nowrap}.ai-pill{display:inline-block;font-family:var(--mono);font-size:9px;border:1px solid #4a4277;color:#d8d1ff;background:#201d31;padding:2px 5px;border-radius:3px;margin-right:4px}
 @media(max-width:650px){.ai-overlay{padding:6px}.ai-modal{width:100%;max-height:96vh}.ai-name-grid{grid-template-columns:1fr}.ai-actions .btn{flex:1 1 46%}}
 
 /* V5.17 beat-linked dialogue + inline reference helpers */
@@ -348,7 +348,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 <body>
 
 <header>
-  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.18.5</small></div>
+  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.18.6</small></div>
   <div class="tag" id="modeTag">T2VA</div>
   <div class="view-toggle" id="viewToggle" title="Basic hides technical schema controls; Advanced reveals everything.">
     <button id="viewBasic" onclick="setUIMode('basic')">Basic</button>
@@ -523,11 +523,11 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 
 <script>
 /* ============================================================
-   MiniMax H3 Prompt Composer V5.18.5
+   MiniMax H3 Prompt Composer V5.18.6
    Implements the schema from MiniMax's official prompt guides:
    VIDEO_PROMPT_WRITING_GUIDE_base_en.md  (T2VA/I2VA/FL2VA/L2VA)
    VIDEO_PROMPT_WRITING_GUIDE_ref_en.md   (full-reference mode)
-   V5.18.5: generation-specific environment Picture routing + clearer AI/user media labeling guidance.
+   V5.18.6: audit fixes for AI Setup naming, style prose, autosave migration, and documentation.
    ============================================================ */
 
 const FPS = 24;
@@ -639,9 +639,9 @@ const REF_KINDS = ['Subject','Picture','Video','Audio'];
 const RETENTION_V = ['fully_preserved','partially_preserved','attribute_transfer','weak_reference'];
 const TASK_TYPES = ['video editing','video continuation','keyframe completion',
   'reference generation','audio reuse','audio reference'];
-const APP_VERSION = '5.18.5';
-const STORAGE_KEY = 'h3_prompt_composer_v5_18_5';
-const BACKUP_KEY  = 'h3_prompt_composer_v5_18_5_backup';
+const APP_VERSION = '5.18.6';
+const STORAGE_KEY = 'h3_prompt_composer_v5_18_6';
+const BACKUP_KEY  = 'h3_prompt_composer_v5_18_6_backup';
 
 /* ---------------- state ---------------- */
 let S = blank();
@@ -858,18 +858,20 @@ function styleInputIsSentence(text){
   return /^(?:the target video|the video|this video|the scene|the footage|it)\b/i.test(t)&&/\b(?:is|are|uses|features|has|contains|looks|appears|remains|shows|presents)\b/i.test(t);
 }
 function styleAttributePhrase(text){const t=String(text||'').trim().replace(/^(?:and|with)\s+/i,'');if(/^handheld$/i.test(t))return 'handheld camera work';if(/^(?:warm|cool|neutral|cinematic|high-contrast|low-contrast)\s+grade$/i.test(t))return `a ${lowerFirstGeneric(t)}`;return t;}
+function stylePartIsBareAdjective(text){const t=String(text||'').trim().toLowerCase();return /^(?:moody|grainy|gritty|vibrant|saturated|desaturated|muted|dreamy|painterly|glossy|soft|dark|bright|warm|cool|high-contrast|low-contrast|naturalistic|realistic|cinematic|stylized|[a-z]+(?:y|ed|al|ic|ous|ive))$/.test(t);}
+function styleAttributeClause(parts){const p=parts.map(x=>String(x||'').trim()).filter(Boolean);if(!p.length)return '';if(p.every(stylePartIsBareAdjective))return `, with a ${listJoin(p.map(lowerFirstGeneric))} look`;return `, with ${listJoin(p.map(styleAttributePhrase))}`;}
 function normalizeStylePreamble(text){
   const raw=String(text||'').trim().replace(/[\s,]+$/,'');if(!raw)return '';
   const bare=raw.replace(/[.!?]+$/,'').trim();
   if(styleInputIsSentence(bare))return ensureSentence(upperInitial(bare));
   if(/^(?:shot|filmed|captured|photographed|rendered|animated|lit|graded)\b/i.test(bare)){
-    const p=bare.split(',').map(x=>x.trim()).filter(Boolean);return ensureSentence(`The target video is ${lowerFirstGeneric(p.shift())}${p.length?`, with ${listJoin(p.map(styleAttributePhrase))}`:''}`);
+    const p=bare.split(',').map(x=>x.trim()).filter(Boolean);return ensureSentence(`The target video is ${lowerFirstGeneric(p.shift())}${styleAttributeClause(p)}`);
   }
   if(/^(?:a|an)\s+/i.test(bare))return ensureSentence(`The target video uses ${lowerFirstGeneric(bare)}`);
   const parts=bare.split(',').map(styleAttributePhrase).filter(Boolean);
-  const styleRe=/^(?:live[- ]action|cinematic|realistic|photorealistic|naturalistic|stylized|claymation|watercolor|vintage film|2d[- ]animated|3d cg|documentary realism|cinematic(?:\s+.+)?\s+realism)$/i;
+  const styleRe=/^(?:live[- ]action|cinematic|realistic|photorealistic|naturalistic|stylized|claymation|watercolor|vintage film|2d[- ]animated|3d cg|documentary realism|anime|film noir|stop[- ]motion|hand[- ]drawn|rotoscope|oil painting|cinematic(?:\s+.+)?\s+realism)$/i;
   const styles=[];while(parts.length&&styleRe.test(parts[0]))styles.push(lowerFirstGeneric(parts.shift()));
-  if(styles.length)return ensureSentence(`The target video is in a ${listJoin(styles)} style${parts.length?`, with ${listJoin(parts)}`:''}`);
+  if(styles.length){const article=/^[aeiou]/i.test(styles[0])?'an':'a';return ensureSentence(`The target video is in ${article} ${listJoin(styles)} style${styleAttributeClause(parts)}`);}
   return ensureSentence(`The target video is presented with ${listJoin(parts.length?parts:[lowerFirstGeneric(bare)])}`);
 }
 function baseStyleClause(text){
@@ -4787,7 +4789,7 @@ async function copyOut(ev){
   flashButton(ev&&ev.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);
 }
 function backupProject(){try{localStorage.setItem(BACKUP_KEY,JSON.stringify(S));}catch(e){}}
-function restorePrevious(){try{const raw=localStorage.getItem(BACKUP_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_4_backup')||localStorage.getItem('h3_prompt_composer_v5_18_3_backup')||localStorage.getItem('h3_prompt_composer_v5_18_2_backup')||localStorage.getItem('h3_prompt_composer_v5_18_0_backup')||localStorage.getItem('h3_prompt_composer_v5_17_2_backup')||localStorage.getItem('h3_prompt_composer_v5_17_1_backup')||localStorage.getItem('h3_prompt_composer_v5_17_0_backup')||localStorage.getItem('h3_prompt_composer_v5_16_1_backup')||localStorage.getItem('h3_prompt_composer_v5_16_0_backup')||localStorage.getItem('h3_prompt_composer_v5_15_1_backup')||localStorage.getItem('h3_prompt_composer_v5_15_0_backup')||localStorage.getItem('h3_prompt_composer_v5_14_3_backup')||localStorage.getItem('h3_prompt_composer_v5_14_2_backup')||localStorage.getItem('h3_prompt_composer_v5_14_1_backup')||localStorage.getItem('h3_prompt_composer_v5_14_0_backup')||localStorage.getItem('h3_prompt_composer_v5_13_0_backup')||localStorage.getItem('h3_prompt_composer_v5_12_4_backup')||localStorage.getItem('h3_prompt_composer_v5_12_3_backup')||localStorage.getItem('h3_prompt_composer_v5_12_2_backup')||localStorage.getItem('h3_prompt_composer_v5_12_1_backup')||localStorage.getItem('h3_prompt_composer_v5_12_0_backup')||localStorage.getItem('h3_prompt_composer_v5_11_1_backup')||localStorage.getItem('h3_prompt_composer_v5_11_0_backup')||localStorage.getItem('h3_prompt_composer_v5_10_6_backup')||localStorage.getItem('h3_prompt_composer_v5_10_5_backup')||localStorage.getItem('h3_prompt_composer_v5_10_4_backup')||localStorage.getItem('h3_prompt_composer_v5_10_3_backup')||localStorage.getItem('h3_prompt_composer_v5_10_2_backup')||localStorage.getItem('h3_prompt_composer_v5_10_1_backup')||localStorage.getItem('h3_prompt_composer_v5_10_0_backup')||localStorage.getItem('h3_prompt_composer_v5_9_9_backup')||localStorage.getItem('h3_prompt_composer_v5_9_8_backup')||localStorage.getItem('h3_prompt_composer_v5_9_7_backup')||localStorage.getItem('h3_prompt_composer_v5_9_6_backup')||localStorage.getItem('h3_prompt_composer_v5_9_5_backup')||localStorage.getItem('h3_prompt_composer_v5_9_4_backup')||localStorage.getItem('h3_prompt_composer_v5_9_3_backup')||localStorage.getItem('h3_prompt_composer_v5_9_2_backup')||localStorage.getItem('h3_prompt_composer_v5_9_1_backup')||localStorage.getItem('h3_prompt_composer_v5_9_backup')||localStorage.getItem('h3_prompt_composer_v5_8_3_backup')||localStorage.getItem('h3_prompt_composer_v5_8_2_backup')||localStorage.getItem('h3_prompt_composer_v5_8_1_backup')||localStorage.getItem('h3_prompt_composer_v5_8_backup')||localStorage.getItem('h3_prompt_composer_v5_7_1_backup')||localStorage.getItem('h3_prompt_composer_v5_7_backup')||localStorage.getItem('h3_prompt_composer_v5_6_backup');if(!raw){alert('No previous project backup is available.');return;}backupProject();S=migrate(JSON.parse(raw));render();}catch(e){alert('The previous project backup could not be restored.');}}
+function restorePrevious(){try{const raw=localStorage.getItem(BACKUP_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_5_backup')||localStorage.getItem('h3_prompt_composer_v5_18_4_backup')||localStorage.getItem('h3_prompt_composer_v5_18_3_backup')||localStorage.getItem('h3_prompt_composer_v5_18_2_backup')||localStorage.getItem('h3_prompt_composer_v5_18_1_backup')||localStorage.getItem('h3_prompt_composer_v5_18_0_backup')||localStorage.getItem('h3_prompt_composer_v5_17_2_backup')||localStorage.getItem('h3_prompt_composer_v5_17_1_backup')||localStorage.getItem('h3_prompt_composer_v5_17_0_backup')||localStorage.getItem('h3_prompt_composer_v5_16_1_backup')||localStorage.getItem('h3_prompt_composer_v5_16_0_backup')||localStorage.getItem('h3_prompt_composer_v5_15_1_backup')||localStorage.getItem('h3_prompt_composer_v5_15_0_backup')||localStorage.getItem('h3_prompt_composer_v5_14_3_backup')||localStorage.getItem('h3_prompt_composer_v5_14_2_backup')||localStorage.getItem('h3_prompt_composer_v5_14_1_backup')||localStorage.getItem('h3_prompt_composer_v5_14_0_backup')||localStorage.getItem('h3_prompt_composer_v5_13_0_backup')||localStorage.getItem('h3_prompt_composer_v5_12_4_backup')||localStorage.getItem('h3_prompt_composer_v5_12_3_backup')||localStorage.getItem('h3_prompt_composer_v5_12_2_backup')||localStorage.getItem('h3_prompt_composer_v5_12_1_backup')||localStorage.getItem('h3_prompt_composer_v5_12_0_backup')||localStorage.getItem('h3_prompt_composer_v5_11_1_backup')||localStorage.getItem('h3_prompt_composer_v5_11_0_backup')||localStorage.getItem('h3_prompt_composer_v5_10_6_backup')||localStorage.getItem('h3_prompt_composer_v5_10_5_backup')||localStorage.getItem('h3_prompt_composer_v5_10_4_backup')||localStorage.getItem('h3_prompt_composer_v5_10_3_backup')||localStorage.getItem('h3_prompt_composer_v5_10_2_backup')||localStorage.getItem('h3_prompt_composer_v5_10_1_backup')||localStorage.getItem('h3_prompt_composer_v5_10_0_backup')||localStorage.getItem('h3_prompt_composer_v5_9_9_backup')||localStorage.getItem('h3_prompt_composer_v5_9_8_backup')||localStorage.getItem('h3_prompt_composer_v5_9_7_backup')||localStorage.getItem('h3_prompt_composer_v5_9_6_backup')||localStorage.getItem('h3_prompt_composer_v5_9_5_backup')||localStorage.getItem('h3_prompt_composer_v5_9_4_backup')||localStorage.getItem('h3_prompt_composer_v5_9_3_backup')||localStorage.getItem('h3_prompt_composer_v5_9_2_backup')||localStorage.getItem('h3_prompt_composer_v5_9_1_backup')||localStorage.getItem('h3_prompt_composer_v5_9_backup')||localStorage.getItem('h3_prompt_composer_v5_8_3_backup')||localStorage.getItem('h3_prompt_composer_v5_8_2_backup')||localStorage.getItem('h3_prompt_composer_v5_8_1_backup')||localStorage.getItem('h3_prompt_composer_v5_8_backup')||localStorage.getItem('h3_prompt_composer_v5_7_1_backup')||localStorage.getItem('h3_prompt_composer_v5_7_backup')||localStorage.getItem('h3_prompt_composer_v5_6_backup');if(!raw){alert('No previous project backup is available.');return;}backupProject();S=migrate(JSON.parse(raw));render();}catch(e){alert('The previous project backup could not be restored.');}}
 function newProject(){if(confirm('Start a new project? The current project will be kept as “Restore previous.”')){backupProject();S=blank();render();}}
 function migrate(o){
   if(!o||typeof o!=='object')o=blank();
@@ -5402,7 +5404,7 @@ function loadExampleWorkflow(kind){
 
 function boot(){
   try{
-    const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_4')||localStorage.getItem('h3_prompt_composer_v5_18_3')||localStorage.getItem('h3_prompt_composer_v5_18_2')||localStorage.getItem('h3_prompt_composer_v5_18_0')||localStorage.getItem('h3_prompt_composer_v5_17_2')||localStorage.getItem('h3_prompt_composer_v5_17_1')||localStorage.getItem('h3_prompt_composer_v5_17_0')||localStorage.getItem('h3_prompt_composer_v5_16_1')||localStorage.getItem('h3_prompt_composer_v5_16_0')||localStorage.getItem('h3_prompt_composer_v5_15_1')||localStorage.getItem('h3_prompt_composer_v5_15_0')||localStorage.getItem('h3_prompt_composer_v5_14_3')||localStorage.getItem('h3_prompt_composer_v5_14_2')||localStorage.getItem('h3_prompt_composer_v5_14_1')||localStorage.getItem('h3_prompt_composer_v5_14_0')||localStorage.getItem('h3_prompt_composer_v5_13_0')||localStorage.getItem('h3_prompt_composer_v5_12_4')||localStorage.getItem('h3_prompt_composer_v5_12_3')||localStorage.getItem('h3_prompt_composer_v5_12_2')||localStorage.getItem('h3_prompt_composer_v5_12_1')||localStorage.getItem('h3_prompt_composer_v5_12_0')||localStorage.getItem('h3_prompt_composer_v5_11_1')||localStorage.getItem('h3_prompt_composer_v5_11_0')||localStorage.getItem('h3_prompt_composer_v5_10_6')||localStorage.getItem('h3_prompt_composer_v5_10_5')||localStorage.getItem('h3_prompt_composer_v5_10_4')||localStorage.getItem('h3_prompt_composer_v5_10_3')||localStorage.getItem('h3_prompt_composer_v5_10_2')||localStorage.getItem('h3_prompt_composer_v5_10_1')||localStorage.getItem('h3_prompt_composer_v5_10_0')||localStorage.getItem('h3_prompt_composer_v5_9_9')||localStorage.getItem('h3_prompt_composer_v5_9_8')||localStorage.getItem('h3_prompt_composer_v5_9_7')||localStorage.getItem('h3_prompt_composer_v5_9_6')||localStorage.getItem('h3_prompt_composer_v5_9_5')||localStorage.getItem('h3_prompt_composer_v5_9_4')||localStorage.getItem('h3_prompt_composer_v5_9_3')||localStorage.getItem('h3_prompt_composer_v5_9_2')||localStorage.getItem('h3_prompt_composer_v5_9_1')||localStorage.getItem('h3_prompt_composer_v5_9')||localStorage.getItem('h3_prompt_composer_v5_8_3')||localStorage.getItem('h3_prompt_composer_v5_8_2')||localStorage.getItem('h3_prompt_composer_v5_8_1')||localStorage.getItem('h3_prompt_composer_v5_8')||localStorage.getItem('h3_prompt_composer_v5_7_1')||localStorage.getItem('h3_prompt_composer_v5_7')||localStorage.getItem('h3_prompt_composer_v5_6')||localStorage.getItem('h3_prompt_composer_v5_5')||localStorage.getItem('h3_prompt_composer_v5_4')||localStorage.getItem('h3_prompt_composer_v5_3')||localStorage.getItem('h3_prompt_composer_v5_2')||localStorage.getItem('h3_prompt_composer_v5');
+    const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_5')||localStorage.getItem('h3_prompt_composer_v5_18_4')||localStorage.getItem('h3_prompt_composer_v5_18_3')||localStorage.getItem('h3_prompt_composer_v5_18_2')||localStorage.getItem('h3_prompt_composer_v5_18_1')||localStorage.getItem('h3_prompt_composer_v5_18_0')||localStorage.getItem('h3_prompt_composer_v5_17_2')||localStorage.getItem('h3_prompt_composer_v5_17_1')||localStorage.getItem('h3_prompt_composer_v5_17_0')||localStorage.getItem('h3_prompt_composer_v5_16_1')||localStorage.getItem('h3_prompt_composer_v5_16_0')||localStorage.getItem('h3_prompt_composer_v5_15_1')||localStorage.getItem('h3_prompt_composer_v5_15_0')||localStorage.getItem('h3_prompt_composer_v5_14_3')||localStorage.getItem('h3_prompt_composer_v5_14_2')||localStorage.getItem('h3_prompt_composer_v5_14_1')||localStorage.getItem('h3_prompt_composer_v5_14_0')||localStorage.getItem('h3_prompt_composer_v5_13_0')||localStorage.getItem('h3_prompt_composer_v5_12_4')||localStorage.getItem('h3_prompt_composer_v5_12_3')||localStorage.getItem('h3_prompt_composer_v5_12_2')||localStorage.getItem('h3_prompt_composer_v5_12_1')||localStorage.getItem('h3_prompt_composer_v5_12_0')||localStorage.getItem('h3_prompt_composer_v5_11_1')||localStorage.getItem('h3_prompt_composer_v5_11_0')||localStorage.getItem('h3_prompt_composer_v5_10_6')||localStorage.getItem('h3_prompt_composer_v5_10_5')||localStorage.getItem('h3_prompt_composer_v5_10_4')||localStorage.getItem('h3_prompt_composer_v5_10_3')||localStorage.getItem('h3_prompt_composer_v5_10_2')||localStorage.getItem('h3_prompt_composer_v5_10_1')||localStorage.getItem('h3_prompt_composer_v5_10_0')||localStorage.getItem('h3_prompt_composer_v5_9_9')||localStorage.getItem('h3_prompt_composer_v5_9_8')||localStorage.getItem('h3_prompt_composer_v5_9_7')||localStorage.getItem('h3_prompt_composer_v5_9_6')||localStorage.getItem('h3_prompt_composer_v5_9_5')||localStorage.getItem('h3_prompt_composer_v5_9_4')||localStorage.getItem('h3_prompt_composer_v5_9_3')||localStorage.getItem('h3_prompt_composer_v5_9_2')||localStorage.getItem('h3_prompt_composer_v5_9_1')||localStorage.getItem('h3_prompt_composer_v5_9')||localStorage.getItem('h3_prompt_composer_v5_8_3')||localStorage.getItem('h3_prompt_composer_v5_8_2')||localStorage.getItem('h3_prompt_composer_v5_8_1')||localStorage.getItem('h3_prompt_composer_v5_8')||localStorage.getItem('h3_prompt_composer_v5_7_1')||localStorage.getItem('h3_prompt_composer_v5_7')||localStorage.getItem('h3_prompt_composer_v5_6')||localStorage.getItem('h3_prompt_composer_v5_5')||localStorage.getItem('h3_prompt_composer_v5_4')||localStorage.getItem('h3_prompt_composer_v5_3')||localStorage.getItem('h3_prompt_composer_v5_2')||localStorage.getItem('h3_prompt_composer_v5');
     if(raw) S=migrate(JSON.parse(raw));
     else S=migrate(S);
   }catch(e){S=migrate(S);}
