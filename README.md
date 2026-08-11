@@ -6,6 +6,8 @@ A free, standalone prompt-building tool for **MiniMax H3** video generation, des
 
 **Single HTML file - no installation - runs locally in your browser**
 
+![H3 Prompt Composer V5.18.5 overview](assets/v5185-overview.png)
+
 H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
 
 ## What's New in V5.18.5
@@ -47,6 +49,8 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 > **The Composer is not a media loader.** It does not load the images, videos, or audio connected to ComfyUI. It describes how those already-connected inputs should be interpreted.
 
 ## Connected ComfyUI Inputs
+
+![V5.18.5 reference workspace with active input map and generated prompt](assets/v5185-reference-workspace.png)
 
 The Images / Videos / Audio counts represent the physical reference slots connected in ComfyUI. They make the corresponding Picture / Video / Audio choices available in the Composer.
 
@@ -91,6 +95,8 @@ The same slot may be reused by different Environments because only the active En
 Use slot-independent names such as `ENV03_BrokenBridge_V02_APPROACH.png`. Reserve a `P##` prefix for media intentionally pinned to a physical Picture input.
 
 ## AI Setup and Import
+
+![V5.18.5 AI Project Setup and reusable Picture routing guidance](assets/v5185-ai-setup.png)
 
 **AI Setup** copies project-building instructions and a schema-v4 JSON example for use with an LLM. The AI can identify Subjects, Environment views, Generations, Shots, actions, and dialogue, then return structured JSON for import.
 
