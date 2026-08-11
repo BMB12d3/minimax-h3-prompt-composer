@@ -1,28 +1,36 @@
 # H3 Prompt Composer
 
-**Version 5.18.5**
+**Version 5.18.6**
 
 A free, standalone prompt-building tool for **MiniMax H3** video generation, designed primarily for **ComfyUI** reference workflows.
 
 **Single HTML file - no installation - runs locally in your browser**
 
-![H3 Prompt Composer V5.18.5 overview](assets/v5185-overview.png)
+![H3 Prompt Composer V5.18.6 overview](assets/v5186-overview.png)
 
 H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
 
-## What's New in V5.18.5
+## What's New in V5.18.6
 
-V5.18.5 formalizes the difference between a persistent project-media identity and a temporary physical H3/ComfyUI Picture input.
+V5.18.6 is a focused audit-and-documentation release built on the reusable routing work introduced in V5.18.5.
+
+- Long filenames in AI Setup no longer collide with their explanations.
+- Autosave and Restore Previous now include the previously omitted V5.18.1 migration keys and the V5.18.5 handoff.
+- Adjective-only style modifiers produce natural prose such as “with a grainy and desaturated look.”
+- Anime, film noir, stop-motion, hand-drawn, rotoscope, and oil painting are recognized as leading style families.
+- The manuals use exact output field names, document duration normalization, remove repeated captions, and use compact targeted screenshots.
+
+V5.18.5 formalized the difference between a persistent project-media identity and a temporary physical H3/ComfyUI Picture input:
 
 - Environment Pictures can reuse the same physical slots across different Environments and Generations.
 - The AI Setup workflow now teaches reusable routing directly, including the `5-6 / 5 / 5-7` pattern.
 - Environment views can carry stable human-readable names through AI import and export.
 - Validation permits cross-Environment slot reuse while rejecting duplicate slots inside one Environment.
 - Upload order, conversational labels, and `ENV##/V##` filename numbering no longer imply a physical Picture slot.
-- Existing projects retain their current wiring during migration; V5.18.5 never silently rewires them.
-- All six built-in workflow prompts remain byte-for-byte identical to V5.18.4.
+- Existing projects retain their current wiring during migration; V5.18.6 never silently rewires them.
+- The V5.18.5 routing work preserved all six built-in workflow prompts byte-for-byte relative to V5.18.4.
 
-The full audit and compatibility notes are in the [V5.18.5 changelog](H3_Prompt_Composer_V5_18_5_CHANGELOG.md).
+The full audit and compatibility notes are in the [V5.18.6 changelog](H3_Prompt_Composer_V5_18_6_CHANGELOG.md).
 
 ## What It Supports
 
@@ -36,7 +44,7 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Quick Start
 
-1. Open `H3_Prompt_Composer_V5_18_5.html` in a modern browser.
+1. Open `H3_Prompt_Composer_V5_18_6.html` in a modern browser.
 2. Choose the H3 mode you are using.
 3. Set duration and style.
 4. In Ref2VA, set **Connected ComfyUI inputs** to match the physical Images / Videos / Audio sockets you connected.
@@ -50,7 +58,7 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Connected ComfyUI Inputs
 
-![V5.18.5 reference workspace with active input map and generated prompt](assets/v5185-reference-workspace.png)
+![V5.18.6 active ComfyUI input map](assets/v5186-input-map.png)
 
 The Images / Videos / Audio counts represent the physical reference slots connected in ComfyUI. They make the corresponding Picture / Video / Audio choices available in the Composer.
 
@@ -63,6 +71,12 @@ Current H3 reference limits used by Prompt Check are up to **9 images, 3 videos,
 A **Generation** is one complete H3 output. A **Shot** is one continuous camera view inside that Generation. A **Timed Action Beat** is a timed action window inside one continuous Shot.
 
 Use a new Shot only when the camera actually cuts or transitions to another view. If the camera stays continuous and only the action pacing changes, use Timed Action Beats.
+
+H3 duration is requested from **4–15 seconds**. At 24 fps, the Composer normalizes the result to the valid **17n+5 frame** sequence. For example, a requested 10.00 seconds becomes 243 frames, or an effective 10.13 seconds.
+
+## Generated Prompt Structure
+
+T2VA, I2VA, FL2VA, and L2VA produce an `integrated_multimodal_description`. Ref2VA uses six top-level sections: `subject_definitions`, `summary`, `retention_analysis`, `detailed_description`, `overall_soundscape`, and `non_diegetic_music`.
 
 ## References: Give Every Input One Clear Job
 
@@ -96,7 +110,7 @@ Use slot-independent names such as `ENV03_BrokenBridge_V02_APPROACH.png`. Reserv
 
 ## AI Setup and Import
 
-![V5.18.5 AI Project Setup and reusable Picture routing guidance](assets/v5185-ai-setup.png)
+![V5.18.6 AI Project Setup and reusable Picture routing guidance](assets/v5186-ai-routing.png)
 
 **AI Setup** copies project-building instructions and a schema-v4 JSON example for use with an LLM. The AI can identify Subjects, Environment views, Generations, Shots, actions, and dialogue, then return structured JSON for import.
 
@@ -224,13 +238,13 @@ Use **Load example** for working templates:
 - **Copy prompt** copies the active Generation.
 - **Copy all generations** copies the complete multi-Generation sequence.
 
-V5.18.5 migrates supported older projects forward without silently changing existing Picture routing. Environment view names and contribution roles survive AI export/import.
+V5.18.6 migrates supported older projects forward without silently changing existing Picture routing. Environment view names and contribution roles survive AI export/import.
 
 ## Privacy and Security
 
-H3 Prompt Composer V5.18.5 is designed to run locally.
+H3 Prompt Composer V5.18.6 is designed to run locally.
 
-The audited V5.18.5 HTML:
+The audited V5.18.6 HTML:
 
 - contains no external JavaScript or stylesheet dependencies
 - does not use `fetch()`, XMLHttpRequest, WebSockets, EventSource, or `sendBeacon`
@@ -244,10 +258,10 @@ The complete application source is contained in the HTML file and can be inspect
 
 ## Documentation
 
-- **[Full V5.18.5 User Guide](H3_Prompt_Composer_V5_18_5_User_Guide.pdf)** - detailed reference for every major workflow, AI Setup, reusable Environment routing, and continuity system.
-- **[V5.18.5 Illustrated User Guide](H3_Prompt_Composer_V5_18_5_Illustrated_User_Guide.pdf)** - visual quick-start guide using current workflow diagrams and routing maps.
-- [`H3_Prompt_Composer_V5_18_5_CHANGELOG.md`](H3_Prompt_Composer_V5_18_5_CHANGELOG.md) - release changes and QA notes.
-- `H3_Prompt_Composer_V5_18_5_SHA256.txt` - checksum for the standalone HTML.
+- **[Full V5.18.6 User Guide](H3_Prompt_Composer_V5_18_6_User_Guide.pdf)** - detailed reference for every major workflow, AI Setup, reusable Environment routing, and continuity system.
+- **[V5.18.6 Illustrated User Guide](H3_Prompt_Composer_V5_18_6_Illustrated_User_Guide.pdf)** - visual quick-start guide using current workflow diagrams and routing maps.
+- [`H3_Prompt_Composer_V5_18_6_CHANGELOG.md`](H3_Prompt_Composer_V5_18_6_CHANGELOG.md) - release changes and QA notes.
+- `H3_Prompt_Composer_V5_18_6_SHA256.txt` - checksum for the standalone HTML.
 
 ## What the Composer Does Not Do
 
@@ -255,9 +269,9 @@ H3 Prompt Composer does not run MiniMax H3, upload your reference media, change 
 
 ## Version
 
-**H3 Prompt Composer V5.18.5**
+**H3 Prompt Composer V5.18.6**
 
-V5.18.5 is the reusable Environment-routing and AI-setup release. It preserves established prompt generation while separating stable media identity from temporary physical Picture routing, adds named Environment views to AI interchange, and strengthens validation around legal slot reuse.
+V5.18.6 applies the independent audit’s relevant code and documentation corrections while retaining the established camera-stability vocabulary as intentional guidance. It builds on V5.18.5’s separation of stable media identity from temporary physical Picture routing.
 
 ## Disclaimer
 
