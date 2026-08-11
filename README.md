@@ -58,7 +58,7 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Connected ComfyUI Inputs
 
-![V5.18.6 reference workspace with active input map and generated prompt](assets/v5186-reference-workspace.png)
+![V5.18.6 active ComfyUI input map](assets/v5186-input-map.png)
 
 The Images / Videos / Audio counts represent the physical reference slots connected in ComfyUI. They make the corresponding Picture / Video / Audio choices available in the Composer.
 

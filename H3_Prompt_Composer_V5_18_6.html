@@ -49,7 +49,7 @@ header .sp{flex:1}
 /* layout */
 .wrap{display:grid;grid-template-columns:360px minmax(420px,1fr) 460px;gap:1px;
   background:var(--line);min-height:calc(100vh - 47px)}
-.col{background:var(--bg);padding:14px;overflow-y:auto;max-height:calc(100vh - 47px)}
+.col{background:var(--bg);padding:14px;overflow-y:auto;overflow-x:hidden;min-width:0;max-height:calc(100vh - 47px)}
 @media(max-width:1200px){
   header{position:relative;flex-wrap:wrap}
   header .sp{display:none}
@@ -71,7 +71,7 @@ input[type=text],input[type=number],select,textarea{width:100%;background:var(--
   border:1px solid var(--line);border-radius:5px;padding:6px 8px;outline:none}
 input:focus,select:focus,textarea:focus{border-color:var(--violet)}
 textarea{resize:vertical;line-height:1.5}
-.row{display:flex;gap:6px}.row>*{flex:1}
+.row{display:flex;gap:6px;min-width:0}.row>*{flex:1;min-width:0}
 .fld{margin-bottom:10px}
 
 /* mode pills */
@@ -87,13 +87,19 @@ textarea{resize:vertical;line-height:1.5}
 .dur b{color:var(--ink)}
 
 /* cards */
-.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;
+.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;min-width:0;
   padding:11px;margin-bottom:9px}
 .card.shot{border-left:2px solid var(--violet)}
-.chead{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.chead{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:8px;margin-bottom:9px;min-width:0}
 .chead .n{font-weight:700;font-size:12px;color:var(--violet)}
-.chead .sp{flex:1}
+.chead .sp{display:none}
+.ref-identity{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:2px 7px;min-width:0}
+.ref-kind{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.ref-name{grid-column:1/-1;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+.ref-actions{display:flex;align-items:flex-start;gap:5px;min-width:0}
+.ref-actions .btn{flex:0 0 auto}
 .ref-badge{font-family:var(--mono);font-size:11px;color:var(--green);font-weight:700}
+@media(max-width:420px){.ref-actions .auto-pill{display:none}.card{padding:9px}.chead{gap:6px}}
 
 /* dialogue */
 .dlg{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--blue);
@@ -330,8 +336,8 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 .ai-code{font-family:var(--mono);font-size:10.5px;line-height:1.45;background:#0d1016;border:1px solid #2a3140;border-radius:6px;padding:9px;white-space:pre-wrap;color:#bfc7d8}
 .ai-import-text{min-height:210px;font-family:var(--mono);font-size:10.5px}
 .ai-preview{margin-top:9px}.ai-preview .okline{color:#a8e9cb}.ai-preview .errline{color:#ffb3b8}.ai-preview .warnline{color:#ffd89b}
-.ai-name-grid{display:grid;grid-template-columns:minmax(250px,max-content) minmax(0,1fr);gap:6px 14px;font-size:10.8px;align-items:start}
-.ai-name-grid code{color:#a8d3f7;white-space:nowrap}.ai-pill{display:inline-block;font-family:var(--mono);font-size:9px;border:1px solid #4a4277;color:#d8d1ff;background:#201d31;padding:2px 5px;border-radius:3px;margin-right:4px}
+.ai-name-grid{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,1.6fr);gap:7px 16px;font-size:10.8px;align-items:start;min-width:0}
+.ai-name-grid>*{min-width:0}.ai-name-grid code{color:#a8d3f7;white-space:normal;overflow-wrap:anywhere;line-height:1.35}.ai-name-grid span{line-height:1.35}.ai-pill{display:inline-block;font-family:var(--mono);font-size:9px;border:1px solid #4a4277;color:#d8d1ff;background:#201d31;padding:2px 5px;border-radius:3px;margin-right:4px}
 @media(max-width:650px){.ai-overlay{padding:6px}.ai-modal{width:100%;max-height:96vh}.ai-name-grid{grid-template-columns:1fr}.ai-actions .btn{flex:1 1 46%}}
 
 /* V5.17 beat-linked dialogue + inline reference helpers */
@@ -858,7 +864,7 @@ function styleInputIsSentence(text){
   return /^(?:the target video|the video|this video|the scene|the footage|it)\b/i.test(t)&&/\b(?:is|are|uses|features|has|contains|looks|appears|remains|shows|presents)\b/i.test(t);
 }
 function styleAttributePhrase(text){const t=String(text||'').trim().replace(/^(?:and|with)\s+/i,'');if(/^handheld$/i.test(t))return 'handheld camera work';if(/^(?:warm|cool|neutral|cinematic|high-contrast|low-contrast)\s+grade$/i.test(t))return `a ${lowerFirstGeneric(t)}`;return t;}
-function stylePartIsBareAdjective(text){const t=String(text||'').trim().toLowerCase();return /^(?:moody|grainy|gritty|vibrant|saturated|desaturated|muted|dreamy|painterly|glossy|soft|dark|bright|warm|cool|high-contrast|low-contrast|naturalistic|realistic|cinematic|stylized|[a-z]+(?:y|ed|al|ic|ous|ive))$/.test(t);}
+function stylePartIsBareAdjective(text){const t=String(text||'').trim().toLowerCase();return /^[a-z][a-z-]*$/.test(t);}
 function styleAttributeClause(parts){const p=parts.map(x=>String(x||'').trim()).filter(Boolean);if(!p.length)return '';if(p.every(stylePartIsBareAdjective))return `, with a ${listJoin(p.map(lowerFirstGeneric))} look`;return `, with ${listJoin(p.map(styleAttributePhrase))}`;}
 function normalizeStylePreamble(text){
   const raw=String(text||'').trim().replace(/[\s,]+$/,'');if(!raw)return '';
@@ -3980,7 +3986,8 @@ function renderRefs(){
         <p class="field-help">H3 accepts ${H3_LIMITS.clipMin}&ndash;${H3_LIMITS.clipMax} seconds per reference video and no more than ${H3_LIMITS.totalVid} seconds in total. Source footage must be 23.976&ndash;60&nbsp;fps.</p>
         <div class="fld"><label class="f">Optional details</label><textarea data-f="details" data-key="ref-${i}-details" rows="2" placeholder="${videoDetailsPlaceholder}">${esc(r.details||'')}</textarea></div>`;
     }
-    const c=el(`<div class="card ${cls} ${r.collapsed?'collapsed':''}"><div class="chead"><span class="kind-icon">${icon}</span><span class="kind-title">${r.kind}</span><span class="ref-badge">${esc(displayLab)}</span><span>${esc(r.kind==='Subject'?subjectName(r):(r.name||referencePresetSummary(r)||''))}</span><div class="sp"></div>${!r.useCustomDef?'<span class="auto-pill">auto definition</span>':''}<button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand">${r.collapsed?'＋':'−'}</button><button class="btn sm danger" data-a="del">✕</button></div><div class="card-body">
+    const refDisplayName=r.kind==='Subject'?subjectName(r):(r.name||referencePresetSummary(r)||'');
+    const c=el(`<div class="card ${cls} ${r.collapsed?'collapsed':''}"><div class="chead"><div class="ref-identity"><span class="ref-kind"><span class="kind-icon">${icon}</span><span class="kind-title">${r.kind}</span></span><span class="ref-badge">${esc(displayLab)}</span><span class="ref-name" title="${esc(refDisplayName)}">${esc(refDisplayName)}</span></div><div class="ref-actions">${!r.useCustomDef?'<span class="auto-pill">auto definition</span>':''}<button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand">${r.collapsed?'＋':'−'}</button><button class="btn sm danger" data-a="del" title="Remove this reference">✕</button></div></div><div class="card-body">
       <div class="active-state ${refActiveInCurrentClip(r)?'':'off'}"><b>${refActiveInCurrentClip(r)?'Used by current Generation':'Project library only'}</b><span>${refActiveInCurrentClip(r)?'This reference is currently reached from the middle-column Shot/workflow controls.':'Saved for reuse. It will not be sent to H3 until a Shot, dialogue/camera control, or guided workflow uses it.'}</span></div><div class="row fld advanced-only"><select data-f="kind" data-key="ref-${i}-kind">${REF_KINDS.map(k=>`<option ${k===r.kind?'selected':''}>${k}</option>`).join('')}</select>${slotField}</div>
       ${main}
       ${fixedRetentionPic?`<div class="active-state advanced-only"><b>${continuityPic?'partially_preserved':'attribute_transfer'}</b><span>${continuityPic?'Fixed for previous-generation continuity references: preserve only the selected prior state, not the entire screenshot.':scaleRef?'Fixed for visual scale/placement references so the guide is not preserved as a target frame.':'Fixed for lighting-integration references so only lighting relationships transfer.'}</span></div>`:`<div class="row fld advanced-only"><select data-f="ret" data-key="ref-${i}-ret">${opts.map(o=>`<option ${o===rc(r).ret?'selected':''}>${o}</option>`).join('')}</select><input type="text" data-f="retNote" data-key="ref-${i}-retNote" placeholder="Optional override, e.g. preserve only the jacket color and fabric texture" value="${esc(rc(r).retNote||'')}"></div>`}
@@ -5230,7 +5237,7 @@ function validateAIImport(o){
   groups.forEach(g=>(Array.isArray(assets[g])?assets[g]:[]).forEach((x,i)=>{const id=aiNormalizeId(x&&x.id);if(!id)errors.push(`${g}[${i}] is missing id.`);else if(ids.has(id))errors.push(`Duplicate asset id "${id}".`);else ids.set(id,{group:g,item:x});}));
   const picSlots=[],audSlots=[],vidSlots=[];const slot=(n,kind,label,max,arr)=>{if(n==null||n==='')return;const x=Number(n);if(!Number.isInteger(x)||x<1||x>max)errors.push(`${label} has invalid ${kind} slot ${n}; allowed 1-${max}.`);else arr.push(x);};
   (assets.subjects||[]).forEach(x=>{(x.picture_slots||[]).forEach(n=>slot(n,'Picture',x.id,H3_LIMITS.img,picSlots));(x.video_slots||[]).forEach(n=>slot(n,'Video',x.id,H3_LIMITS.vid,vidSlots));if(!String(x.description||'').trim())warnings.push(`${x.id}: Subject description is blank; ask the LLM/user to describe the visible reference.`);});
-  (assets.environments||[]).forEach(x=>{const local=new Set();(x.pictures||[]).forEach((p,i)=>{const raw=typeof p==='object'?p.slot:p;slot(raw,'Picture',x.id,H3_LIMITS.img,picSlots);const n=Number(raw);if(Number.isInteger(n)&&n>0&&n<=H3_LIMITS.img){if(local.has(n))errors.push(`${x.id}: multiple views inside this Environment use Picture ${n}. Views connected together for one Environment need unique physical slots.`);local.add(n);}});if(!String(x.description||'').trim())warnings.push(`${x.id}: Environment description is blank.`);});
+  (assets.environments||[]).forEach(x=>{const local=new Set();(x.pictures||[]).forEach((p,i)=>{if(p&&typeof p==='object'&&p.name!==undefined&&typeof p.name!=='string')errors.push(`${x.id}: pictures[${i}].name must be a string when provided.`);const raw=typeof p==='object'?p.slot:p;slot(raw,'Picture',x.id,H3_LIMITS.img,picSlots);const n=Number(raw);if(Number.isInteger(n)&&n>0&&n<=H3_LIMITS.img){if(local.has(n))errors.push(`${x.id}: multiple views inside this Environment use Picture ${n}. Views connected together for one Environment need unique physical slots.`);local.add(n);}});if(!String(x.description||'').trim())warnings.push(`${x.id}: Environment description is blank.`);});
   (assets.pictures||[]).forEach(x=>slot(x.slot,'Picture',x.id,H3_LIMITS.img,picSlots));(assets.audio||[]).forEach(x=>slot(x.slot,'Audio',x.id,H3_LIMITS.aud,audSlots));(assets.videos||[]).forEach(x=>slot(x.slot,'Video',x.id,H3_LIMITS.vid,vidSlots));const explicitAudioSlots=new Map();(assets.audio||[]).forEach(x=>{const n=Number(x.slot);if(Number.isInteger(n)&&n>0){if(explicitAudioSlots.has(n))warnings.push(`${x.id}: Audio slot ${n} is also used by ${explicitAudioSlots.get(n)}; the importer will reassign one of them.`);else explicitAudioSlots.set(n,x.id);}});
   (assets.pictures||[]).forEach(x=>{(x.targets||[]).forEach(id=>{if(!ids.get(String(id))||ids.get(String(id)).group!=='subjects')errors.push(`${x.id}: unknown target Subject \"${id}\".`);});if(x.target&&(!ids.get(String(x.target))||ids.get(String(x.target)).group!=='subjects'))errors.push(`${x.id}: unknown target Subject \"${x.target}\".`);});(assets.audio||[]).forEach(x=>{if(x.subject&&(!ids.get(String(x.subject))||ids.get(String(x.subject)).group!=='subjects'))errors.push(`${x.id}: unknown bound Subject \"${x.subject}\".`);});
   const gens=Array.isArray(o.generations)?o.generations:[];if(!gens.length)errors.push('At least one generation is required.');let shotCount=0;
