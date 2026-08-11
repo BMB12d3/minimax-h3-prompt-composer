@@ -1,30 +1,28 @@
 # H3 Prompt Composer
 
-**Version 5.14.0**
+**Version 5.18.5**
 
 A free, standalone prompt-building tool for **MiniMax H3** video generation, designed primarily for **ComfyUI** reference workflows.
 
 **Single HTML file - no installation - runs locally in your browser**
 
-![H3 Prompt Composer V5.14.0](assets/composer-overview.png)
+![H3 Prompt Composer V5.18.5](assets/composer-overview.png)
 
 H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
 
-## What's New in V5.14.0
+## What's New in V5.18.5
 
-V5.14.0 is an **audit-hardening and correctness release**. The multi-Subject scale/placement workflow introduced in V5.13 remains intact; this release tightens the implementation after an independent source/runtime review.
+V5.18.5 formalizes the difference between a persistent project-media identity and a temporary physical H3/ComfyUI Picture input.
 
-- Fixed two built-in examples that stored an invalid camera-composition enum (`thirds`), which could silently drop composition language and desynchronize the UI from project state.
-- Fixed the generated English in multi-Subject scale/placement Shot cues by removing a broken possessive after lists of Subject labels.
-- Added camera-enum self-healing during project migration and **Auto-tidy**, so legacy or hand-edited JSON values that are not valid dropdown options are cleared safely instead of surviving as hidden state.
-- Auto-tidy now deduplicates multi-Subject scale/placement lists while preserving their first-occurrence left-to-right order.
-- Prompt Check now flags custom retention notes that incorrectly place speaker IDs such as `(S1)` inside `retention_analysis`.
-- The `detailed_description` advisory now counts the **actual complete detailed-description section**, including style and generated preambles, rather than approximating from Shot text alone.
-- Removed eight unreferenced helper functions and other maintenance-only drift identified by the audit.
-- Updated the minimum target duration to **4 seconds**, matching the current official H3 output specification. Local ComfyUI output still snaps to H3's 17k+5 frame grid at 24 fps.
-- Updated documentation and screenshots so examples match the application's real generated wording and valid camera controls.
+- Environment Pictures can reuse the same physical slots across different Environments and Generations.
+- The AI Setup workflow now teaches reusable routing directly, including the `5-6 / 5 / 5-7` pattern.
+- Environment views can carry stable human-readable names through AI import and export.
+- Validation permits cross-Environment slot reuse while rejecting duplicate slots inside one Environment.
+- Upload order, conversational labels, and `ENV##/V##` filename numbering no longer imply a physical Picture slot.
+- Existing projects retain their current wiring during migration; V5.18.5 never silently rewires them.
+- All six built-in workflow prompts remain byte-for-byte identical to V5.18.4.
 
-The core V5.13 feature remains: one Visual Height / Scale / Placement Picture can map an ordered list of multiple Subjects from left to right.
+The full audit and compatibility notes are in the [V5.18.5 changelog](H3_Prompt_Composer_V5_18_5_CHANGELOG.md).
 
 ![Multi-subject scale and placement](assets/scale-placement.png)
 
@@ -40,7 +38,7 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Quick Start
 
-1. Open `H3_Prompt_Composer_V5_14_0.html` in a modern browser.
+1. Open `H3_Prompt_Composer_V5_18_5.html` in a modern browser.
 2. Choose the H3 mode you are using.
 3. Set duration and style.
 4. In Ref2VA, set **Connected ComfyUI inputs** to match the physical Images / Videos / Audio sockets you connected.
@@ -89,6 +87,27 @@ The optional Subject source-video section is shown only when Video inputs are ac
 ### Multi-view Environments
 
 If several Pictures show complementary angles of the same location, select them all inside **one Environment Subject**. The Environment reference defines the stable place and layout; Camera Builder still defines the target shot framing.
+
+Picture numbers on an Environment are temporary routing for that Environment, not permanent IDs for its source images. If Pictures 1-4 are pinned Subject references, three alternative Environments can legally route as:
+
+- Jungle Clearing: Pictures 5-6
+- Jungle Road: Picture 5
+- Broken Bridge: Pictures 5-7
+
+The same slot may be reused by different Environments because only the active Environment is connected for that Generation. Multiple views used together inside one Environment still need distinct slots.
+
+Use slot-independent names such as `ENV03_BrokenBridge_V02_APPROACH.png`. Reserve a `P##` prefix for media intentionally pinned to a physical Picture input.
+
+## AI Setup and Import
+
+**AI Setup** copies project-building instructions and a schema-v4 JSON example for use with an LLM. The AI can identify Subjects, Environment views, Generations, Shots, actions, and dialogue, then return structured JSON for import.
+
+The import model separates two concepts:
+
+- **Library identity** - the stable semantic identity of a character sheet or Environment view.
+- **Physical routing** - the temporary `<Picture N>` socket used when a particular Generation is rendered.
+
+Upload order, a phrase such as "picture 10," or `ENV03/V03` in a filename does not establish Picture 10 or Picture 3. Only an intentional `P##` filename prefix or an explicit physical-slot instruction fixes a slot. Review imported Environment routing against the inputs you intend to connect before generating.
 
 ## Appearance and Wardrobe Continuity
 
@@ -229,13 +248,13 @@ Use **Load example** for working templates:
 - **Copy prompt** copies the active Generation.
 - **Copy all generations** copies the complete multi-Generation sequence.
 
-V5.14.0 migrates supported older projects forward. Existing two-Subject scale references are converted into the equivalent ordered left-to-right Subject list.
+V5.18.5 migrates supported older projects forward without silently changing existing Picture routing. Environment view names and contribution roles survive AI export/import.
 
 ## Privacy and Security
 
-H3 Prompt Composer V5.14.0 is designed to run locally.
+H3 Prompt Composer V5.18.5 is designed to run locally.
 
-The audited V5.14.0 HTML:
+The audited V5.18.5 HTML:
 
 - contains no external JavaScript or stylesheet dependencies
 - does not use `fetch()`, XMLHttpRequest, WebSockets, EventSource, or `sendBeacon`
@@ -249,10 +268,10 @@ The complete application source is contained in the HTML file and can be inspect
 
 ## Documentation
 
-- **[Full V5.14.0 User Guide](H3_Prompt_Composer_V5_14_0_User_Guide.pdf)** - detailed reference for every major workflow and continuity system.
-- **[V5.14.0 Illustrated User Guide](H3_Prompt_Composer_V5_14_0_Illustrated_User_Guide.pdf)** - visual quick-start guide using screenshots of the current interface.
-- `H3_Prompt_Composer_V5_14_0_CHANGELOG.txt` - release changes and QA notes.
-- `H3_Prompt_Composer_V5_14_0_SHA256.txt` - checksum for the standalone HTML.
+- **[Full V5.18.5 User Guide](H3_Prompt_Composer_V5_18_5_User_Guide.pdf)** - detailed reference for every major workflow, AI Setup, reusable Environment routing, and continuity system.
+- **[V5.18.5 Illustrated User Guide](H3_Prompt_Composer_V5_18_5_Illustrated_User_Guide.pdf)** - visual quick-start guide using interface screenshots and routing examples.
+- [`H3_Prompt_Composer_V5_18_5_CHANGELOG.md`](H3_Prompt_Composer_V5_18_5_CHANGELOG.md) - release changes and QA notes.
+- `H3_Prompt_Composer_V5_18_5_SHA256.txt` - checksum for the standalone HTML.
 
 ## What the Composer Does Not Do
 
@@ -260,9 +279,9 @@ H3 Prompt Composer does not run MiniMax H3, upload your reference media, change 
 
 ## Version
 
-**H3 Prompt Composer V5.14.0**
+**H3 Prompt Composer V5.18.5**
 
-V5.14.0 is the audited maintenance release of the multi-Subject scale/placement build. It fixes example enum drift and generated-English grammar, adds migration/Auto-tidy enum self-healing, improves Prompt Check and word-count accuracy, removes dead code, and updates the supported target-duration floor to 4 seconds. It retains the V5.13 ordered left-to-right multi-Subject mapping and the V5.12 generation-isolation, appearance-continuity, relighting-reference, dialogue-free performance-transfer, video-continuation, and UI-copy improvements.
+V5.18.5 is the reusable Environment-routing and AI-setup release. It preserves established prompt generation while separating stable media identity from temporary physical Picture routing, adds named Environment views to AI interchange, and strengthens validation around legal slot reuse.
 
 ## Disclaimer
 
