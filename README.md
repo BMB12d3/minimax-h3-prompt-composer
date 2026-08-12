@@ -1,6 +1,6 @@
 # H3 Prompt Composer
 
-**Version 5.18.6**
+**Version 5.18.7**
 
 A free, standalone prompt-building tool for **MiniMax H3** video generation, designed primarily for **ComfyUI** reference workflows.
 
@@ -10,15 +10,20 @@ A free, standalone prompt-building tool for **MiniMax H3** video generation, des
 
 H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
 
-## What's New in V5.18.6
+## What's New in V5.18.7
 
-V5.18.6 is a focused audit-and-documentation release built on the reusable routing work introduced in V5.18.5.
+V5.18.7 is a focused prompt-language and AI-import reliability release built on V5.18.6.
 
-- Long filenames in AI Setup no longer collide with their explanations.
-- Autosave and Restore Previous now include the previously omitted V5.18.1 migration keys and the V5.18.5 handoff.
-- Adjective-only style modifiers produce natural prose such as “with a grainy and desaturated look.”
-- Anime, film noir, stop-motion, hand-drawn, rotoscope, and oil painting are recognized as leading style families.
-- The manuals use exact output field names, document duration normalization, remove repeated captions, and use compact targeted screenshots.
+- Camera composition now names the framed Subject explicitly, preventing phrases such as “camera directly in front of Subject 1, positioned on the left third.”
+- Timed dialogue assigns `(S1)`, `(S2)`, and later speaker IDs in chronological vocal-event order.
+- Dialogue-delivery phrases choose grammatical articles and add “voice” when an adjective-only delivery needs a noun.
+- Subject descriptions no longer depend on a small noun whitelist, so creatures, vehicles, props, and other valid noun phrases receive correct first-appearance grammar.
+- All-capital Environment names retain their supplied capitalization.
+- Automatic summaries use unambiguous shot counts and remove accidental duplicate task-type prefixes.
+- AI import now rejects malformed field types, null Environment views, and unknown camera values instead of silently coercing or discarding them.
+- AI Setup guidance is shorter, consolidates Environment routing, assigns prose budgets, and makes Camera Builder the sole owner of camera language.
+
+V5.18.6 added the current interface screenshots and manuals, corrected audit findings, and preserved the reusable routing model introduced in V5.18.5.
 
 V5.18.5 formalized the difference between a persistent project-media identity and a temporary physical H3/ComfyUI Picture input:
 
@@ -30,7 +35,7 @@ V5.18.5 formalized the difference between a persistent project-media identity an
 - Existing projects retain their current wiring during migration; V5.18.6 never silently rewires them.
 - The V5.18.5 routing work preserved all six built-in workflow prompts byte-for-byte relative to V5.18.4.
 
-The full audit and compatibility notes are in the [V5.18.6 changelog](H3_Prompt_Composer_V5_18_6_CHANGELOG.md).
+The full compatibility and QA notes are in the [V5.18.7 changelog](H3_Prompt_Composer_V5_18_7_CHANGELOG.md).
 
 ## What It Supports
 
@@ -44,7 +49,7 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Quick Start
 
-1. Open `H3_Prompt_Composer_V5_18_6.html` in a modern browser.
+1. Open `H3_Prompt_Composer_V5_18_7.html` in a modern browser.
 2. Choose the H3 mode you are using.
 3. Set duration and style.
 4. In Ref2VA, set **Connected ComfyUI inputs** to match the physical Images / Videos / Audio sockets you connected.
@@ -112,7 +117,7 @@ Use slot-independent names such as `ENV03_BrokenBridge_V02_APPROACH.png`. Reserv
 
 ![V5.18.6 AI Project Setup and reusable Picture routing guidance](assets/v5186-ai-routing.png)
 
-**AI Setup** copies project-building instructions and a schema-v4 JSON example for use with an LLM. The AI can identify Subjects, Environment views, Generations, Shots, actions, and dialogue, then return structured JSON for import.
+**AI Setup** copies concise project-building instructions and a schema-v4 JSON example for use with an LLM. The AI can identify Subjects, Environment views, Generations, Shots, actions, and dialogue, then return structured JSON for import. Camera fields own camera language, while opening state and action remain focused on blocking and physical change.
 
 The import model separates two concepts:
 
@@ -238,13 +243,13 @@ Use **Load example** for working templates:
 - **Copy prompt** copies the active Generation.
 - **Copy all generations** copies the complete multi-Generation sequence.
 
-V5.18.6 migrates supported older projects forward without silently changing existing Picture routing. Environment view names and contribution roles survive AI export/import.
+V5.18.7 migrates supported older projects forward without silently changing existing Picture routing. Environment view names and contribution roles survive AI export/import.
 
 ## Privacy and Security
 
-H3 Prompt Composer V5.18.6 is designed to run locally.
+H3 Prompt Composer V5.18.7 is designed to run locally.
 
-The audited V5.18.6 HTML:
+The audited V5.18.7 HTML:
 
 - contains no external JavaScript or stylesheet dependencies
 - does not use `fetch()`, XMLHttpRequest, WebSockets, EventSource, or `sendBeacon`
@@ -258,10 +263,10 @@ The complete application source is contained in the HTML file and can be inspect
 
 ## Documentation
 
-- **[Full V5.18.6 User Guide](H3_Prompt_Composer_V5_18_6_User_Guide.pdf)** - detailed reference for every major workflow, AI Setup, reusable Environment routing, and continuity system.
-- **[V5.18.6 Illustrated User Guide](H3_Prompt_Composer_V5_18_6_Illustrated_User_Guide.pdf)** - visual quick-start guide using current workflow diagrams and routing maps.
-- [`H3_Prompt_Composer_V5_18_6_CHANGELOG.md`](H3_Prompt_Composer_V5_18_6_CHANGELOG.md) - release changes and QA notes.
-- `H3_Prompt_Composer_V5_18_6_SHA256.txt` - checksum for the standalone HTML.
+- **[Full V5.18.6 User Guide](H3_Prompt_Composer_V5_18_6_User_Guide.pdf)** - current workflow reference; its interface guidance remains compatible with V5.18.7.
+- **[V5.18.6 Illustrated User Guide](H3_Prompt_Composer_V5_18_6_Illustrated_User_Guide.pdf)** - current visual quick-start guide; V5.18.7 does not change the illustrated workflow.
+- [`H3_Prompt_Composer_V5_18_7_CHANGELOG.md`](H3_Prompt_Composer_V5_18_7_CHANGELOG.md) - focused cleanup changes, compatibility notes, and QA results.
+- `H3_Prompt_Composer_V5_18_7_SHA256.txt` - checksum for the standalone V5.18.7 HTML.
 
 ## What the Composer Does Not Do
 
@@ -269,9 +274,9 @@ H3 Prompt Composer does not run MiniMax H3, upload your reference media, change 
 
 ## Version
 
-**H3 Prompt Composer V5.18.6**
+**H3 Prompt Composer V5.18.7**
 
-V5.18.6 applies the independent audit’s relevant code and documentation corrections while retaining the established camera-stability vocabulary as intentional guidance. It builds on V5.18.5’s separation of stable media identity from temporary physical Picture routing.
+V5.18.7 tightens prompt grammar, chronological dialogue identity, and AI-import safety without changing the established workflow or reference-routing model.
 
 ## Disclaimer
 
