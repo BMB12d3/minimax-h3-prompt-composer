@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>H3 Prompt Composer V5.18.5</title>
+<title>H3 Prompt Composer V5.18.8</title>
 <style>
 :root{
   --bg:#14161c; --panel:#1b1e26; --panel2:#212530; --line:#2c313d;
@@ -49,7 +49,7 @@ header .sp{flex:1}
 /* layout */
 .wrap{display:grid;grid-template-columns:360px minmax(420px,1fr) 460px;gap:1px;
   background:var(--line);min-height:calc(100vh - 47px)}
-.col{background:var(--bg);padding:14px;overflow-y:auto;max-height:calc(100vh - 47px)}
+.col{background:var(--bg);padding:14px;overflow-y:auto;overflow-x:hidden;min-width:0;max-height:calc(100vh - 47px)}
 @media(max-width:1200px){
   header{position:relative;flex-wrap:wrap}
   header .sp{display:none}
@@ -71,7 +71,7 @@ input[type=text],input[type=number],select,textarea{width:100%;background:var(--
   border:1px solid var(--line);border-radius:5px;padding:6px 8px;outline:none}
 input:focus,select:focus,textarea:focus{border-color:var(--violet)}
 textarea{resize:vertical;line-height:1.5}
-.row{display:flex;gap:6px}.row>*{flex:1}
+.row{display:flex;gap:6px;min-width:0}.row>*{flex:1;min-width:0}
 .fld{margin-bottom:10px}
 
 /* mode pills */
@@ -87,13 +87,19 @@ textarea{resize:vertical;line-height:1.5}
 .dur b{color:var(--ink)}
 
 /* cards */
-.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;
+.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;min-width:0;
   padding:11px;margin-bottom:9px}
 .card.shot{border-left:2px solid var(--violet)}
-.chead{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.chead{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:8px;margin-bottom:9px;min-width:0}
 .chead .n{font-weight:700;font-size:12px;color:var(--violet)}
-.chead .sp{flex:1}
+.chead .sp{display:none}
+.ref-identity{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:2px 7px;min-width:0}
+.ref-kind{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.ref-name{grid-column:1/-1;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+.ref-actions{display:flex;align-items:flex-start;gap:5px;min-width:0}
+.ref-actions .btn{flex:0 0 auto}
 .ref-badge{font-family:var(--mono);font-size:11px;color:var(--green);font-weight:700}
+@media(max-width:420px){.ref-actions .auto-pill{display:none}.card{padding:9px}.chead{gap:6px}}
 
 /* dialogue */
 .dlg{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--blue);
@@ -330,8 +336,8 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 .ai-code{font-family:var(--mono);font-size:10.5px;line-height:1.45;background:#0d1016;border:1px solid #2a3140;border-radius:6px;padding:9px;white-space:pre-wrap;color:#bfc7d8}
 .ai-import-text{min-height:210px;font-family:var(--mono);font-size:10.5px}
 .ai-preview{margin-top:9px}.ai-preview .okline{color:#a8e9cb}.ai-preview .errline{color:#ffb3b8}.ai-preview .warnline{color:#ffd89b}
-.ai-name-grid{display:grid;grid-template-columns:185px 1fr;gap:6px 10px;font-size:10.8px;align-items:start}
-.ai-name-grid code{color:#a8d3f7}.ai-pill{display:inline-block;font-family:var(--mono);font-size:9px;border:1px solid #4a4277;color:#d8d1ff;background:#201d31;padding:2px 5px;border-radius:3px;margin-right:4px}
+.ai-name-grid{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,1.6fr);gap:7px 16px;font-size:10.8px;align-items:start;min-width:0}
+.ai-name-grid>*{min-width:0}.ai-name-grid code{color:#a8d3f7;white-space:normal;overflow-wrap:anywhere;line-height:1.35}.ai-name-grid span{line-height:1.35}.ai-pill{display:inline-block;font-family:var(--mono);font-size:9px;border:1px solid #4a4277;color:#d8d1ff;background:#201d31;padding:2px 5px;border-radius:3px;margin-right:4px}
 @media(max-width:650px){.ai-overlay{padding:6px}.ai-modal{width:100%;max-height:96vh}.ai-name-grid{grid-template-columns:1fr}.ai-actions .btn{flex:1 1 46%}}
 
 /* V5.17 beat-linked dialogue + inline reference helpers */
@@ -348,7 +354,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 <body>
 
 <header>
-  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.18.5</small></div>
+  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.18.8</small></div>
   <div class="tag" id="modeTag">T2VA</div>
   <div class="view-toggle" id="viewToggle" title="Basic hides technical schema controls; Advanced reveals everything.">
     <button id="viewBasic" onclick="setUIMode('basic')">Basic</button>
@@ -392,7 +398,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 
       <div class="ai-section"><h4>Instructions preview</h4><textarea id="aiInstructionPreview" class="ai-import-text" readonly></textarea></div>
 
-      <div class="ai-section"><h4>Import AI Setup JSON</h4><p class="field-help" style="margin:0 0 8px">Paste the JSON returned by the LLM or open a .json file. Pasted JSON is checked automatically. Structural/schema problems block import; Prompt Check problems are shown clearly but may still be imported so you can fix them inside the Composer.</p><textarea id="aiImportText" class="ai-import-text" placeholder="Paste h3_prompt_composer_ai_import JSON here..." oninput="scheduleAIImportPreview()"></textarea><div class="ai-actions"><button class="btn" onclick="document.getElementById('aiFi').click()">Open AI JSON</button><button class="btn" onclick="previewAIImport()">Preview import</button><button class="btn good" id="aiApplyBtn" onclick="applyAIImport()" disabled>Import project</button><button class="btn ghost" onclick="clearAIImport()">Clear</button></div><div class="ai-preview" id="aiImportPreview"></div></div>
+      <div class="ai-section"><h4>Import AI Setup JSON</h4><p class="field-help" style="margin:0 0 8px">Paste the JSON returned by the LLM or open a .json file. Pasted JSON is checked automatically. The JSON’s <b>operation</b> field decides what happens: <b>replace_project</b> replaces the whole project, while <b>append_generations</b> (returned when you use <b>Copy next-Generation context</b>) merges the new Generation(s) into the current project. Structural/schema problems block import; Prompt Check problems are shown clearly but may still be imported so you can fix them inside the Composer.</p><textarea id="aiImportText" class="ai-import-text" placeholder="Paste h3_prompt_composer_ai_import JSON here..." oninput="scheduleAIImportPreview()"></textarea><div class="ai-actions"><button class="btn" onclick="document.getElementById('aiFi').click()">Open AI JSON</button><button class="btn" onclick="previewAIImport()" title="Pasted JSON is checked automatically. Use this to re-check after the Composer project changes (for example after importing Generation 1).">Re-check import</button><button class="btn good" id="aiApplyBtn" onclick="applyAIImport()" disabled>Import project</button><button class="btn ghost" onclick="clearAIImport()">Clear</button></div><div class="ai-preview" id="aiImportPreview"></div></div>
     </div>
   </div>
 </div>
@@ -523,11 +529,11 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 
 <script>
 /* ============================================================
-   MiniMax H3 Prompt Composer V5.18.5
+   MiniMax H3 Prompt Composer V5.18.8
    Implements the schema from MiniMax's official prompt guides:
    VIDEO_PROMPT_WRITING_GUIDE_base_en.md  (T2VA/I2VA/FL2VA/L2VA)
    VIDEO_PROMPT_WRITING_GUIDE_ref_en.md   (full-reference mode)
-   V5.18.5: generation-specific environment Picture routing + clearer AI/user media labeling guidance.
+   V5.18.8: custom-camera crash fix, visible error reporting, resilient rendering, Copy-all-generations repair, and base-mode capitalization fixes.
    ============================================================ */
 
 const FPS = 24;
@@ -639,9 +645,9 @@ const REF_KINDS = ['Subject','Picture','Video','Audio'];
 const RETENTION_V = ['fully_preserved','partially_preserved','attribute_transfer','weak_reference'];
 const TASK_TYPES = ['video editing','video continuation','keyframe completion',
   'reference generation','audio reuse','audio reference'];
-const APP_VERSION = '5.18.5';
-const STORAGE_KEY = 'h3_prompt_composer_v5_18_5';
-const BACKUP_KEY  = 'h3_prompt_composer_v5_18_5_backup';
+const APP_VERSION = '5.18.8';
+const STORAGE_KEY = 'h3_prompt_composer_v5_18_8';
+const BACKUP_KEY  = 'h3_prompt_composer_v5_18_8_backup';
 
 /* ---------------- state ---------------- */
 let S = blank();
@@ -810,17 +816,25 @@ function conciseReferenceSentence(text,maxWords=34){
   return t;
 }
 function lowerFirstGeneric(text){const t=String(text||'').trim();return t?t.charAt(0).toLowerCase()+t.slice(1):'';}
+function lowerNameInitial(text){
+  const t=String(text||'').trim(),letters=t.replace(/[^A-Za-z]+/g,'');
+  return letters&&letters===letters.toUpperCase()?t:lowerFirstGeneric(t);
+}
 function indefinitePhrase(text){
   let t=String(text||'').trim().replace(/^[,:;\s]+|[,:;\s]+$/g,'');if(!t)return '';
   if(/^(?:a|an|the)\b/i.test(t))return lowerFirstGeneric(t);
   return `${/^[aeiou]/i.test(t)?'an':'a'} ${lowerFirstGeneric(t)}`;
 }
-function subjectTraitNounPattern(){return /\b(?:woman|man|girl|boy|person|performer|character|creature|animal|dog|cat|fox|dinosaur|tyrannosaurus|velociraptor|vehicle|jeep|car|truck|motorcycle|robot|object|prop)\b/i;}
+function traitClauseOpening(text){return /^(?:is|are|has|have|wears?|holds?|stands?|sits?|appears?|looks?|shown|depicted|dressed|covered|wearing|holding|standing|sitting|facing|moving|posed|with)\b/i.test(String(text||'').trim());}
+function structuredTraitNounPhrase(text){
+  const t=String(text||'').trim();if(!t||traitClauseOpening(t))return t;
+  return indefinitePhrase(t);
+}
 function structuredTraitDefinition(details){
   const raw=String(details||'').replace(/\s+/g,' ').trim().replace(/[.!?]+$/,'');if(!raw)return '';
   const m=raw.match(/^([^,;]+?)\s+with\s+(.+)$/i);
-  if(m&&subjectTraitNounPattern().test(m[1]))return `${indefinitePhrase(m[1])} with ${m[2].trim()}`;
-  return raw;
+  if(m&&!traitClauseOpening(m[1]))return `${structuredTraitNounPhrase(m[1])} with ${m[2].trim()}`;
+  return structuredTraitNounPhrase(raw);
 }
 function environmentDefinitionDetails(name,details){
   const d=String(details||'').replace(/\s+/g,' ').trim().replace(/[.!?]+$/,'');if(!d)return {lead:'',rest:''};
@@ -832,14 +846,17 @@ function firstVisibleTraitDescriptor(r){
   let raw=conciseReferenceSentence(r&&r.details||'',24);if(!raw)return '';
   if(/^(?:preserve|retain|keep|use|transfer|follow|match|replace|remove|insert|do not|only)\b/i.test(raw))return '';
   const m=raw.match(/^([^,;]+?)\s+with\s+(.+)$/i);
-  if(m&&subjectTraitNounPattern().test(m[1])){
+  if(m&&!traitClauseOpening(m[1])){
     const traits=m[2].split(',').map(x=>x.trim().replace(/^(?:and|with)\s+/i,'')).filter(Boolean).slice(0,2);
-    return `${indefinitePhrase(m[1])}${traits.length?` with ${listJoin(traits)}`:''}`;
+    return `${structuredTraitNounPhrase(m[1])}${traits.length?` with ${listJoin(traits)}`:''}`;
   }
   const segs=raw.split(',').map(x=>x.trim().replace(/^(?:and|with)\s+/i,'')).filter(Boolean).slice(0,2);
   const short=segs.join(', ');
-  if(subjectTraitNounPattern().test(short))return indefinitePhrase(short);
-  return short?`with ${lowerFirstGeneric(short)}`:'';
+  if(!short)return '';
+  if(/^with\b/i.test(raw))return lowerFirstGeneric(raw);
+  if(/^(?:wearing|holding|standing|sitting|facing|moving|posed)\b/i.test(short))return `who is ${lowerFirstGeneric(short)}`;
+  if(/^(?:has|wears|holds|stands|sits|appears|looks)\b/i.test(short))return `who ${lowerFirstGeneric(short)}`;
+  return structuredTraitNounPhrase(short);
 }
 function firstAppearanceSubjectsForShot(shotIndex){
   if(S.mode!=='REF')return [];
@@ -858,18 +875,20 @@ function styleInputIsSentence(text){
   return /^(?:the target video|the video|this video|the scene|the footage|it)\b/i.test(t)&&/\b(?:is|are|uses|features|has|contains|looks|appears|remains|shows|presents)\b/i.test(t);
 }
 function styleAttributePhrase(text){const t=String(text||'').trim().replace(/^(?:and|with)\s+/i,'');if(/^handheld$/i.test(t))return 'handheld camera work';if(/^(?:warm|cool|neutral|cinematic|high-contrast|low-contrast)\s+grade$/i.test(t))return `a ${lowerFirstGeneric(t)}`;return t;}
+function stylePartIsBareAdjective(text){const t=String(text||'').trim().toLowerCase();return /^[a-z][a-z-]*$/.test(t);}
+function styleAttributeClause(parts){const p=parts.map(x=>String(x||'').trim()).filter(Boolean);if(!p.length)return '';if(p.every(stylePartIsBareAdjective))return `, with a ${listJoin(p.map(lowerFirstGeneric))} look`;return `, with ${listJoin(p.map(styleAttributePhrase))}`;}
 function normalizeStylePreamble(text){
   const raw=String(text||'').trim().replace(/[\s,]+$/,'');if(!raw)return '';
   const bare=raw.replace(/[.!?]+$/,'').trim();
   if(styleInputIsSentence(bare))return ensureSentence(upperInitial(bare));
   if(/^(?:shot|filmed|captured|photographed|rendered|animated|lit|graded)\b/i.test(bare)){
-    const p=bare.split(',').map(x=>x.trim()).filter(Boolean);return ensureSentence(`The target video is ${lowerFirstGeneric(p.shift())}${p.length?`, with ${listJoin(p.map(styleAttributePhrase))}`:''}`);
+    const p=bare.split(',').map(x=>x.trim()).filter(Boolean);return ensureSentence(`The target video is ${lowerFirstGeneric(p.shift())}${styleAttributeClause(p)}`);
   }
   if(/^(?:a|an)\s+/i.test(bare))return ensureSentence(`The target video uses ${lowerFirstGeneric(bare)}`);
   const parts=bare.split(',').map(styleAttributePhrase).filter(Boolean);
-  const styleRe=/^(?:live[- ]action|cinematic|realistic|photorealistic|naturalistic|stylized|claymation|watercolor|vintage film|2d[- ]animated|3d cg|documentary realism|cinematic(?:\s+.+)?\s+realism)$/i;
+  const styleRe=/^(?:live[- ]action|cinematic|realistic|photorealistic|naturalistic|stylized|claymation|watercolor|vintage film|2d[- ]animated|3d cg|documentary realism|anime|film noir|stop[- ]motion|hand[- ]drawn|rotoscope|oil painting|cinematic(?:\s+.+)?\s+realism)$/i;
   const styles=[];while(parts.length&&styleRe.test(parts[0]))styles.push(lowerFirstGeneric(parts.shift()));
-  if(styles.length)return ensureSentence(`The target video is in a ${listJoin(styles)} style${parts.length?`, with ${listJoin(parts)}`:''}`);
+  if(styles.length){const article=/^[aeiou]/i.test(styles[0])?'an':'a';return ensureSentence(`The target video is in ${article} ${listJoin(styles)} style${styleAttributeClause(parts)}`);}
   return ensureSentence(`The target video is presented with ${listJoin(parts.length?parts:[lowerFirstGeneric(bare)])}`);
 }
 function baseStyleClause(text){
@@ -1004,9 +1023,12 @@ function shotReferenceScanText(sh){
   const dialogueAfter=(sh?.dlg||[]).map(d=>d.afterAction||'').join(' ');
   return [(sh?.openingState||''),(sh?.action||''),timedActionText(sh),(sh?.soundEffects||''),dialogueAfter,screens,camera].filter(Boolean).join(' ');
 }
-let __activeRefUidCache=null;
+let __activeRefUidCache=null,__activeRefUidBuilding=false;
 function activeRefUidSet(){
   if(__activeRefUidCache)return __activeRefUidCache;
+  if(__activeRefUidBuilding)return new Set();
+  __activeRefUidBuilding=true;
+  try{
   const active=new Set(),add=id=>{if(id&&refByUid(id))active.add(id);};
   (C().shots||[]).forEach(sh=>{
     add(sh.environmentUid);add(sh.scaleReferenceUid);
@@ -1057,6 +1079,7 @@ function activeRefUidSet(){
     });
   }
   __activeRefUidCache=active;return active;
+  }finally{__activeRefUidBuilding=false;}
 }
 function refActiveInCurrentClip(r){return !!r&&activeRefUidSet().has(r.uid);}
 function audioActiveReason(r){
@@ -1089,10 +1112,15 @@ function audioRefsInH3Order(){
 }
 let __audioLabelMapCache=null;
 function resetDerivedCaches(){__audioLabelMapCache=null;__activeRefUidCache=null;}
+let __audioLabelMapBuilding=false;
 function audioLabelMap(){
   if(__audioLabelMapCache)return __audioLabelMapCache;
-  const m=new Map();audioRefsInH3Order().forEach((r,i)=>m.set(r.uid,i+1));
-  __audioLabelMapCache=m;return m;
+  if(__audioLabelMapBuilding)return new Map();
+  __audioLabelMapBuilding=true;
+  try{
+    const m=new Map();audioRefsInH3Order().forEach((r,i)=>m.set(r.uid,i+1));
+    __audioLabelMapCache=m;return m;
+  }finally{__audioLabelMapBuilding=false;}
 }
 function audioLabelNumber(r){
   if(!r||r.kind!=='Audio')return Number(r&&r.idx)||0;
@@ -1250,9 +1278,15 @@ function effSec(sec){ return snapFrames(sec)/FPS; }
 /* ---------------- speaker registry ---------------- */
 // IDs follow the order of actual vocal events, as required by the guide.
 // Subject UIDs make the mapping stable even if the display name is edited later.
+function chronologicalDialogueEvents(sh){
+  const out=[],seen=new Set(),add=d=>{if(!d||seen.has(d))return;seen.add(d);out.push(d);};
+  timedActionBeats(sh).slice().sort((a,b)=>Number(a.startSec||0)-Number(b.startSec||0)).forEach(b=>dialogueLinkedToBeat(sh,b.uid).forEach(add));
+  (sh.dlg||[]).forEach(add);
+  return out;
+}
 function speakerMap(){
   const m=new Map(); let i=1;
-  C().shots.forEach(sh=>sh.dlg.forEach(d=>{
+  C().shots.forEach(sh=>chronologicalDialogueEvents(sh).forEach(d=>{
     if(!(d.text||'').trim()) return;
     dialogueKeys(d).forEach(key=>{if(key&&!m.has(key))m.set(key,'S'+(i++));});
   }));
@@ -1832,8 +1866,9 @@ function endpointAngleClause(f){
   return ({eye_level:'at eye level',slightly_low:'slightly below eye level',low:'at a low angle',ground:'near ground level',slightly_high:'slightly above eye level',high:'at a high angle',overhead:'overhead',waist_level:'at waist height',chest_level:'at chest height',custom:endpointCustomCameraClause(f.camAngleCustom)})[f.camAngle]||'';
 }
 function endpointCompositionClause(f){
+  const target=cameraRefLabel(f.camFocusUid,'','the primary subject');
   const second=cameraRefLabel(f.camSecondaryFocusUid,'','the second subject');
-  return ({centered:'centered',left_third:'on the left third',right_third:'on the right third',negative_left:'with negative space on the left',negative_right:'with negative space on the right',balanced_two:f.camSecondaryFocusUid?'in a balanced two-subject composition':`with ${second} in a balanced two-subject composition`,symmetrical:'in a symmetrical composition',dirty_single:'with the foreground shoulder retained',custom:lowerNaturalInitial(f.camCompositionCustom||'').trim().replace(/[.\s]+$/,'')})[f.camComposition]||'';
+  return ({centered:`with ${target} centered in the frame`,left_third:`with ${target} on the left third of the frame`,right_third:`with ${target} on the right third of the frame`,negative_left:`with ${target} positioned to the right and negative space on the left`,negative_right:`with ${target} positioned to the left and negative space on the right`,balanced_two:`with ${target} and ${second} in a balanced two-subject composition`,symmetrical:'in a symmetrical composition',dirty_single:'with the foreground shoulder retained',custom:(f.camCompositionCustom||'').trim()?`using the custom composition ${lowerNaturalInitial(f.camCompositionCustom).trim().replace(/[.\s]+$/,'')}`:''})[f.camComposition]||'';
 }
 // Start Frame already states the opening geometry. For an explicit endpoint,
 // describe only what changes so H3 is not given the same destination twice.
@@ -1861,7 +1896,7 @@ function cameraEndpointTravelClauses(sh,target){
   if(d.focusDetailChanged&&!d.framingChanged){
     const detail=focusDescription(end);if(detail&&detail!==endPrimary)ending.push(`on ${detail}`);
   }
-  if(ending.length)clauses.push(`ending ${listJoin(ending)}`);
+  if(ending.length)clauses.push(`ending ${ending.join(', ')}`);
   return clauses;
 }
 function appendEndpointDestination(text,sh,target){
@@ -2021,7 +2056,10 @@ function customCameraPovPattern(label){
 function cameraCustomPovUids(sh){
   if(!sh.camUseCustom)return [];
   const text=(sh.camCustomText||'').trim();if(!text)return [];
-  return subjectRefs().filter(r=>customCameraPovPattern(labelOf(r,refIndex(r))).test(text)).map(r=>r.uid);
+  // librarySubjectRefs + staticLabelOf: Subject labels are stable project identities,
+  // and this function runs inside activeRefUidSet's own computation, so it must not
+  // route back through orderedRefs/labelOf (per-clip active-ref machinery) or it recurses.
+  return librarySubjectRefs().filter(r=>customCameraPovPattern(staticLabelOf(r,refIndex(r))).test(text)).map(r=>r.uid);
 }
 function customCameraVisualText(sh){
   let text=(sh.camCustomText||'').trim();
@@ -2124,12 +2162,13 @@ function angleSentence(sh){
   const m={eye_level:'The camera is at eye level.',slightly_low:'The camera is slightly below eye level.',low:'The camera uses a low angle.',ground:'The camera is near ground level at a steep low angle.',slightly_high:'The camera is slightly above eye level.',high:'The camera uses a high angle.',overhead:'The camera is overhead, looking straight down.',waist_level:'The camera is at waist height, looking level.',chest_level:'The camera is at chest height, looking level.',custom:ensureSentence(sh.camAngleCustom||'')};
   return m[sh.camAngle]||'';
 }
-function compositionClause(sh){
+function compositionClause(sh,targetOverride=''){
   if(sh.camFraming==='two_shot'&&sh.camComposition==='balanced_two')return '';
   if(sh.camFraming==='over_shoulder'&&sh.camComposition==='dirty_single')return '';
+  const target=targetOverride||cameraRefLabel(sh.camFocusUid,'','the primary subject');
   const second=cameraRefLabel(sh.camSecondaryFocusUid,'','the second subject');
   const foreground=cameraRefLabel(sh.camForegroundUid,'','the foreground subject');
-  return ({centered:'centered in the frame',left_third:'positioned on the left third of the frame',right_third:'positioned on the right third of the frame',negative_left:'positioned to the right with negative space on the left',negative_right:'positioned to the left with negative space on the right',balanced_two:sh.camSecondaryFocusUid?'in a balanced two-subject composition':`with ${second} sharing the frame in a balanced two-subject composition`,symmetrical:'held in a symmetrical composition',dirty_single:`framed through the soft foreground edge of ${foreground}`,custom:(sh.camCompositionCustom||'').trim()})[sh.camComposition]||'';
+  return ({centered:`${target} is centered in the frame`,left_third:`${target} is positioned on the left third of the frame`,right_third:`${target} is positioned on the right third of the frame`,negative_left:`${target} is positioned to the right with negative space on the left`,negative_right:`${target} is positioned to the left with negative space on the right`,balanced_two:`${target} and ${second} share a balanced two-subject composition`,symmetrical:'The composition is symmetrical',dirty_single:`${foreground} forms a soft foreground edge`,custom:(sh.camCompositionCustom||'').trim()?`The custom composition is ${lowerNaturalInitial(sh.camCompositionCustom).trim().replace(/[.\s]+$/,'')}`:''})[sh.camComposition]||'';
 }
 function cameraFramingCore(sh){
   if(!sh.camFraming)return '';
@@ -2138,7 +2177,7 @@ function cameraFramingCore(sh){
   const target=cameraRefLabel(sh.camFocusUid,'',inferred||'the primary subject');
   const second=sh.camSecondaryFocusUid&&!['over_shoulder','insert','extreme_close_up'].includes(sh.camFraming)&&type!=='environment'?cameraRefLabel(sh.camSecondaryFocusUid,'',''):'';
   const pair=second?`${target} and ${second}`:target;
-  let detail=focusDescription(sh);const comp=compositionClause(sh);const view=viewpointClause(sh.camViewpoint,target,sh.camViewpointCustom);
+  let detail=focusDescription(sh);const comp=compositionClause(sh,target);const view=viewpointClause(sh.camViewpoint,target,sh.camViewpointCustom);
   if(!sh.camFocusArea&&sh.camFraming==='close_up'&&humanlike)detail=`${target}'s face and head`;
   let core='';
   if(S.mode!=='REF'&&!ref){
@@ -2165,7 +2204,7 @@ function cameraFramingCore(sh){
     else if(sh.camFraming==='over_shoulder'){const fg=cameraRefLabel(sh.camForegroundUid,'','the foreground subject');core=`an over-the-shoulder shot frames ${target} past ${fg}`;}
   }
   if(view&&sh.camViewpoint!=='pov')core+=`, with the camera ${view}`;
-  if(comp)core+=`, ${comp}`;
+  if(comp)core+=`; ${comp}`;
   return core;
 }
 function cameraPositionPhrase(sh){
@@ -2293,9 +2332,9 @@ function compactEndFrameCore(f,sh=null){
   else if(f.camFraming==='over_shoulder'){const fg=cameraRefLabel(f.camForegroundUid,'','the foreground subject');core=`an over-the-shoulder shot of ${target} past ${fg}`;}
   else core=`the ending framing on ${target}`;
   const d=sh?cameraEndpointDiff(sh):null;const showView=!d||d.viewpointChanged||d.focusTargetChanged;const showComp=!d||d.compositionChanged||d.focusTargetChanged;
-  const view=viewpointClause(f.camViewpoint,target,f.camViewpointCustom);const comp=compositionClause(f);
+  const view=viewpointClause(f.camViewpoint,target,f.camViewpointCustom);const comp=compositionClause(f,target);
   if(showView&&view&&f.camViewpoint!=='pov')core+=`, with the camera ${view}`;
-  if(showComp&&comp)core+=`, ${comp}`;
+  if(showComp&&comp)core+=`; ${comp}`;
   return core;
 }
 function compactEndAngleSentence(f){
@@ -2338,7 +2377,8 @@ function normalizeDialogueDelivery(text){
   if(/^(?:in|with|using|while|as)\b/i.test(d))return d;
   if(/^(?:softly|quietly|loudly|slowly|quickly|calmly|angrily|urgently|fearfully|nervously|breathlessly|hesitantly|firmly|gently|sharply|forcefully|whispering|shouting|yelling|murmuring|muttering)\b/i.test(d))return d;
   if(/^(?:a|an|the)\s+/i.test(d))return `in ${d}`;
-  return `in a ${d}`;
+  const hasDeliveryNoun=/\b(?:voice|tone|whisper|murmur|mutter|shout|yell|cry|cadence|drawl|accent|rasp|register|delivery)\b/i.test(d);
+  return `in ${indefinitePhrase(hasDeliveryNoun?d:`${d} voice`)}`;
 }
 function dlgLine(d,map){
   const sid=sidForDialogue(d,map);
@@ -2482,13 +2522,13 @@ function shotText(sh, idx, map){
   const firstRefs=firstAppearanceSubjectsForShot(idx),firstUsed=new Set();
   firstRefs.forEach(r=>{let w=weaveFirstAppearanceDescriptor(act,r);act=w.text;if(w.used){firstUsed.add(r.uid);return;}w=weaveFirstAppearanceDescriptor(opening,r);opening=w.text;if(w.used)firstUsed.add(r.uid);});
   firstRefs.filter(r=>!firstUsed.has(r.uid)).forEach(r=>{const cue=firstAppearanceFallbackCue(r);if(cue)parts.push(cue);});
-  if(opening)parts.push(ensureSentence(opening));
+  if(opening)parts.push(ensureSentence((idx===0&&baseStyleInline&&parts.length===1)?lowerShotInitial(opening):upperInitial(opening)));
   if(act){
     // In base modes the Shot 1 style phrase ends with a comma. Lowercase the
     // action only when it is the very next clause. If framing, camera, or another
     // generated sentence comes first, the action begins a new sentence and must
     // retain normal capitalization.
-    const actionText=(idx===0&&baseStyleInline&&parts.length===1)?lowerShotInitial(act):act;
+    const actionText=(idx===0&&baseStyleInline&&parts.length===1)?lowerShotInitial(act):upperInitial(act);
     parts.push(ensureSentence(actionText));
   }
   const spoken=(sh.dlg||[]).filter(d=>d.text);
@@ -2617,7 +2657,7 @@ function definitionFor(r,i,map=speakerMap()){
     const details=(r.details||'').trim().replace(/[.\s]+$/,''),structured=structuredTraitDefinition(details);
     if(subjectType(r)==='environment'){
       const srcBits=[];sourcePicNumbers(r).forEach(n=>srcBits.push(`${`<Picture ${n}>`} (${environmentViewRoleText(environmentViewRole(r,n))})`));sourceVideoNumbers(r).forEach(n=>srcBits.push(`<Video ${n}>`));
-      const ed=environmentDefinitionDetails(name,details),envName=/^the\b/i.test(name)?lowerFirstGeneric(name):`the ${lowerFirstGeneric(name)}`;
+      const ed=environmentDefinitionDetails(name,details),envName=/^the\b/i.test(name)?lowerNameInitial(name):`the ${lowerNameInitial(name)}`;
       const desc=ed.rest?(ed.lead==='with'?`, with ${ed.rest}`:`, described as ${lowerFirstGeneric(ed.rest)}`):'';
       return `is ${envName}${srcBits.length?` as defined by ${listJoin(srcBits)}`:''}${desc}.`;
     }
@@ -2653,7 +2693,7 @@ function definitionFor(r,i,map=speakerMap()){
     }
     if(role==='storyboard reference')return `is a storyboard reference${forShots}, defining shot order, viewpoint, framing, blocking, action direction, and timing; annotations and rough-composite artifacts are planning only${details?`; ${lowerFirstGeneric(details)}`:''}.`;
     if(role==='environment state reference')return `is an environment-state reference${forShots}, defining the current location condition, layout, weather, lighting, and atmosphere while the Shot controls camera viewpoint${details?`; ${lowerFirstGeneric(details)}`:''}.`;
-    return `is ${name}, used as a ${role}${forShots}${details?`, with ${lowerFirstGeneric(details)}`:''}.`;
+    return `is ${name}, used as ${indefinitePhrase(role)}${forShots}${details?`, with ${lowerFirstGeneric(details)}`:''}.`;
   }
   if(r.kind==='Video'){
     const role=r.role||'camera movement reference',details=(r.details||r.desc||'').trim().replace(/[.\s]+$/,'');
@@ -2950,8 +2990,13 @@ function summaryReferenceRelationships(){
   }).filter(Boolean);
   if(bound.length)bits.push(`${listJoin(bound)}.`);
   const continuity=pictureRefs().filter(r=>(r.role||'')==='previous generation continuity'&&refActiveInCurrentClip(r));
-  if(continuity.length)bits.push(`${listJoin(continuity.map(r=>labelOf(r,refIndex(r))))} preserve assigned previous-generation blocking or scene state.`);
+  if(continuity.length)bits.push(`${listJoin(continuity.map(r=>labelOf(r,refIndex(r))))} preserve${continuity.length===1?'s':''} assigned previous-generation blocking or scene state.`);
   return bits.join(' ');
+}
+function summaryWithoutTaskPrefix(text){
+  const t=String(text||'').trim(),m=t.match(/^\[([^\]]+)\]\s*/);if(!m)return t;
+  const declared=m[1].split('+').map(x=>x.trim().toLowerCase()).filter(Boolean);
+  return declared.length&&declared.every(x=>TASK_TYPES.includes(x))?t.slice(m[0].length).trim():t;
 }
 function autoSummary(){
   const editSummary=editWorkflowSummary();if(editSummary)return editSummary;
@@ -2960,7 +3005,8 @@ function autoSummary(){
   const lead=[];
   if(editVideos.length)lead.push(`The target video is an edited version of ${labelOf(editVideos[0],refIndex(editVideos[0]))}.`);
   else if(continuations.length)lead.push(`The target video continues from ${labelOf(continuations[0],refIndex(continuations[0]))}.`);
-  lead.push(`The target video is a ${C().shots.length}-shot sequence${usedEnvs.length?` set in ${usedEnvs.map(r=>labelOf(r,refIndex(r))).join(usedEnvs.length>1?' and ':'')}`:''}.`);
+  const shotCount=C().shots.length;
+  lead.push(`The target video contains ${shotCount} shot${shotCount===1?'':'s'}${usedEnvs.length?` set in ${usedEnvs.map(r=>labelOf(r,refIndex(r))).join(usedEnvs.length>1?' and ':'')}`:''}.`);
   const shotLines=C().shots.map((sh,i)=>{
     const visible=identitySubjectRefs().filter(r=>visualShotList(r).includes(i+1)).map(r=>labelOf(r,refIndex(r)));
     const voicePairs=[];
@@ -3027,7 +3073,7 @@ function build(){
   const editPreamble=editDetailedPreamble();
   const scaleText=scalePreamble();
   const preamble=[style,editPreamble,scaleText,continuity].filter(Boolean).join('\n');
-  return `subject_definitions:\n${defs||'—'}\n\nsummary:\n${prefix}${C().summary.trim()||autoSummary()}\n\nretention_analysis:\n${ret||'—'}\n\ndetailed_description:\n${preamble?preamble+'\n':''}${body}\n\noverall_soundscape:\n${ss}\n\nnon_diegetic_music:\n${nd}`;
+  return `subject_definitions:\n${defs||'—'}\n\nsummary:\n${prefix}${summaryWithoutTaskPrefix(C().summary)||autoSummary()}\n\nretention_analysis:\n${ret||'—'}\n\ndetailed_description:\n${preamble?preamble+'\n':''}${body}\n\noverall_soundscape:\n${ss}\n\nnon_diegetic_music:\n${nd}`;
 }
 
 function detailedDescriptionWordCount(promptText){
@@ -3305,7 +3351,9 @@ function lint(prompt=null,bodyWordCount=null){
       if(!['character scale reference','lighting integration reference'].includes(role)&&!computedShotList(r).length) L.push(['warn',`${esc(lab)} is a standalone shot-planning image but is not assigned to any shot.`]);
       if(role==='lighting integration reference'&&(!r.targetSubjectUid||!refByUid(r.targetSubjectUid)))L.push(['err',`${esc(lab)} is a lighting-integration reference but has no valid target Subject.`]);
       const sourceUse=[...pictureSources.keys()].includes(Number(r.idx));
-      if(sourceUse) L.push(['info',`${esc(lab)} is also used inside a Subject definition. Keep this standalone entry only if its separate ${role==='character scale reference'?'global height/scale role':role==='lighting integration reference'?'lighting-integration role':'viewpoint or framing role'} should influence the generation.`]);
+      const envOverlap=refActiveInCurrentClip(r)?environmentRefs().filter(e=>sourcePicNumbers(e).includes(Number(r.idx))):[];
+      if(envOverlap.length) L.push(['warn',`${esc(lab)} shares physical Picture slot ${Number(r.idx)} with active Environment view${envOverlap.length===1?'':'s'} ${envOverlap.map(e=>esc(subjectName(e))).join(', ')} in this Generation. One connected image cannot be both a clean Environment view and a separate ${esc(r.role||'reference')} image at the same time; move one to a different slot or bypass one of them.`]);
+      else if(sourceUse) L.push(['info',`${esc(lab)} is also used inside a Subject definition. Keep this standalone entry only if its separate ${role==='character scale reference'?'global height/scale role':role==='lighting integration reference'?'lighting-integration role':'viewpoint or framing role'} should influence the generation.`]);
       if(r.useCustomDef&&/^<Subject \d+>[.]?$/i.test((r.desc||'').trim()))
         L.push(['err',`${esc(lab)} only repeats a Subject label. Remove this standalone Picture entry and cite it inside the Subject definition instead.`]);
     });
@@ -3978,7 +4026,8 @@ function renderRefs(){
         <p class="field-help">H3 accepts ${H3_LIMITS.clipMin}&ndash;${H3_LIMITS.clipMax} seconds per reference video and no more than ${H3_LIMITS.totalVid} seconds in total. Source footage must be 23.976&ndash;60&nbsp;fps.</p>
         <div class="fld"><label class="f">Optional details</label><textarea data-f="details" data-key="ref-${i}-details" rows="2" placeholder="${videoDetailsPlaceholder}">${esc(r.details||'')}</textarea></div>`;
     }
-    const c=el(`<div class="card ${cls} ${r.collapsed?'collapsed':''}"><div class="chead"><span class="kind-icon">${icon}</span><span class="kind-title">${r.kind}</span><span class="ref-badge">${esc(displayLab)}</span><span>${esc(r.kind==='Subject'?subjectName(r):(r.name||referencePresetSummary(r)||''))}</span><div class="sp"></div>${!r.useCustomDef?'<span class="auto-pill">auto definition</span>':''}<button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand">${r.collapsed?'＋':'−'}</button><button class="btn sm danger" data-a="del">✕</button></div><div class="card-body">
+    const refDisplayName=r.kind==='Subject'?subjectName(r):(r.name||referencePresetSummary(r)||'');
+    const c=el(`<div class="card ${cls} ${r.collapsed?'collapsed':''}"><div class="chead"><div class="ref-identity"><span class="ref-kind"><span class="kind-icon">${icon}</span><span class="kind-title">${r.kind}</span></span><span class="ref-badge">${esc(displayLab)}</span><span class="ref-name" title="${esc(refDisplayName)}">${esc(refDisplayName)}</span></div><div class="ref-actions">${!r.useCustomDef?'<span class="auto-pill">auto definition</span>':''}<button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand">${r.collapsed?'＋':'−'}</button><button class="btn sm danger" data-a="del" title="Remove this reference">✕</button></div></div><div class="card-body">
       <div class="active-state ${refActiveInCurrentClip(r)?'':'off'}"><b>${refActiveInCurrentClip(r)?'Used by current Generation':'Project library only'}</b><span>${refActiveInCurrentClip(r)?'This reference is currently reached from the middle-column Shot/workflow controls.':'Saved for reuse. It will not be sent to H3 until a Shot, dialogue/camera control, or guided workflow uses it.'}</span></div><div class="row fld advanced-only"><select data-f="kind" data-key="ref-${i}-kind">${REF_KINDS.map(k=>`<option ${k===r.kind?'selected':''}>${k}</option>`).join('')}</select>${slotField}</div>
       ${main}
       ${fixedRetentionPic?`<div class="active-state advanced-only"><b>${continuityPic?'partially_preserved':'attribute_transfer'}</b><span>${continuityPic?'Fixed for previous-generation continuity references: preserve only the selected prior state, not the entire screenshot.':scaleRef?'Fixed for visual scale/placement references so the guide is not preserved as a target frame.':'Fixed for lighting-integration references so only lighting relationships transfer.'}</span></div>`:`<div class="row fld advanced-only"><select data-f="ret" data-key="ref-${i}-ret">${opts.map(o=>`<option ${o===rc(r).ret?'selected':''}>${o}</option>`).join('')}</select><input type="text" data-f="retNote" data-key="ref-${i}-retNote" placeholder="Optional override, e.g. preserve only the jacket color and fabric texture" value="${esc(rc(r).retNote||'')}"></div>`}
@@ -4050,7 +4099,7 @@ function renderRefs(){
     c.querySelectorAll('[data-continuity-subject-uid]').forEach(ch=>ch.onclick=()=>{
       const id=ch.dataset.continuitySubjectUid,a=[...new Set(r.continuitySubjectUids||[])];r.continuitySubjectUids=a.includes(id)?a.filter(x=>x!==id):a.concat(id);render();
     });
-    c.querySelectorAll('[data-env-view-name]').forEach(inp=>inp.oninput=e=>{r.environmentViewNames=r.environmentViewNames||{};r.environmentViewNames[String(e.target.dataset.envViewName)]=e.target.value;saveSoon();});
+    c.querySelectorAll('[data-env-view-name]').forEach(inp=>inp.oninput=e=>{r.environmentViewNames=r.environmentViewNames||{};r.environmentViewNames[String(e.target.dataset.envViewName)]=e.target.value;buildOnly();});
     c.querySelectorAll('[data-env-view-role]').forEach(sel=>sel.onchange=e=>{r.environmentViewRoles=r.environmentViewRoles||{};r.environmentViewRoles[String(e.target.dataset.envViewRole)]=e.target.value;buildOnly();});
     const envViewDetails=c.querySelector('[data-env-view-details]');if(envViewDetails)envViewDetails.ontoggle=()=>{r.environmentViewRolesOpen=envViewDetails.open;};
 
@@ -4479,6 +4528,27 @@ function renderDur(){
 function refreshSidBadges(){
   const map=speakerMap();C().shots.forEach((sh,i)=>sh.dlg.forEach((d,j)=>{const n=document.querySelector(`[data-sidbadge="${i}-${j}"]`);if(n)n.textContent=sidForDialogue(d,map);}));
 }
+let __appErrors=[];
+function reportAppError(err,where){
+  try{
+    const msg=(err&&err.message)?err.message:String(err);
+    const stack=((err&&err.stack)||'').split('\n').slice(0,30).join('\n');
+    __appErrors.push({when:new Date().toISOString(),where:where||'',msg,stack});
+    if(__appErrors.length>20)__appErrors=__appErrors.slice(-20);
+    let bar=document.getElementById('appErrorBar');
+    if(!bar){
+      bar=document.createElement('div');bar.id='appErrorBar';
+      bar.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:200;background:#3a1418;border-top:2px solid #ff5a63;color:#ffd6d9;font:12px/1.5 system-ui,sans-serif;padding:9px 14px;display:flex;gap:12px;align-items:center';
+      bar.innerHTML='<b style="color:#ff8b92;white-space:nowrap">Internal error</b><span id="appErrorMsg" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="appErrorCopy" style="background:#5b1f26;color:#ffd6d9;border:1px solid #ff5a63;border-radius:5px;padding:3px 10px;cursor:pointer">Copy error report</button><button id="appErrorClose" style="background:none;color:#ffd6d9;border:1px solid #7a3a41;border-radius:5px;padding:3px 10px;cursor:pointer">Dismiss</button>';
+      document.body.appendChild(bar);
+      document.getElementById('appErrorClose').onclick=()=>bar.remove();
+      document.getElementById('appErrorCopy').onclick=async(ev)=>{const report=`H3 Prompt Composer ${APP_VERSION} error report\nmode=${S.mode} generations=${(S.clips||[]).length} active=${S.active} refs=${(S.refs||[]).length}\n\n`+__appErrors.map(e=>`[${e.when}] ${e.where}\n${e.msg}\n${e.stack}`).join('\n\n');const ok=await writeClipboard(report);flashButton(ev.currentTarget,ok?'Copied':'Copy failed',1200);};
+    }
+    const m=document.getElementById('appErrorMsg');if(m)m.textContent=`${where?where+': ':''}${msg} — the interface stays usable; use “Copy error report” and share it so this can be fixed.`;
+  }catch(e){}
+}
+window.addEventListener('error',e=>reportAppError(e.error||e.message,'window'));
+window.addEventListener('unhandledrejection',e=>reportAppError(e.reason,'promise'));
 function render(){
   resetDerivedCaches();
   syncAllAppearanceCarries();
@@ -4486,10 +4556,13 @@ function render(){
   document.body.dataset.uiMode=S.uiMode==='advanced'?'advanced':'basic';
   const vb=document.getElementById('viewBasic'),va=document.getElementById('viewAdvanced');if(vb)vb.classList.toggle('on',S.uiMode!=='advanced');if(va)va.classList.toggle('on',S.uiMode==='advanced');
   const a=document.activeElement,key=(a&&a.dataset)?a.dataset.key:null;let s0=null,s1=null;if(key){try{s0=a.selectionStart;s1=a.selectionEnd;}catch(e){}}
-  renderModes();renderRefs();renderClips();renderCurrentInputMap();renderShots();renderDur();renderPB();
+  [['renderModes',renderModes],['renderRefs',renderRefs],['renderClips',renderClips],['renderCurrentInputMap',renderCurrentInputMap],['renderShots',renderShots],['renderDur',renderDur],['renderPB',renderPB]].forEach(([name,fn])=>{try{fn();}catch(e){reportAppError(e,name);}});
+  try{
   document.getElementById('style').value=S.style;document.getElementById('ss').value=C().soundscape==='N/A'?'':C().soundscape;document.getElementById('ssExtra').value=C().soundscapeExtra||'';document.getElementById('nd').value=C().music==='N/A'?'':C().music;document.getElementById('dur').value=S.dur;
   document.getElementById('ssMode').value=C().soundscapeMode||'unset';document.getElementById('ndMode').value=C().musicMode||'unset';
-  document.getElementById('ss').disabled=(C().soundscapeMode==='silence');document.getElementById('ssExtra').disabled=(C().soundscapeMode==='silence');document.getElementById('nd').disabled=(C().musicMode==='none');buildOnly();
+  document.getElementById('ss').disabled=(C().soundscapeMode==='silence');document.getElementById('ssExtra').disabled=(C().soundscapeMode==='silence');document.getElementById('nd').disabled=(C().musicMode==='none');
+  }catch(e){reportAppError(e,'render fields');}
+  try{buildOnly();}catch(e){reportAppError(e,'buildOnly');const outEl=document.getElementById('out');if(outEl)outEl.textContent='The prompt for this Generation could not be built: '+((e&&e.message)||e)+'\n\nUse "Copy error report" in the red bar below and share it so the cause can be fixed. Other Generations remain selectable.';}
   if(key){const n=document.querySelector(`[data-key="${key}"]`);if(n){n.focus();if(s0!==null&&n.setSelectionRange){try{n.setSelectionRange(s0,s1);}catch(e){}}}}
 }
 
@@ -4779,15 +4852,32 @@ async function writeClipboard(text){
     const ok=document.execCommand('copy');ta.remove();return !!ok;
   }catch(e){console.error('Clipboard copy failed',e);return false;}
 }
+async function copyAll(ev){
+  resetDerivedCaches();
+  const old=S.active,parts=[];let errs=0;
+  (S.clips||[]).forEach((cl,i)=>{
+    S.active=i;resetDerivedCaches();
+    let prompt;
+    try{prompt=build();errs+=lint(prompt).filter(x=>x[0]==='err').length;}
+    catch(e){reportAppError(e,`copyAll/Generation ${i+1}`);prompt='[This Generation could not be built: '+((e&&e.message)||e)+']';errs++;}
+    parts.push(`===== Generation ${i+1}${cl.name&&cl.name!==`Generation ${i+1}`?`: ${cl.name}`:''} =====\n\n${prompt}`);
+  });
+  S.active=old;resetDerivedCaches();buildOnly();
+  if(errs&&!confirm(`The checker found ${errs} error${errs===1?'':'s'} across the Generations. Copy all prompts anyway?`))return;
+  const ok=await writeClipboard(parts.join('\n\n\n'));
+  flashButton(ev&&ev.currentTarget,ok?'Copied all':'Copy failed',ok?1200:1800);
+}
 async function copyOut(ev){
-  resetDerivedCaches();const prompt=build();
-  const L=lint(prompt),errs=L.filter(x=>x[0]==='err').length;
+  resetDerivedCaches();let prompt;
+  try{prompt=build();}catch(e){reportAppError(e,'copyOut/build');alert('The prompt for this Generation could not be built:\n\n'+((e&&e.message)||e)+'\n\nNothing was copied. Use "Copy error report" in the red bar to capture details.');return;}
+  let L=[];try{L=lint(prompt);}catch(e){reportAppError(e,'copyOut/lint');}
+  const errs=L.filter(x=>x[0]==='err').length;
   if(errs&&!confirm(`The checker found ${errs} error${errs===1?'':'s'}. Copy the prompt anyway?`))return;
   const ok=await writeClipboard(prompt);
   flashButton(ev&&ev.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);
 }
 function backupProject(){try{localStorage.setItem(BACKUP_KEY,JSON.stringify(S));}catch(e){}}
-function restorePrevious(){try{const raw=localStorage.getItem(BACKUP_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_4_backup')||localStorage.getItem('h3_prompt_composer_v5_18_3_backup')||localStorage.getItem('h3_prompt_composer_v5_18_2_backup')||localStorage.getItem('h3_prompt_composer_v5_18_0_backup')||localStorage.getItem('h3_prompt_composer_v5_17_2_backup')||localStorage.getItem('h3_prompt_composer_v5_17_1_backup')||localStorage.getItem('h3_prompt_composer_v5_17_0_backup')||localStorage.getItem('h3_prompt_composer_v5_16_1_backup')||localStorage.getItem('h3_prompt_composer_v5_16_0_backup')||localStorage.getItem('h3_prompt_composer_v5_15_1_backup')||localStorage.getItem('h3_prompt_composer_v5_15_0_backup')||localStorage.getItem('h3_prompt_composer_v5_14_3_backup')||localStorage.getItem('h3_prompt_composer_v5_14_2_backup')||localStorage.getItem('h3_prompt_composer_v5_14_1_backup')||localStorage.getItem('h3_prompt_composer_v5_14_0_backup')||localStorage.getItem('h3_prompt_composer_v5_13_0_backup')||localStorage.getItem('h3_prompt_composer_v5_12_4_backup')||localStorage.getItem('h3_prompt_composer_v5_12_3_backup')||localStorage.getItem('h3_prompt_composer_v5_12_2_backup')||localStorage.getItem('h3_prompt_composer_v5_12_1_backup')||localStorage.getItem('h3_prompt_composer_v5_12_0_backup')||localStorage.getItem('h3_prompt_composer_v5_11_1_backup')||localStorage.getItem('h3_prompt_composer_v5_11_0_backup')||localStorage.getItem('h3_prompt_composer_v5_10_6_backup')||localStorage.getItem('h3_prompt_composer_v5_10_5_backup')||localStorage.getItem('h3_prompt_composer_v5_10_4_backup')||localStorage.getItem('h3_prompt_composer_v5_10_3_backup')||localStorage.getItem('h3_prompt_composer_v5_10_2_backup')||localStorage.getItem('h3_prompt_composer_v5_10_1_backup')||localStorage.getItem('h3_prompt_composer_v5_10_0_backup')||localStorage.getItem('h3_prompt_composer_v5_9_9_backup')||localStorage.getItem('h3_prompt_composer_v5_9_8_backup')||localStorage.getItem('h3_prompt_composer_v5_9_7_backup')||localStorage.getItem('h3_prompt_composer_v5_9_6_backup')||localStorage.getItem('h3_prompt_composer_v5_9_5_backup')||localStorage.getItem('h3_prompt_composer_v5_9_4_backup')||localStorage.getItem('h3_prompt_composer_v5_9_3_backup')||localStorage.getItem('h3_prompt_composer_v5_9_2_backup')||localStorage.getItem('h3_prompt_composer_v5_9_1_backup')||localStorage.getItem('h3_prompt_composer_v5_9_backup')||localStorage.getItem('h3_prompt_composer_v5_8_3_backup')||localStorage.getItem('h3_prompt_composer_v5_8_2_backup')||localStorage.getItem('h3_prompt_composer_v5_8_1_backup')||localStorage.getItem('h3_prompt_composer_v5_8_backup')||localStorage.getItem('h3_prompt_composer_v5_7_1_backup')||localStorage.getItem('h3_prompt_composer_v5_7_backup')||localStorage.getItem('h3_prompt_composer_v5_6_backup');if(!raw){alert('No previous project backup is available.');return;}backupProject();S=migrate(JSON.parse(raw));render();}catch(e){alert('The previous project backup could not be restored.');}}
+function restorePrevious(){try{const raw=localStorage.getItem(BACKUP_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup')||localStorage.getItem('h3_prompt_composer_v5_18_5_backup')||localStorage.getItem('h3_prompt_composer_v5_18_4_backup')||localStorage.getItem('h3_prompt_composer_v5_18_3_backup')||localStorage.getItem('h3_prompt_composer_v5_18_2_backup')||localStorage.getItem('h3_prompt_composer_v5_18_1_backup')||localStorage.getItem('h3_prompt_composer_v5_18_0_backup')||localStorage.getItem('h3_prompt_composer_v5_17_2_backup')||localStorage.getItem('h3_prompt_composer_v5_17_1_backup')||localStorage.getItem('h3_prompt_composer_v5_17_0_backup')||localStorage.getItem('h3_prompt_composer_v5_16_1_backup')||localStorage.getItem('h3_prompt_composer_v5_16_0_backup')||localStorage.getItem('h3_prompt_composer_v5_15_1_backup')||localStorage.getItem('h3_prompt_composer_v5_15_0_backup')||localStorage.getItem('h3_prompt_composer_v5_14_3_backup')||localStorage.getItem('h3_prompt_composer_v5_14_2_backup')||localStorage.getItem('h3_prompt_composer_v5_14_1_backup')||localStorage.getItem('h3_prompt_composer_v5_14_0_backup')||localStorage.getItem('h3_prompt_composer_v5_13_0_backup')||localStorage.getItem('h3_prompt_composer_v5_12_4_backup')||localStorage.getItem('h3_prompt_composer_v5_12_3_backup')||localStorage.getItem('h3_prompt_composer_v5_12_2_backup')||localStorage.getItem('h3_prompt_composer_v5_12_1_backup')||localStorage.getItem('h3_prompt_composer_v5_12_0_backup')||localStorage.getItem('h3_prompt_composer_v5_11_1_backup')||localStorage.getItem('h3_prompt_composer_v5_11_0_backup')||localStorage.getItem('h3_prompt_composer_v5_10_6_backup')||localStorage.getItem('h3_prompt_composer_v5_10_5_backup')||localStorage.getItem('h3_prompt_composer_v5_10_4_backup')||localStorage.getItem('h3_prompt_composer_v5_10_3_backup')||localStorage.getItem('h3_prompt_composer_v5_10_2_backup')||localStorage.getItem('h3_prompt_composer_v5_10_1_backup')||localStorage.getItem('h3_prompt_composer_v5_10_0_backup')||localStorage.getItem('h3_prompt_composer_v5_9_9_backup')||localStorage.getItem('h3_prompt_composer_v5_9_8_backup')||localStorage.getItem('h3_prompt_composer_v5_9_7_backup')||localStorage.getItem('h3_prompt_composer_v5_9_6_backup')||localStorage.getItem('h3_prompt_composer_v5_9_5_backup')||localStorage.getItem('h3_prompt_composer_v5_9_4_backup')||localStorage.getItem('h3_prompt_composer_v5_9_3_backup')||localStorage.getItem('h3_prompt_composer_v5_9_2_backup')||localStorage.getItem('h3_prompt_composer_v5_9_1_backup')||localStorage.getItem('h3_prompt_composer_v5_9_backup')||localStorage.getItem('h3_prompt_composer_v5_8_3_backup')||localStorage.getItem('h3_prompt_composer_v5_8_2_backup')||localStorage.getItem('h3_prompt_composer_v5_8_1_backup')||localStorage.getItem('h3_prompt_composer_v5_8_backup')||localStorage.getItem('h3_prompt_composer_v5_7_1_backup')||localStorage.getItem('h3_prompt_composer_v5_7_backup')||localStorage.getItem('h3_prompt_composer_v5_6_backup');if(!raw){alert('No previous project backup is available.');return;}backupProject();S=migrate(JSON.parse(raw));render();}catch(e){alert('The previous project backup could not be restored.');}}
 function newProject(){if(confirm('Start a new project? The current project will be kept as “Restore previous.”')){backupProject();S=blank();render();}}
 function migrate(o){
   if(!o||typeof o!=='object')o=blank();
@@ -5069,7 +5159,7 @@ function initFrameGrabDropZones(){const stage=document.getElementById('frameStag
 function frameCanvasBlob(v){return new Promise(resolve=>{const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d',{alpha:false});ctx.drawImage(v,0,0,c.width,c.height);c.toBlob(resolve,'image/png');});}
 function downloadFrameBlob(blob,name){const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
 async function captureFrameGrab(){const v=document.getElementById('frameVideo');if(!v||!v.videoWidth||!v.videoHeight){alert('Open a video and seek to the frame you want first.');return;}v.pause();const name=updateFrameFilename(),blob=await frameCanvasBlob(v);if(!blob){alert('The browser could not capture this frame.');return;}if(__frameOutputDirHandle){try{const ok=await frameEnsureWritePermission(__frameOutputDirHandle);if(ok){const fh=await __frameOutputDirHandle.getFileHandle(name,{create:true}),w=await fh.createWritable();await w.write(blob);await w.close();setFrameOutputStatus(`Saved ${name} directly to “${__frameOutputDirHandle.name}”.`,'good');return;}setFrameOutputStatus('Write permission was not granted for the selected folder. The PNG was downloaded through the browser instead.','warn');}catch(e){setFrameOutputStatus(`Could not write directly to “${__frameOutputDirHandle.name}”: ${e.message||e}. The PNG was downloaded instead.`,'warn');}}downloadFrameBlob(blob,name);}
-async function copyFrameFilename(ev){const name=updateFrameFilename();const ok=await copyText(name);flashButton(ev?.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);}
+async function copyFrameFilename(ev){const name=updateFrameFilename();const ok=await writeClipboard(name);flashButton(ev?.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);}
 
 /* ---------------- V5.18 AI Project Setup ---------------- */
 let __aiPendingImport=null,__aiPendingPromptIssues=[],__aiPreviewTimer=null;
@@ -5117,25 +5207,11 @@ function aiStarterTemplate(){
     ]}]
   };
 }
-function aiNamingGuidance(){return `MEDIA IDENTITY VS PHYSICAL SLOT ROUTING
-There are two different concepts:
-1. PROJECT MEDIA IDENTITY: what an image is (Jane character sheet, Jungle Clearing wide view, Broken Bridge ramp detail). This identity is persistent.
-2. PHYSICAL H3 SLOT: which ComfyUI input the active file is connected to for a particular Generation. Environment slots are commonly reused between Generations.
-
-Recommended filenames:
-- P01_Jane_CHARACTER_SHEET.png  ← use P## only when Picture 1 is intentionally fixed/pinned
-- P02_John_CHARACTER_SHEET.png
-- ENV01_JungleClearing_V01_WIDE.png  ← no permanent Picture slot implied
-- ENV01_JungleClearing_V02_SHED_SIDE.png
-- ENV02_JungleRoad_V01_WIDE.png
-- ENV03_BrokenBridge_V01_WIDE.png
-- ENV03_BrokenBridge_V02_APPROACH.png
-- ENV03_BrokenBridge_V03_RAMP_DETAIL.png
-- G01_JaneJohn_CONT_BLOCKING_00-04-250.png  ← add P## only if its physical slot is already known
-- A01_Jane_VOICE.wav
-- V01_Performance_REFERENCE.mp4
-
-For Environment media, keep a stable environment name and view label. Do NOT infer a permanent H3 slot from upload order, a conversational label like "picture 10", or ENV/View numbering. If Subjects are pinned to Pictures 1-4, it is valid and expected for Environment A to route its views to Pictures 5-6, Environment B to reuse Picture 5, and Environment C to reuse Pictures 5-7. In assets.environments[].pictures[], slot is the physical routing to use WHEN THAT ENVIRONMENT IS ACTIVE, and name is the stable slot-independent view identity. Different Environments may reuse the same slot numbers; different views inside one Environment must use different slots.`;}
+function aiNamingGuidance(){return `MEDIA NAMING
+- Use P##, V##, or A## only when the physical ComfyUI slot is intentionally fixed: P01_Jane_CHARACTER_SHEET.png, A01_Jane_VOICE.wav.
+- Use slot-independent names for reusable Environment views: ENV01_JungleClearing_V01_WIDE.png, ENV01_JungleClearing_V02_SHED_SIDE.png.
+- Use a continuity-purpose name for previous-generation frames: G01_JaneJohn_CONT_BLOCKING_00-04-250.png. Add P## only when its physical slot is already known.
+- Upload order, conversational labels such as "picture 10", and ENV/V numbering do not declare physical H3 slots.`;}
 function aiComposerOnlyContext(){
   const height=(scaleRules()||[]).map((r,i)=>{const a=refByUid(r.subjectAUid),b=refByUid(r.subjectBUid);return `Height rule ${i+1}: ${a?subjectName(a):'Subject A'} ${r.heightA||''}${b?` relative to ${subjectName(b)} ${r.heightB||''}`:''}${r.note?`; ${r.note}`:''}`.trim();});
   const transitions=[];(S.clips||[]).forEach((cl,ci)=>(cl.shots||[]).forEach((sh,si)=>(sh.appearanceTransitions||[]).forEach(tr=>{const r=refByUid(tr.subjectUid),a=r?appearanceStateByUid(r,tr.startStateUid):null,b=r?appearanceStateByUid(r,tr.endStateUid):null;if(r&&a&&b&&a.uid!==b.uid)transitions.push(`Generation ${ci+1} Shot ${si+1}: ${subjectName(r)} changes from "${a.name||'start'}" to "${b.name||'end'}".`);})));return {height,transitions};
@@ -5145,16 +5221,57 @@ function aiSetupInstructions(mode='new'){
   mode=['new','full','append'].includes(mode)?mode:'new';
   let sample=aiStarterTemplate();
   if(mode==='append')sample={format:AI_SETUP_FORMAT,schema_version:AI_SETUP_SCHEMA_VERSION,operation:'append_generations',assets:{subjects:[],environments:[],pictures:[],audio:[],videos:[]},generations:[{name:'Next Generation',overall_ambience:'Continue the established ambience.',music:'N/A',shots:[{cut_time_seconds:null,environment:'environment_1',presence:{subject_1:'on_screen'},opening_state:'Describe where the existing subject begins.',action:'Describe what happens next.',camera:{framing:'medium',primary:'subject_1',movement:'static'}}]}]};
-  const template=JSON.stringify(sample,null,2);
-  const exported=projectToAIInterchange();
-  const composerOnly=aiComposerOnlyContext();
-  const current=mode==='new'?'':`\n\nCURRENT PROJECT CONTEXT\n${JSON.stringify(exported,null,2)}\n\nCOMPOSER-ONLY CONTEXT (read-only; do not try to recreate these with undocumented JSON keys)\n${[...composerOnly.height,...composerOnly.transitions].join('\n')||'None.'}`;
+  const template=JSON.stringify(sample,null,2),exported=projectToAIInterchange(),composerOnly=aiComposerOnlyContext();
+  const current=mode==='new'?'':`\n\nCURRENT PROJECT CONTEXT\n${JSON.stringify(exported,null,2)}\n\nCOMPOSER-ONLY CONTEXT (read-only; do not recreate with undocumented keys)\n${[...composerOnly.height,...composerOnly.transitions].join('\n')||'None.'}`;
   const operationRule=mode==='append'
-    ? `Set operation to "append_generations". Return ONLY the new asset definitions that do not already exist plus ONLY the new Generation(s). Reference existing asset IDs exactly as they appear in CURRENT PROJECT CONTEXT. Do not repeat, rename, or redefine existing assets, and do not include existing Generations.`
-    : `Set operation to "replace_project". Return the complete project JSON that should exist after import.`;
-  return `You are preparing structured project data for H3 Prompt Composer. Your job is NOT to write the final MiniMax/H3 prompt. The Composer generates subject_definitions, summary, retention_analysis, detailed_description, overall_soundscape, non_diegetic_music, dialogue tags, and final H3 syntax itself.\n\nReturn exactly ONE valid JSON object and nothing else: no Markdown fence, commentary, preface, or trailing explanation. Use format "${AI_SETUP_FORMAT}", schema_version ${AI_SETUP_SCHEMA_VERSION}, and ${operationRule}\n\nWORKFLOW RULES\n1. Build reusable Subjects for characters, creatures, vehicles, and props. If reference images are available, inspect visible traits and write concise stable descriptions. Use only identities/names supplied by the user; do not guess a real person's identity from an image.\n2. A multi-view character sheet is one Subject. Subject assets may use current_appearance for the active wardrobe/temporary look. If the user explicitly pins a Subject to a physical Picture input, preserve that picture_slots assignment across Generations unless the user asks to change it.\n3. Build clean location views as Environments. Multiple pictures of one location remain one Environment. Each environment picture object should use {slot, name, contribution}: name is a stable slot-independent view identity such as "wide clearing", "shed-side view", "approach view", or "ramp detail"; contribution is "overall geography", "alternate view", "structural detail", "lighting reference", or "custom".\n\nENVIRONMENT ROUTING RULES\nA. Separate PROJECT MEDIA IDENTITY from PHYSICAL H3 SLOT ROUTING. Being the 10th uploaded image, being called "picture 10" conversationally, or having ENV03/V03 in a filename does NOT mean physical <Picture 10>. Only an intentional P## prefix or an explicit user statement such as "this is ComfyUI Picture 3" declares a physical slot.\nB. Environment routing is generation-specific and reusable. Different Environments MAY intentionally reuse the same legal Picture slots because they are alternatives. Example: with recurring Subjects pinned to Pictures 1-4, Jungle Clearing can use Pictures 5-6, Jungle Road can reuse Picture 5, and Broken Bridge can reuse Pictures 5-7. Within one Environment, simultaneously used views need unique slots.\nC. If the user has not given an explicit Environment slot plan, choose the lowest reusable legal Picture slots that do not collide with fixed/pinned references needed in that Generation. Treat these as routing suggestions the user can change in the Composer.\nD. Do not drop an Environment view because its project/media number exceeds the H3 Picture-input count. Remap the logical view to a legal reusable Environment slot instead. Only preserve an out-of-range conflict when the USER explicitly demanded that physical slot.\nE. The physical Picture limit applies to simultaneous ComfyUI inputs, not to the number of logical image assets across the whole project.\n\n4. Previous-generation screenshots use role "previous_generation_continuity". For a single-subject blocking screenshot, preserve that target's position/orientation relative to visible environment geometry; use the clean Environment to establish the complete location. Multiple separate one-shots may independently anchor different subjects in the same Environment. Do not treat continuity screenshots as clean Environment views merely because they show the location.\n5. Give continuity references explicit targets whenever they preserve subject blocking, object position, or appearance. continuity_type values: subject_blocking, object_position, environment_state, appearance_state, broad_scene.\n6. Use scale_reference only when extra relative-size guidance is genuinely needed. preserve_blocking is optional.\n7. In every Shot, opening_state describes the exact starting state; action describes what changes afterward.\n8. Presence values: on_screen, off_screen, not_present, auto. Use off_screen when a subject is audible/nearby but should not be visible.\n9. For ordered stages inside one continuous Shot, use timed_beats with stable ids and start_seconds/end_seconds relative to the Shot. Dialogue can bind to one Beat using timed_beat. Do not invent extra cuts merely to express timing.\n10. Camera fields are optional. Avoid over-constraining. If a push/zoom/pull remains a two-shot, normally leave movement_target omitted so the Composer follows the pair; set a single movement_target only when the camera should intentionally favor that one subject. Use view/angle/composition = "custom" only when the named choices truly do not fit, and then also provide custom_view, custom_angle, or custom_composition. The same rule applies to end_view/end_angle/end_composition with end_custom_view, end_custom_angle, and end_custom_composition.\n11. Dialogue supports speaker, speaker_name (for a narrator/custom speaker with no Subject), delivery, language, text, timed_beat, after_action, off_screen, voiceover, and cutoff. Preserve spoken wording exactly. Do not add <d> tags.\n12. sound_effects contains synchronized audible content for that Shot as natural sound prose, e.g. "soft kissing sounds and subtle clothing movement". Do not prefix it with "SFX:" or a field label. Put recurring ambience in overall_ambience. Use "N/A" for no audience-only music.\n13. Physical limits are Picture 1-${H3_LIMITS.img}, Video 1-${H3_LIMITS.vid}, Audio 1-${H3_LIMITS.aud}. Do not invent a fixed physical slot for persistent media from upload order alone. Environment views are the exception to fixed-slot thinking: route them into reusable legal Picture slots per the Environment Routing Rules above.\n14. If information is unknown, omit the optional field or use auto rather than fabricating details. User statements override visual inference.\n15. Filename guidance: P##/A##/V## denotes a physical slot only when intentionally used as that prefix. Prefer slot-independent names such as ENV03_BrokenBridge_V02_APPROACH.png for reusable Environment views. Treat ordinary upload order or labels like "image 10" as project-media identity, not physical slot routing. Inspect the actual media when available.\n16. Shot keys also support transition, additional_references, on_screen_text [{where,verb,text}], scale_reference, continuity_references, timed_beats, and sound_effects.\n17. Video roles: camera_reference, performance_reference, performance_and_camera, continuation_source, source_video_for_edit, source_video_for_subject_insertion, source_video_for_background_replacement_and_relighting, source_composite_for_relighting.\n18. Audio roles: voice, music, sfx, exact_dialogue, reuse. Picture roles: previous_generation_continuity, scale_reference, composition_anchor, storyboard_reference, wardrobe_reference, lighting_integration_reference, environment_state_reference, first_frame, keyframe, last_frame, edited_keyframe.\n19. Guided edit_workflow values: none, performance_transfer, insert_subject, background_relight, continuation. edit_settings may use source_video, target_subject, inserted_subject, performer, replacement_environment, lighting_reference, dialogue_treatment, placement, insert_action, source_audio_mode, preserve_audio, preserve_plate, use_occlusion, ground_subject, match_integration, stage, source_background_type, lighting_strength, lighting_details, preserve_performance, remove_spill, preserve_composite, preserve_subject_motion, preserve_camera_motion, preserve_environment, avoid_replay, handoff_notes.\n20. The interchange does not recreate the Composer's text-only height-rule list or multi-state appearance-transition history. Do not invent replacement keys. Append mode leaves the existing Composer data untouched; full replacement may require the user to re-enter it.
-21. The final H3 prompt has a hard ${H3_LIMITS.promptChars.toLocaleString()}-character ceiling per Generation. Keep project prose concise so the Composer has headroom: Subject identity descriptions should usually be one compact sentence; current_appearance one compact sentence; Environment descriptions one or two compact sentences; opening_state/action/Timed Beats should describe shot-specific state or change without re-stating full asset descriptions. Prefer enough detail to disambiguate over exhaustive prose.
-22. Do not silently drop an EXPLICIT user-specified physical media slot because it conflicts with the limits. Preserve explicit physical-slot conflicts so the Composer can report them. Do not apply this rule to logical Environment image numbering: those views should be remapped to legal reusable Environment slots instead of being discarded.\n\nCAMERA VALUES\nFraming: extreme_close_up, close_up, medium_close_up, medium, medium_wide, wide, extreme_wide, insert, two_shot, over_shoulder.\nView: front, front_3q_left, front_3q_right, left_profile, right_profile, rear_3q_left, rear_3q_right, behind, pov, custom.\nAngle: eye_level, slightly_low, low, ground, slightly_high, high, overhead, waist_level, chest_level, custom.\nComposition: centered, left_third, right_third, negative_left, negative_right, balanced_two, symmetrical, dirty_single, custom.\nMovement: static, push_in, pull_out, truck_left, truck_right, pan_left, pan_right, tilt_up, tilt_down, pedestal_up, pedestal_down, crane, dolly_diagonal, orbit, tracking, zoom_in, zoom_out, dolly_zoom, roll_clockwise, roll_counterclockwise, custom.\nSpeed: slow, normal, fast. Timing: after_opening_action, during_opening_action, during_dialogue, after_dialogue, throughout_shot. Stability: locked, smooth, subtle_handheld, strong_handheld, documentary, floating, auto. Custom companion fields: custom_view, custom_angle, custom_composition, end_custom_view, end_custom_angle, end_custom_composition.\n\n${aiNamingGuidance()}\n\nSCHEMA EXAMPLE\n${template}${current}`;
+    ? 'Set operation to "append_generations". Return only new assets and new Generations. Reference existing asset IDs exactly; do not repeat, rename, or redefine existing assets or Generations.'
+    : 'Set operation to "replace_project" and return the complete project that should exist after import.';
+  return `Prepare structured project data for H3 Prompt Composer. Do not write the final MiniMax/H3 prompt: the Composer generates its sections, reference labels, retention syntax, timestamps, dialogue tags, and camera prose.
+
+Return exactly one valid JSON object—no Markdown fence, preface, commentary, or trailing text. Use format "${AI_SETUP_FORMAT}", schema_version ${AI_SETUP_SCHEMA_VERSION}. ${operationRule}
+
+PROSE AND OWNERSHIP RULES
+1. Be precise and compact. Typical limits: Subject description 25–45 words in one sentence; Environment description 35–60 words in one or two sentences; current_appearance 15–35 words; opening_state 10–30 words; action 20–60 words; each Timed Beat one observable action sentence. Exceed these only when the user supplies essential detail.
+2. Write each Subject description as a complete visible noun phrase with its article when needed, for example "a massive carnivorous tyrannosaur with scarred olive-brown scales." Do not repeat that full appearance in opening_state, action, or Timed Beats.
+3. opening_state contains only the exact state at the first frame: positions, orientation, blocking, occlusion, and motion already underway. action contains only what changes afterward.
+4. When a camera object is present, it exclusively owns shot size, viewpoint, camera angle/height, composition, movement, lens, depth of field, focus, stability, and ending frame. Do not restate camera instructions in opening_state, action, Timed Beats, or summary.
+5. Dialogue delivery must be a complete grammatical phrase, such as "urgently, in a hushed voice" or "in an emotional whisper." Preserve dialogue wording exactly and do not add <d> tags.
+6. Preserve supplied names and capitalization exactly. Do not change JUNGLE CLEARING to title case or infer a real person's identity from an image.
+7. summary is optional. Omit it unless the user supplied or clearly needs a custom one. If included, write one short paragraph without a bracketed task-type prefix; the Composer adds that prefix.
+8. Put synchronized Shot sound in sound_effects as natural prose without "SFX:". Put recurring ambience in overall_ambience. Use music: "N/A" when no audience-only music is requested.
+9. Unknown optional information should be omitted or set to auto, never invented. User statements override visual inference.
+
+ASSETS, CONTINUITY, AND ROUTING
+10. Build one reusable Subject per character, creature, vehicle, or prop. A multi-view character sheet remains one Subject. current_appearance describes only the active wardrobe or temporary state. Preserve explicitly pinned Subject picture_slots across Generations.
+11. Group clean views of one location into one Environment. Each pictures item uses {slot, name, contribution}; name is a stable view identity and contribution is overall geography, alternate view, structural detail, lighting reference, or custom.
+12. Project-media identity is not a physical H3 slot. Only an intentional P##/V##/A## prefix or an explicit user statement declares a fixed slot. Physical limits are Picture 1-${H3_LIMITS.img}, Video 1-${H3_LIMITS.vid}, Audio 1-${H3_LIMITS.aud}.
+13. Environment routing is Generation-specific. Different Environments may reuse the same legal Picture slots because they are alternatives; simultaneous views inside one Environment must use unique slots. If no plan is supplied, use the lowest legal reusable slots that do not collide with fixed references. Remap logical Environment numbering rather than dropping views. Preserve explicit user-requested slot conflicts so the Composer can report them.
+14. Previous-generation screenshots use role previous_generation_continuity and explicit targets when preserving subject blocking, object position, or appearance. continuity_type is subject_blocking, object_position, environment_state, appearance_state, or broad_scene. Use the clean Environment for the complete location; do not reclassify a continuity screenshot as a clean Environment view.
+15. Use scale_reference only for necessary relative-size guidance. preserve_blocking is optional. Presence is on_screen, off_screen, not_present, or auto; off_screen means audible or nearby but not visible.
+16. For ordered stages within one continuous Shot, use timed_beats with unique stable ids and non-overlapping start_seconds/end_seconds relative to that Shot. Bind dialogue with timed_beat. Do not invent cuts to express beats.
+
+CAMERA AND WORKFLOW VALUES
+Framing: extreme_close_up, close_up, medium_close_up, medium, medium_wide, wide, extreme_wide, insert, two_shot, over_shoulder.
+View: front, front_3q_left, front_3q_right, left_profile, right_profile, rear_3q_left, rear_3q_right, behind, pov, custom.
+Angle: eye_level, slightly_low, low, ground, slightly_high, high, overhead, waist_level, chest_level, custom.
+Composition: centered, left_third, right_third, negative_left, negative_right, balanced_two, symmetrical, dirty_single, custom.
+Movement: static, push_in, pull_out, truck_left, truck_right, pan_left, pan_right, tilt_up, tilt_down, pedestal_up, pedestal_down, crane, dolly_diagonal, orbit, tracking, zoom_in, zoom_out, dolly_zoom, roll_clockwise, roll_counterclockwise, custom.
+Speed: slow, normal, fast. Timing: after_opening_action, during_opening_action, during_dialogue, after_dialogue, throughout_shot. Stability: locked, smooth, subtle_handheld, strong_handheld, documentary, floating, auto.
+Use custom_view/custom_angle/custom_composition only when the named choices do not fit. The corresponding end fields are end_custom_view/end_custom_angle/end_custom_composition. Camera fields are optional; avoid over-constraining. For a push, pull, or zoom that remains a two-shot, omit movement_target unless one Subject is intentionally favored.
+
+Dialogue keys: speaker, speaker_name, delivery, language, text, timed_beat, after_action, off_screen, voiceover, cutoff.
+Shot keys may also include transition, additional_references, on_screen_text [{where,verb,text}], scale_reference, continuity_references, timed_beats, and sound_effects.
+Picture roles: previous_generation_continuity, scale_reference, composition_anchor, storyboard_reference, wardrobe_reference, lighting_integration_reference, environment_state_reference, first_frame, keyframe, last_frame, edited_keyframe.
+Video roles: camera_reference, performance_reference, performance_and_camera, continuation_source, source_video_for_edit, source_video_for_subject_insertion, source_video_for_background_replacement_and_relighting, source_composite_for_relighting.
+Audio roles: voice, music, sfx, exact_dialogue, reuse.
+edit_workflow: none, performance_transfer, insert_subject, background_relight, continuation. Use only the edit_settings keys shown in the schema/current project. The interchange does not recreate text-only height rules or multi-state appearance-transition history; do not invent replacement keys.
+
+The final prompt has a hard ${H3_LIMITS.promptChars.toLocaleString()}-character ceiling per Generation. Prefer enough detail to disambiguate, not exhaustive repetition.
+
+${aiNamingGuidance()}
+
+SCHEMA EXAMPLE
+${template}${current}`;
 }
 async function copyAISetupInstructions(ev,mode='new'){const ok=await writeClipboard(aiSetupInstructions(mode));const msg=mode==='append'?'Copied next-Generation context':mode==='full'?'Copied full project':'Copied instructions';flashButton(ev&&ev.currentTarget,ok?msg:'Copy failed',ok?1500:1800);}
 function downloadAIStarterTemplate(){const blob=new Blob([JSON.stringify(aiStarterTemplate(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='H3_Prompt_Composer_AI_Setup_Template_v4.json';a.click();URL.revokeObjectURL(a.href);}
@@ -5221,21 +5338,94 @@ function aiAppendGenerations(raw,resolved){
   S.clips.push(...appended);S.active=oldCount;S.wired={img:Math.max(Number(S.wired?.img||0),Number(temp.wired?.img||0)),vid:Math.max(Number(S.wired?.vid||0),Number(temp.wired?.vid||0)),aud:Math.max(Number(S.wired?.aud||0),Number(temp.wired?.aud||0))};S.taskTypes=[...new Set([...(S.taskTypes||[]),...(temp.taskTypes||[])])].filter(x=>TASK_TYPES.includes(x));S.version=APP_VERSION;S=migrate(S);resetDerivedCaches();
 }
 function validateAIImport(o){
-  const errors=[],warnings=[];if(!o||typeof o!=='object')return {errors:['Top-level JSON must be an object.'],warnings,summary:null};
-  if(o.format!==AI_SETUP_FORMAT)errors.push(`format must be \"${AI_SETUP_FORMAT}\".`);const sv=Number(o.schema_version);if(![1,2,3,AI_SETUP_SCHEMA_VERSION].includes(sv))errors.push(`schema_version must be 1, 2, 3, or ${AI_SETUP_SCHEMA_VERSION}.`);
-  if(Number(o.schema_version)>=4&&!['replace_project','append_generations'].includes(o.operation))errors.push('schema v4 operation must be \"replace_project\" or \"append_generations\".');
-  const assets=o.assets&&typeof o.assets==='object'?o.assets:{};const groups=['subjects','environments','pictures','audio','videos'];const ids=new Map();
-  groups.forEach(g=>(Array.isArray(assets[g])?assets[g]:[]).forEach((x,i)=>{const id=aiNormalizeId(x&&x.id);if(!id)errors.push(`${g}[${i}] is missing id.`);else if(ids.has(id))errors.push(`Duplicate asset id "${id}".`);else ids.set(id,{group:g,item:x});}));
-  const picSlots=[],audSlots=[],vidSlots=[];const slot=(n,kind,label,max,arr)=>{if(n==null||n==='')return;const x=Number(n);if(!Number.isInteger(x)||x<1||x>max)errors.push(`${label} has invalid ${kind} slot ${n}; allowed 1-${max}.`);else arr.push(x);};
-  (assets.subjects||[]).forEach(x=>{(x.picture_slots||[]).forEach(n=>slot(n,'Picture',x.id,H3_LIMITS.img,picSlots));(x.video_slots||[]).forEach(n=>slot(n,'Video',x.id,H3_LIMITS.vid,vidSlots));if(!String(x.description||'').trim())warnings.push(`${x.id}: Subject description is blank; ask the LLM/user to describe the visible reference.`);});
-  (assets.environments||[]).forEach(x=>{const local=new Set();(x.pictures||[]).forEach((p,i)=>{const raw=typeof p==='object'?p.slot:p;slot(raw,'Picture',x.id,H3_LIMITS.img,picSlots);const n=Number(raw);if(Number.isInteger(n)&&n>0&&n<=H3_LIMITS.img){if(local.has(n))errors.push(`${x.id}: multiple views inside this Environment use Picture ${n}. Views connected together for one Environment need unique physical slots.`);local.add(n);}});if(!String(x.description||'').trim())warnings.push(`${x.id}: Environment description is blank.`);});
-  (assets.pictures||[]).forEach(x=>slot(x.slot,'Picture',x.id,H3_LIMITS.img,picSlots));(assets.audio||[]).forEach(x=>slot(x.slot,'Audio',x.id,H3_LIMITS.aud,audSlots));(assets.videos||[]).forEach(x=>slot(x.slot,'Video',x.id,H3_LIMITS.vid,vidSlots));const explicitAudioSlots=new Map();(assets.audio||[]).forEach(x=>{const n=Number(x.slot);if(Number.isInteger(n)&&n>0){if(explicitAudioSlots.has(n))warnings.push(`${x.id}: Audio slot ${n} is also used by ${explicitAudioSlots.get(n)}; the importer will reassign one of them.`);else explicitAudioSlots.set(n,x.id);}});
-  (assets.pictures||[]).forEach(x=>{(x.targets||[]).forEach(id=>{if(!ids.get(String(id))||ids.get(String(id)).group!=='subjects')errors.push(`${x.id}: unknown target Subject \"${id}\".`);});if(x.target&&(!ids.get(String(x.target))||ids.get(String(x.target)).group!=='subjects'))errors.push(`${x.id}: unknown target Subject \"${x.target}\".`);});(assets.audio||[]).forEach(x=>{if(x.subject&&(!ids.get(String(x.subject))||ids.get(String(x.subject)).group!=='subjects'))errors.push(`${x.id}: unknown bound Subject \"${x.subject}\".`);});
-  const gens=Array.isArray(o.generations)?o.generations:[];if(!gens.length)errors.push('At least one generation is required.');let shotCount=0;
-  const get=id=>ids.get(aiNormalizeId(id));
-  gens.forEach((g,gi)=>{const wf=g.edit_workflow||'none',es=g.edit_settings||{};if(!['none','performance_transfer','insert_subject','background_relight','continuation'].includes(wf))errors.push(`Generation ${gi+1}: unknown edit_workflow \"${wf}\".`);const need=(key,group)=>{if(es[key]&&(!get(es[key])||get(es[key]).group!==group))errors.push(`Generation ${gi+1}: edit_settings.${key} references unknown ${group} asset \"${es[key]}\".`);};if(wf==='performance_transfer'){need('target_subject','subjects');need('source_video','videos');}if(wf==='insert_subject'){need('inserted_subject','subjects');need('source_video','videos');}if(wf==='background_relight'){need('performer','subjects');need('replacement_environment','environments');need('source_video','videos');if(es.lighting_reference)need('lighting_reference','pictures');}if(wf==='continuation')need('source_video','videos');const shots=Array.isArray(g.shots)?g.shots:[];if(!shots.length)errors.push(`Generation ${gi+1} has no shots.`);shotCount+=shots.length;let last=-1;shots.forEach((sh,si)=>{const p=`Generation ${gi+1} Shot ${si+1}`;if(sh.environment&&!get(sh.environment))errors.push(`${p}: unknown environment id "${sh.environment}".`);if(sh.environment&&get(sh.environment)?.group!=='environments')errors.push(`${p}: "${sh.environment}" is not an Environment asset.`);Object.keys(sh.presence||{}).forEach(id=>{if(!get(id)||get(id).group!=='subjects')errors.push(`${p}: presence references unknown Subject "${id}".`);});(sh.continuity_references||[]).forEach(id=>{const x=get(id);if(!x||x.group!=='pictures'||x.item.role!=='previous_generation_continuity')errors.push(`${p}: continuity reference "${id}" is missing or has the wrong role.`);});if(sh.scale_reference){const x=get(sh.scale_reference);if(!x||x.group!=='pictures'||x.item.role!=='scale_reference')errors.push(`${p}: scale_reference "${sh.scale_reference}" is missing or not a scale_reference.`);}const c=sh.camera||{};['primary','secondary','movement_target','end_primary','end_secondary'].forEach(k=>{if(c[k]&&(!get(c[k])||!['subjects','environments'].includes(get(c[k]).group)))errors.push(`${p}: camera.${k} references unknown visual asset "${c[k]}".`);});const beatIds=new Set();(sh.timed_beats||[]).forEach((b,bi)=>{const id=String(b.id||`beat_${bi+1}`);if(beatIds.has(id))errors.push(`${p}: duplicate Timed Beat id "${id}".`);beatIds.add(id);});(sh.dialogue||[]).forEach((d,di)=>{if(d.speaker&&(!get(d.speaker)||get(d.speaker).group!=='subjects'))errors.push(`${p} dialogue ${di+1}: unknown speaker "${d.speaker}".`);if(d.timed_beat&&!beatIds.has(String(d.timed_beat)))errors.push(`${p} dialogue ${di+1}: timed_beat "${d.timed_beat}" does not match a Timed Beat id in this Shot.`);});if(si>0&&sh.cut_time_seconds!=null){const t=Number(sh.cut_time_seconds),dur=Number(o.project?.duration_seconds||10);if(!Number.isFinite(t)||t<=0||t<=last)errors.push(`${p}: cut_time_seconds must be greater than zero and strictly increase.`);else if(t>=dur)errors.push(`${p}: cut_time_seconds must be earlier than the target duration (${dur}s).`);else last=t;}(sh.timed_beats||[]).forEach((b,bi)=>{const a=Number(b.start_seconds),z=Number(b.end_seconds);if(!Number.isFinite(a)||!Number.isFinite(z)||a<0||z<=a)errors.push(`${p} timed beat ${bi+1}: use non-negative start_seconds and end_seconds greater than start_seconds.`);});});});
-  (assets.pictures||[]).filter(x=>x.role==='previous_generation_continuity'&&['subject_blocking','object_position','appearance_state'].includes(x.continuity_type||'subject_blocking')&&!(x.targets||[]).length).forEach(x=>warnings.push(`${x.id}: continuity reference should identify target Subjects/objects.`));
-  const maxPic=aiMaxSlot(picSlots),maxAud=aiMaxSlot(audSlots),maxVid=aiMaxSlot(vidSlots);return {errors,warnings,summary:{subjects:(assets.subjects||[]).length,environments:(assets.environments||[]).length,pictures:(assets.pictures||[]).length,audio:(assets.audio||[]).length,videos:(assets.videos||[]).length,generations:gens.length,shots:shotCount,maxPic,maxAud,maxVid}};
+  const errors=[],warnings=[],isObject=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
+  if(!isObject(o))return {errors:['Top-level JSON must be an object.'],warnings,summary:null};
+  const pathLabel=(path,key)=>path?`${path}.${key}`:key;
+  const stringField=(obj,key,path,required=false)=>{
+    const v=obj?.[key],label=pathLabel(path,key);
+    if(v===undefined||v===null){if(required)errors.push(`${label} is required and must be a string.`);return '';}
+    if(typeof v!=='string'){errors.push(`${label} must be a string.`);return '';}
+    if(required&&!v.trim())errors.push(`${label} must not be blank.`);
+    return v;
+  };
+  const numberField=(obj,key,path,{required=false,allowNull=false}={})=>{
+    const v=obj?.[key],label=pathLabel(path,key);
+    if(v===undefined||(allowNull&&v===null)){if(required&&v===undefined)errors.push(`${label} is required and must be a number.`);return null;}
+    if(typeof v!=='number'||!Number.isFinite(v)){errors.push(`${label} must be a finite number${allowNull?' or null':''}.`);return null;}
+    return v;
+  };
+  const booleanField=(obj,key,path)=>{const v=obj?.[key];if(v!==undefined&&typeof v!=='boolean')errors.push(`${pathLabel(path,key)} must be true or false.`);};
+  const arrayField=(obj,key,path,{required=false}={})=>{
+    const v=obj?.[key],label=pathLabel(path,key);
+    if(v===undefined){if(required)errors.push(`${label} is required and must be an array.`);return [];}
+    if(!Array.isArray(v)){errors.push(`${label} must be an array.`);return [];}
+    return v;
+  };
+  const objectField=(obj,key,path,{required=false}={})=>{
+    const v=obj?.[key],label=pathLabel(path,key);
+    if(v===undefined){if(required)errors.push(`${label} is required and must be an object.`);return {};}
+    if(!isObject(v)){errors.push(`${label} must be an object.`);return {};}
+    return v;
+  };
+  const enumField=(obj,key,path,allowed,{allowBlank=true}={})=>{
+    const v=obj?.[key];if(v===undefined||(allowBlank&&v===''))return '';
+    if(typeof v!=='string'){errors.push(`${pathLabel(path,key)} must be a string.`);return '';}
+    if(!allowed.includes(v))errors.push(`${pathLabel(path,key)} has unknown value "${v}".`);
+    return v;
+  };
+  const stringArray=(obj,key,path)=>arrayField(obj,key,path).map((v,i)=>{if(typeof v!=='string')errors.push(`${pathLabel(path,key)}[${i}] must be a string.`);return typeof v==='string'?v:'';}).filter(Boolean);
+
+  if(o.format!==AI_SETUP_FORMAT)errors.push(`format must be "${AI_SETUP_FORMAT}".`);
+  const sv=Number(o.schema_version);if(![1,2,3,AI_SETUP_SCHEMA_VERSION].includes(sv))errors.push(`schema_version must be 1, 2, 3, or ${AI_SETUP_SCHEMA_VERSION}.`);
+  if(Number(o.schema_version)>=4&&!['replace_project','append_generations'].includes(o.operation))errors.push('schema v4 operation must be "replace_project" or "append_generations".');
+
+  const project=objectField(o,'project','',{required:true});
+  enumField(project,'mode','project',Object.keys(MODES),{allowBlank:false});
+  const duration=numberField(project,'duration_seconds','project',{required:true});if(duration!==null&&(duration<TARGET_DURATION.min||duration>TARGET_DURATION.max))errors.push(`project.duration_seconds must be between ${TARGET_DURATION.min} and ${TARGET_DURATION.max}.`);
+  stringField(project,'style','project');
+  const taskTypes=arrayField(project,'task_types','project');taskTypes.forEach((v,i)=>{if(typeof v!=='string')errors.push(`project.task_types[${i}] must be a string.`);else if(!TASK_TYPES.includes(v))errors.push(`project.task_types[${i}] has unknown value "${v}".`);});
+
+  const assets=objectField(o,'assets','',{required:true}),groups=aiAssetGroups(),assetLists={},ids=new Map();
+  groups.forEach(group=>{
+    const list=arrayField(assets,group,'assets');assetLists[group]=[];
+    list.forEach((item,i)=>{const path=`assets.${group}[${i}]`;if(!isObject(item)){errors.push(`${path} must be an object.`);return;}assetLists[group].push(item);const id=stringField(item,'id',path,true).trim();if(!id)return;if(ids.has(id))errors.push(`Duplicate asset id "${id}".`);else ids.set(id,{group,item});});
+  });
+  const picSlots=[],audSlots=[],vidSlots=[];
+  const slot=(value,kind,label,max,arr,{required=false}={})=>{if(value===undefined||value===null||value===''){if(required)errors.push(`${label} is missing its ${kind} slot.`);return;}if(typeof value!=='number'||!Number.isInteger(value)||value<1||value>max)errors.push(`${label} has invalid ${kind} slot ${String(value)}; allowed 1-${max}.`);else arr.push(value);};
+  const subjectTypes=['character','creature','vehicle','object','other'],subjectContributions=['character_sheet','wardrobe'];
+  assetLists.subjects.forEach((x,i)=>{const path=`assets.subjects[${i}]`;stringField(x,'name',path);stringField(x,'description',path);stringField(x,'current_appearance',path);enumField(x,'type',path,subjectTypes);enumField(x,'reference_contribution',path,subjectContributions);arrayField(x,'picture_slots',path).forEach((n,j)=>slot(n,'Picture',`${path}.picture_slots[${j}]`,H3_LIMITS.img,picSlots));arrayField(x,'video_slots',path).forEach((n,j)=>slot(n,'Video',`${path}.video_slots[${j}]`,H3_LIMITS.vid,vidSlots));if(!String(x.description||'').trim())warnings.push(`${x.id}: Subject description is blank; describe the visible reference.`);});
+  const environmentContributions=['overall geography','alternate view','structural detail','lighting reference','custom'];
+  assetLists.environments.forEach((x,i)=>{const path=`assets.environments[${i}]`,local=new Set();stringField(x,'name',path);stringField(x,'description',path);arrayField(x,'pictures',path).forEach((p,j)=>{const pth=`${path}.pictures[${j}]`;if(typeof p==='number'){slot(p,'Picture',pth,H3_LIMITS.img,picSlots,{required:true});if(local.has(p))errors.push(`${x.id}: multiple Environment views use Picture ${p}.`);local.add(p);return;}if(!isObject(p)){errors.push(`${pth} must be an object with slot, name, and contribution.`);return;}slot(p.slot,'Picture',pth,H3_LIMITS.img,picSlots,{required:true});stringField(p,'name',pth);enumField(p,'contribution',pth,environmentContributions);const n=p.slot;if(Number.isInteger(n)&&n>0&&n<=H3_LIMITS.img){if(local.has(n))errors.push(`${x.id}: multiple Environment views use Picture ${n}.`);local.add(n);}});if(!String(x.description||'').trim())warnings.push(`${x.id}: Environment description is blank.`);});
+  const pictureRoles=['previous_generation_continuity','scale_reference','composition_anchor','storyboard_reference','wardrobe_reference','lighting_integration_reference','environment_state_reference','first_frame','keyframe','last_frame','edited_keyframe'];
+  assetLists.pictures.forEach((x,i)=>{const path=`assets.pictures[${i}]`;slot(x.slot,'Picture',path,H3_LIMITS.img,picSlots,{required:true});stringField(x,'name',path);stringField(x,'details',path);enumField(x,'role',path,pictureRoles,{allowBlank:false});enumField(x,'continuity_type',path,['subject_blocking','object_position','environment_state','appearance_state','broad_scene']);stringArray(x,'targets',path);stringField(x,'target',path);booleanField(x,'preserve_framing',path);booleanField(x,'preserve_blocking',path);});
+  const audioRoles=['voice','music','sfx','exact_dialogue','reuse'];
+  assetLists.audio.forEach((x,i)=>{const path=`assets.audio[${i}]`;slot(x.slot,'Audio',path,H3_LIMITS.aud,audSlots,{required:true});stringField(x,'name',path);stringField(x,'details',path);stringField(x,'subject',path);enumField(x,'role',path,audioRoles,{allowBlank:false});if(x.duration_seconds!==undefined)numberField(x,'duration_seconds',path);});
+  const videoRoles=['camera_reference','performance_reference','performance_and_camera','continuation_source','source_video_for_edit','source_video_for_subject_insertion','source_video_for_background_replacement_and_relighting','source_composite_for_relighting'];
+  assetLists.videos.forEach((x,i)=>{const path=`assets.videos[${i}]`;slot(x.slot,'Video',path,H3_LIMITS.vid,vidSlots,{required:true});stringField(x,'name',path);stringField(x,'details',path);enumField(x,'role',path,videoRoles,{allowBlank:false});if(x.duration_seconds!==undefined)numberField(x,'duration_seconds',path);if(x.transfer_flags!==undefined){const flags=objectField(x,'transfer_flags',path);Object.entries(flags).forEach(([k,v])=>{if(!['transferFacial','transferMouth','transferHead','transferEyeline','transferUpperBody','transferFullBody','transferCamera'].includes(k))warnings.push(`${path}.transfer_flags.${k} is not a recognized transfer flag.`);if(typeof v!=='boolean')errors.push(`${path}.transfer_flags.${k} must be true or false.`);});}});
+
+  const explicitAudioSlots=new Map();assetLists.audio.forEach(x=>{const n=x.slot;if(Number.isInteger(n)&&n>0){if(explicitAudioSlots.has(n))warnings.push(`${x.id}: Audio slot ${n} is also used by ${explicitAudioSlots.get(n)}; assign unique simultaneous Audio slots.`);else explicitAudioSlots.set(n,x.id);}});
+  const get=id=>ids.get(typeof id==='string'?id.trim():'');
+  assetLists.pictures.forEach(x=>{stringArray(x,'targets',`asset ${x.id}`).forEach(id=>{if(!get(id)||get(id).group!=='subjects')errors.push(`${x.id}: unknown target Subject "${id}".`);});if(x.target&&(!get(x.target)||get(x.target).group!=='subjects'))errors.push(`${x.id}: unknown target Subject "${x.target}".`);});
+  assetLists.audio.forEach(x=>{if(x.subject&&(!get(x.subject)||get(x.subject).group!=='subjects'))errors.push(`${x.id}: unknown bound Subject "${x.subject}".`);});
+
+  const gens=arrayField(o,'generations','',{required:true});if(!gens.length)errors.push('At least one generation is required.');let shotCount=0;
+  const cameraEnums={framing:enumValues(CAM_FRAMINGS).filter(Boolean),view:enumValues(CAM_VIEWPOINTS).filter(Boolean),angle:enumValues(CAM_ANGLES).filter(Boolean),composition:enumValues(CAM_COMPOSITIONS).filter(Boolean),movement:['static','push_in','pull_out','truck_left','truck_right','pan_left','pan_right','tilt_up','tilt_down','pedestal_up','pedestal_down','crane','dolly_diagonal','orbit','tracking','zoom_in','zoom_out','dolly_zoom','roll_clockwise','roll_counterclockwise','custom'],speed:['slow','normal','fast'],timing:enumValues(CAM_TIMINGS),stability:[...enumValues(CAM_STABILITY).filter(Boolean),'auto'],lens:enumValues(CAM_LENSES).filter(Boolean),depth_of_field:enumValues(CAM_DOF).filter(Boolean),end_framing:enumValues(CAM_FRAMINGS).filter(Boolean),end_view:enumValues(CAM_VIEWPOINTS).filter(Boolean),end_angle:enumValues(CAM_ANGLES).filter(Boolean),end_composition:enumValues(CAM_COMPOSITIONS).filter(Boolean),track_relationship:['lead_front','follow_behind','side_left','side_right','front_3q','rear_3q','free'],orbit_direction:['clockwise','counterclockwise']};
+  gens.forEach((g,gi)=>{const gp=`generations[${gi}]`;if(!isObject(g)){errors.push(`${gp} must be an object.`);return;}stringField(g,'name',gp);stringField(g,'summary',gp);stringField(g,'overall_ambience',gp);stringField(g,'additional_ambience',gp);stringField(g,'music',gp);if(g.summary&&summaryWithoutTaskPrefix(g.summary)!==g.summary.trim())warnings.push(`Generation ${gi+1}: omit the bracketed task-type prefix from summary; the Composer adds it automatically.`);const wf=enumField(g,'edit_workflow',gp,['none','performance_transfer','insert_subject','background_relight','continuation'])||'none',es=g.edit_settings===undefined?{}:objectField(g,'edit_settings',gp);const need=(key,group)=>{if(es[key]!==undefined)stringField(es,key,`${gp}.edit_settings`);if(es[key]&&(!get(es[key])||get(es[key]).group!==group))errors.push(`Generation ${gi+1}: edit_settings.${key} references unknown ${group} asset "${es[key]}".`);};if(wf==='performance_transfer'){need('target_subject','subjects');need('source_video','videos');}if(wf==='insert_subject'){need('inserted_subject','subjects');need('source_video','videos');}if(wf==='background_relight'){need('performer','subjects');need('replacement_environment','environments');need('source_video','videos');if(es.lighting_reference)need('lighting_reference','pictures');}if(wf==='continuation')need('source_video','videos');
+    const shots=arrayField(g,'shots',gp,{required:true});if(!shots.length)errors.push(`Generation ${gi+1} has no shots.`);shotCount+=shots.length;let last=-1;
+    shots.forEach((sh,si)=>{const p=`Generation ${gi+1} Shot ${si+1}`,sp=`${gp}.shots[${si}]`;if(!isObject(sh)){errors.push(`${sp} must be an object.`);return;}if(sh.cut_time_seconds!==undefined)numberField(sh,'cut_time_seconds',sp,{allowNull:true});stringField(sh,'environment',sp);stringField(sh,'opening_state',sp);stringField(sh,'action',sp);stringField(sh,'sound_effects',sp);if(sh.transition!==undefined)enumField(sh,'transition',sp,CUT_VERBS);if(sh.environment&&!get(sh.environment))errors.push(`${p}: unknown environment id "${sh.environment}".`);else if(sh.environment&&get(sh.environment)?.group!=='environments')errors.push(`${p}: "${sh.environment}" is not an Environment asset.`);
+      const presence=sh.presence===undefined?{}:objectField(sh,'presence',sp);Object.entries(presence).forEach(([id,v])=>{if(!get(id)||get(id).group!=='subjects')errors.push(`${p}: presence references unknown Subject "${id}".`);if(typeof v!=='string'||!['on_screen','off_screen','not_present','auto'].includes(v))errors.push(`${p}: presence.${id} must be on_screen, off_screen, not_present, or auto.`);});
+      const continuity=stringArray(sh,'continuity_references',sp);continuity.forEach(id=>{const x=get(id);if(!x||x.group!=='pictures'||x.item.role!=='previous_generation_continuity')errors.push(`${p}: continuity reference "${id}" is missing or has the wrong role.`);});
+      stringField(sh,'scale_reference',sp);if(sh.scale_reference){const x=get(sh.scale_reference);if(!x||x.group!=='pictures'||x.item.role!=='scale_reference')errors.push(`${p}: scale_reference "${sh.scale_reference}" is missing or not a scale_reference.`);}
+      stringArray(sh,'additional_references',sp).forEach(id=>{const x=get(id);if(!x||!['pictures','audio','videos'].includes(x.group))errors.push(`${p}: additional reference "${id}" is unknown or not a Picture, Audio, or Video asset.`);});
+      const c=sh.camera===undefined?{}:objectField(sh,'camera',sp);Object.entries(cameraEnums).forEach(([key,allowed])=>enumField(c,key,`${sp}.camera`,allowed));['primary','secondary','movement_target','end_primary','end_secondary'].forEach(k=>{if(c[k]!==undefined)stringField(c,k,`${sp}.camera`);if(c[k]&&(!get(c[k])||!['subjects','environments'].includes(get(c[k]).group)))errors.push(`${p}: camera.${k} references unknown visual asset "${c[k]}".`);});['custom_view','custom_angle','custom_composition','custom_target','custom_movement','end_custom_view','end_custom_angle','end_custom_composition','reveal'].forEach(k=>stringField(c,k,`${sp}.camera`));
+      const beatIds=new Set(),beats=arrayField(sh,'timed_beats',sp);beats.forEach((b,bi)=>{const bp=`${sp}.timed_beats[${bi}]`;if(!isObject(b)){errors.push(`${bp} must be an object.`);return;}const id=stringField(b,'id',bp,true)||`beat_${bi+1}`;numberField(b,'start_seconds',bp,{required:true});numberField(b,'end_seconds',bp,{required:true});stringField(b,'action',bp);if(beatIds.has(id))errors.push(`${p}: duplicate Timed Beat id "${id}".`);beatIds.add(id);const a=b.start_seconds,z=b.end_seconds;if(typeof a==='number'&&typeof z==='number'&&(a<0||z<=a))errors.push(`${p} timed beat ${bi+1}: use non-negative start_seconds and end_seconds greater than start_seconds.`);});
+      arrayField(sh,'dialogue',sp).forEach((d,di)=>{const dp=`${sp}.dialogue[${di}]`;if(!isObject(d)){errors.push(`${dp} must be an object.`);return;}['speaker','speaker_name','delivery','language','text','timed_beat','after_action'].forEach(k=>stringField(d,k,dp));['off_screen','voiceover','cutoff'].forEach(k=>booleanField(d,k,dp));if(d.speaker&&(!get(d.speaker)||get(d.speaker).group!=='subjects'))errors.push(`${p} dialogue ${di+1}: unknown speaker "${d.speaker}".`);if(d.timed_beat&&!beatIds.has(d.timed_beat))errors.push(`${p} dialogue ${di+1}: timed_beat "${d.timed_beat}" does not match a Timed Beat id in this Shot.`);});
+      arrayField(sh,'on_screen_text',sp).forEach((t,ti)=>{const tp=`${sp}.on_screen_text[${ti}]`;if(!isObject(t)){errors.push(`${tp} must be an object.`);return;}['where','verb','text'].forEach(k=>stringField(t,k,tp));});
+      if(si>0&&sh.cut_time_seconds!=null&&typeof sh.cut_time_seconds==='number'){const t=sh.cut_time_seconds,dur=typeof project.duration_seconds==='number'?project.duration_seconds:10;if(t<=0||t<=last)errors.push(`${p}: cut_time_seconds must be greater than zero and strictly increase.`);else if(t>=dur)errors.push(`${p}: cut_time_seconds must be earlier than the target duration (${dur}s).`);else last=t;}
+    });
+  });
+  assetLists.pictures.filter(x=>x.role==='previous_generation_continuity'&&['subject_blocking','object_position','appearance_state'].includes(x.continuity_type||'subject_blocking')&&(!Array.isArray(x.targets)||!x.targets.length)).forEach(x=>warnings.push(`${x.id}: continuity reference should identify target Subjects/objects.`));
+  const maxPic=aiMaxSlot(picSlots),maxAud=aiMaxSlot(audSlots),maxVid=aiMaxSlot(vidSlots);return {errors,warnings,summary:{subjects:assetLists.subjects.length,environments:assetLists.environments.length,pictures:assetLists.pictures.length,audio:assetLists.audio.length,videos:assetLists.videos.length,generations:gens.length,shots:shotCount,maxPic,maxAud,maxVid}};
 }
 function parseAISetupText(text){let t=String(text||'').trim();t=t.replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'').trim();try{return JSON.parse(t);}catch(first){const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a>=0&&b>a){try{return JSON.parse(t.slice(a,b+1));}catch(second){throw new Error('Could not find exactly one valid JSON object. Remove extra JSON objects or surrounding malformed text, then try again.');}}throw first;}}
 function preflightAIImportedProject(obj,appendRaw=null){
@@ -5251,12 +5441,13 @@ function previewAIImport(){
   clearTimeout(__aiPreviewTimer);const ta=document.getElementById('aiImportText'),out=document.getElementById('aiImportPreview'),btn=document.getElementById('aiApplyBtn');__aiPendingImport=null;__aiPendingPromptIssues=[];if(btn){btn.disabled=true;btn.textContent='Import project';}let obj;
   try{obj=parseAISetupText(ta.value);}catch(e){out.innerHTML=`<div class="errline"><b>Invalid JSON:</b> ${esc(e.message)}</div>`;if(btn){btn.disabled=!String(ta.value||'').trim();btn.textContent='Check import';}return;}
   const env=aiAppendEnvelopeIssues(obj),resolved=aiResolvedImportDocument(obj),v=validateAIImport(resolved),op=aiOperation(obj);v.errors.unshift(...env.errors);v.warnings.unshift(...env.warnings);
-  const rawG=Array.isArray(obj.generations)?obj.generations:[],rawShots=rawG.reduce((n,g)=>n+(Array.isArray(g.shots)?g.shots.length:0),0),newAssets=aiAssetGroups().reduce((n,g)=>n+(Array.isArray(obj.assets?.[g])?obj.assets[g].length:0),0),s=v.summary;
+  const rawG=Array.isArray(obj?.generations)?obj.generations:[],rawShots=rawG.reduce((n,g)=>n+(Array.isArray(g?.shots)?g.shots.length:0),0),newAssets=aiAssetGroups().reduce((n,g)=>n+(Array.isArray(obj?.assets?.[g])?obj.assets[g].length:0),0),s=v.summary;
   let h=`<div class="okline"><b>${op==='append_generations'?'Append new Generations':'Replace project'}</b></div>`;
   if(op==='append_generations')h+=`<div class="field-help">Will add ${rawG.length} Generation${rawG.length===1?'':'s'} · ${rawShots} Shot${rawShots===1?'':'s'} · ${newAssets} new asset${newAssets===1?'':'s'}. Existing Generations remain in place.</div>`;
   else if(s)h+=`<div class="field-help">${s.generations} Generation${s.generations===1?'':'s'} · ${s.shots} Shot${s.shots===1?'':'s'} · ${s.subjects} Subject${s.subjects===1?'':'s'} · ${s.environments} Environment${s.environments===1?'':'s'}. Required physical inputs: Pictures through ${s.maxPic||0} · Videos through ${s.maxVid||0} · Audio through ${s.maxAud||0}</div>`;
   v.errors.forEach(x=>h+=`<div class="errline">✕ ${esc(x)}</div>`);v.warnings.forEach(x=>h+=`<div class="warnline">⚠ ${esc(x)}</div>`);
   if(op==='replace_project'&&aiFidelityNoticeHTML())h+=aiFidelityNoticeHTML();
+  if(op==='replace_project'&&projectHasMeaningfulWork())h+=`<div class="field-help">This JSON replaces the whole project. To add new Generations to the current project instead, use <b>Copy next-Generation context</b> so the LLM returns an <b>append_generations</b> JSON.</div>`;
   let pre=[];if(!v.errors.length){pre=preflightAIImportedProject(resolved,op==='append_generations'?obj:null);pre.forEach(x=>{const fatal=x.kind==='fatal',promptErr=x.kind==='err';h+=`<div class="${fatal?'errline':'warnline'}">${fatal?'✕':'⚠'} ${x.generation?`Generation ${x.generation}: `:''}${promptErr?'Prompt Check: ':''}${esc(x.msg)}</div>`;});}
   const fatalPre=pre.filter(x=>x.kind==='fatal'),promptErrors=pre.filter(x=>x.kind==='err'),blocking=v.errors.length+fatalPre.length;
   if(!blocking){__aiPendingImport=obj;__aiPendingPromptIssues=pre;if(btn){btn.disabled=false;btn.textContent=promptErrors.length?'Import anyway':(op==='append_generations'?'Append Generation(s)':'Replace project');}if(promptErrors.length)h+=`<div class="warnline" style="margin-top:6px"><b>Import structure is valid.</b> ${promptErrors.length} Prompt Check error${promptErrors.length===1?'':'s'} will still need correction before those prompts are sent to H3. You may import now and fix them inside the Composer.</div>`;else h+=`<div class="okline" style="margin-top:6px">✓ Import structure is valid and the Composer's Prompt Check passes${pre.some(x=>x.kind==='warn')?' with warnings shown above':''}.</div>`;}else{if(btn){btn.disabled=false;btn.textContent='Re-check import';}h+=`<div class="errline" style="margin-top:6px">Fix the structural/conversion issues above before importing.</div>`;}out.innerHTML=h;
@@ -5402,7 +5593,11 @@ function loadExampleWorkflow(kind){
 
 function boot(){
   try{
-    const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_4')||localStorage.getItem('h3_prompt_composer_v5_18_3')||localStorage.getItem('h3_prompt_composer_v5_18_2')||localStorage.getItem('h3_prompt_composer_v5_18_0')||localStorage.getItem('h3_prompt_composer_v5_17_2')||localStorage.getItem('h3_prompt_composer_v5_17_1')||localStorage.getItem('h3_prompt_composer_v5_17_0')||localStorage.getItem('h3_prompt_composer_v5_16_1')||localStorage.getItem('h3_prompt_composer_v5_16_0')||localStorage.getItem('h3_prompt_composer_v5_15_1')||localStorage.getItem('h3_prompt_composer_v5_15_0')||localStorage.getItem('h3_prompt_composer_v5_14_3')||localStorage.getItem('h3_prompt_composer_v5_14_2')||localStorage.getItem('h3_prompt_composer_v5_14_1')||localStorage.getItem('h3_prompt_composer_v5_14_0')||localStorage.getItem('h3_prompt_composer_v5_13_0')||localStorage.getItem('h3_prompt_composer_v5_12_4')||localStorage.getItem('h3_prompt_composer_v5_12_3')||localStorage.getItem('h3_prompt_composer_v5_12_2')||localStorage.getItem('h3_prompt_composer_v5_12_1')||localStorage.getItem('h3_prompt_composer_v5_12_0')||localStorage.getItem('h3_prompt_composer_v5_11_1')||localStorage.getItem('h3_prompt_composer_v5_11_0')||localStorage.getItem('h3_prompt_composer_v5_10_6')||localStorage.getItem('h3_prompt_composer_v5_10_5')||localStorage.getItem('h3_prompt_composer_v5_10_4')||localStorage.getItem('h3_prompt_composer_v5_10_3')||localStorage.getItem('h3_prompt_composer_v5_10_2')||localStorage.getItem('h3_prompt_composer_v5_10_1')||localStorage.getItem('h3_prompt_composer_v5_10_0')||localStorage.getItem('h3_prompt_composer_v5_9_9')||localStorage.getItem('h3_prompt_composer_v5_9_8')||localStorage.getItem('h3_prompt_composer_v5_9_7')||localStorage.getItem('h3_prompt_composer_v5_9_6')||localStorage.getItem('h3_prompt_composer_v5_9_5')||localStorage.getItem('h3_prompt_composer_v5_9_4')||localStorage.getItem('h3_prompt_composer_v5_9_3')||localStorage.getItem('h3_prompt_composer_v5_9_2')||localStorage.getItem('h3_prompt_composer_v5_9_1')||localStorage.getItem('h3_prompt_composer_v5_9')||localStorage.getItem('h3_prompt_composer_v5_8_3')||localStorage.getItem('h3_prompt_composer_v5_8_2')||localStorage.getItem('h3_prompt_composer_v5_8_1')||localStorage.getItem('h3_prompt_composer_v5_8')||localStorage.getItem('h3_prompt_composer_v5_7_1')||localStorage.getItem('h3_prompt_composer_v5_7')||localStorage.getItem('h3_prompt_composer_v5_6')||localStorage.getItem('h3_prompt_composer_v5_5')||localStorage.getItem('h3_prompt_composer_v5_4')||localStorage.getItem('h3_prompt_composer_v5_3')||localStorage.getItem('h3_prompt_composer_v5_2')||localStorage.getItem('h3_prompt_composer_v5');
+    const priorProject=localStorage.getItem('h3_prompt_composer_v5_18_7')||localStorage.getItem('h3_prompt_composer_v5_18_6');
+    const priorBackup=localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup');
+    if(!localStorage.getItem(STORAGE_KEY)&&priorProject)localStorage.setItem(STORAGE_KEY,priorProject);
+    if(!localStorage.getItem(BACKUP_KEY)&&priorBackup)localStorage.setItem(BACKUP_KEY,priorBackup);
+    const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_5')||localStorage.getItem('h3_prompt_composer_v5_18_4')||localStorage.getItem('h3_prompt_composer_v5_18_3')||localStorage.getItem('h3_prompt_composer_v5_18_2')||localStorage.getItem('h3_prompt_composer_v5_18_1')||localStorage.getItem('h3_prompt_composer_v5_18_0')||localStorage.getItem('h3_prompt_composer_v5_17_2')||localStorage.getItem('h3_prompt_composer_v5_17_1')||localStorage.getItem('h3_prompt_composer_v5_17_0')||localStorage.getItem('h3_prompt_composer_v5_16_1')||localStorage.getItem('h3_prompt_composer_v5_16_0')||localStorage.getItem('h3_prompt_composer_v5_15_1')||localStorage.getItem('h3_prompt_composer_v5_15_0')||localStorage.getItem('h3_prompt_composer_v5_14_3')||localStorage.getItem('h3_prompt_composer_v5_14_2')||localStorage.getItem('h3_prompt_composer_v5_14_1')||localStorage.getItem('h3_prompt_composer_v5_14_0')||localStorage.getItem('h3_prompt_composer_v5_13_0')||localStorage.getItem('h3_prompt_composer_v5_12_4')||localStorage.getItem('h3_prompt_composer_v5_12_3')||localStorage.getItem('h3_prompt_composer_v5_12_2')||localStorage.getItem('h3_prompt_composer_v5_12_1')||localStorage.getItem('h3_prompt_composer_v5_12_0')||localStorage.getItem('h3_prompt_composer_v5_11_1')||localStorage.getItem('h3_prompt_composer_v5_11_0')||localStorage.getItem('h3_prompt_composer_v5_10_6')||localStorage.getItem('h3_prompt_composer_v5_10_5')||localStorage.getItem('h3_prompt_composer_v5_10_4')||localStorage.getItem('h3_prompt_composer_v5_10_3')||localStorage.getItem('h3_prompt_composer_v5_10_2')||localStorage.getItem('h3_prompt_composer_v5_10_1')||localStorage.getItem('h3_prompt_composer_v5_10_0')||localStorage.getItem('h3_prompt_composer_v5_9_9')||localStorage.getItem('h3_prompt_composer_v5_9_8')||localStorage.getItem('h3_prompt_composer_v5_9_7')||localStorage.getItem('h3_prompt_composer_v5_9_6')||localStorage.getItem('h3_prompt_composer_v5_9_5')||localStorage.getItem('h3_prompt_composer_v5_9_4')||localStorage.getItem('h3_prompt_composer_v5_9_3')||localStorage.getItem('h3_prompt_composer_v5_9_2')||localStorage.getItem('h3_prompt_composer_v5_9_1')||localStorage.getItem('h3_prompt_composer_v5_9')||localStorage.getItem('h3_prompt_composer_v5_8_3')||localStorage.getItem('h3_prompt_composer_v5_8_2')||localStorage.getItem('h3_prompt_composer_v5_8_1')||localStorage.getItem('h3_prompt_composer_v5_8')||localStorage.getItem('h3_prompt_composer_v5_7_1')||localStorage.getItem('h3_prompt_composer_v5_7')||localStorage.getItem('h3_prompt_composer_v5_6')||localStorage.getItem('h3_prompt_composer_v5_5')||localStorage.getItem('h3_prompt_composer_v5_4')||localStorage.getItem('h3_prompt_composer_v5_3')||localStorage.getItem('h3_prompt_composer_v5_2')||localStorage.getItem('h3_prompt_composer_v5');
     if(raw) S=migrate(JSON.parse(raw));
     else S=migrate(S);
   }catch(e){S=migrate(S);}
