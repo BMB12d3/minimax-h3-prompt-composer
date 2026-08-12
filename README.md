@@ -19,6 +19,9 @@ V5.18.8 is a pre-publication bug-fix release built from a full headless audit of
 - A standalone Picture that shares a physical slot with an active Environment view in the same Generation now raises a clear Prompt Check warning instead of a soft note.
 - The AI Setup import panel now explains that the JSON's `operation` field decides replace vs. append, renames Preview import to **Re-check import**, and points to **Copy next-Generation context** when a replace JSON is pasted over an existing project.
 - Automatic summaries fix a singular/plural slip ("preserves"), and Restore previous now includes the V5.18.6/V5.18.7 backup keys.
+- Custom camera overrides no longer trigger a recursive derived-state crash that could freeze Generation tabs and copy controls.
+- Frame Grabber's **Copy filename** action and live Environment view-name editing now use the correct shared helpers.
+- Internal failures now surface in a dismissible error bar with a copyable diagnostic report, while independent interface sections keep rendering.
 
 All six built-in example prompts are byte-identical to V5.18.7. Full details in the [V5.18.8 changelog](H3_Prompt_Composer_V5_18_8_CHANGELOG.md).
 
@@ -47,7 +50,7 @@ V5.18.5 formalized the difference between a persistent project-media identity an
 - Existing projects retain their current wiring during migration; V5.18.6 never silently rewires them.
 - The V5.18.5 routing work preserved all six built-in workflow prompts byte-for-byte relative to V5.18.4.
 
-The full compatibility and QA notes are in the [V5.18.8 changelog](H3_Prompt_Composer_V5_18_8_CHANGELOG.md) and the [V5.18.7 changelog](H3_Prompt_Composer_V5_18_7_CHANGELOG.md).
+The full compatibility and QA notes are in the [V5.18.8 changelog](H3_Prompt_Composer_V5_18_8_CHANGELOG.md).
 
 ## What It Supports
 
@@ -275,8 +278,8 @@ The complete application source is contained in the HTML file and can be inspect
 
 ## Documentation
 
-- **[Full V5.18.6 User Guide](H3_Prompt_Composer_V5_18_6_User_Guide.pdf)** - current workflow reference; its workflow guidance remains compatible with V5.18.8.
-- **[V5.18.6 Illustrated User Guide](H3_Prompt_Composer_V5_18_6_Illustrated_User_Guide.pdf)** - current visual quick-start guide. Its AI Setup screenshot may show **Preview import** instead of the V5.18.8 **Re-check import** label; the underlying workflow is unchanged.
+- **[Full V5.18.8 User Guide](H3_Prompt_Composer_V5_18_8_User_Guide.pdf)** - current workflow reference.
+- **[V5.18.8 Illustrated User Guide](H3_Prompt_Composer_V5_18_8_Illustrated_User_Guide.pdf)** - current visual quick-start guide. Its AI Setup screenshot may show **Preview import** instead of **Re-check import**; the underlying workflow is unchanged.
 - [`H3_Prompt_Composer_V5_18_8_CHANGELOG.md`](H3_Prompt_Composer_V5_18_8_CHANGELOG.md) - bug fixes, compatibility notes, known non-changes, and QA results.
 - `H3_Prompt_Composer_V5_18_8_SHA256.txt` - checksum for the standalone V5.18.8 HTML.
 
@@ -288,7 +291,7 @@ H3 Prompt Composer does not run MiniMax H3, upload your reference media, change 
 
 **H3 Prompt Composer V5.18.8**
 
-V5.18.8 repairs multi-Generation copying, tightens base-mode capitalization and import guidance, and improves migration and Prompt Check coverage without changing the established workflow or reference-routing model.
+V5.18.8 repairs custom-camera rendering and multi-Generation copying, corrects two additional UI handlers, adds visible error recovery, tightens base-mode capitalization and import guidance, and improves migration and Prompt Check coverage without changing the established workflow or reference-routing model.
 
 ## Disclaimer
 

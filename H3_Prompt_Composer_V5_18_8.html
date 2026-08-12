@@ -533,7 +533,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
    Implements the schema from MiniMax's official prompt guides:
    VIDEO_PROMPT_WRITING_GUIDE_base_en.md  (T2VA/I2VA/FL2VA/L2VA)
    VIDEO_PROMPT_WRITING_GUIDE_ref_en.md   (full-reference mode)
-   V5.18.8: copy-all repair, prompt capitalization fixes, import guidance, and migration hardening.
+   V5.18.8: custom-camera crash fix, visible error reporting, resilient rendering, Copy-all-generations repair, and base-mode capitalization fixes.
    ============================================================ */
 
 const FPS = 24;
@@ -1023,9 +1023,12 @@ function shotReferenceScanText(sh){
   const dialogueAfter=(sh?.dlg||[]).map(d=>d.afterAction||'').join(' ');
   return [(sh?.openingState||''),(sh?.action||''),timedActionText(sh),(sh?.soundEffects||''),dialogueAfter,screens,camera].filter(Boolean).join(' ');
 }
-let __activeRefUidCache=null;
+let __activeRefUidCache=null,__activeRefUidBuilding=false;
 function activeRefUidSet(){
   if(__activeRefUidCache)return __activeRefUidCache;
+  if(__activeRefUidBuilding)return new Set();
+  __activeRefUidBuilding=true;
+  try{
   const active=new Set(),add=id=>{if(id&&refByUid(id))active.add(id);};
   (C().shots||[]).forEach(sh=>{
     add(sh.environmentUid);add(sh.scaleReferenceUid);
@@ -1076,6 +1079,7 @@ function activeRefUidSet(){
     });
   }
   __activeRefUidCache=active;return active;
+  }finally{__activeRefUidBuilding=false;}
 }
 function refActiveInCurrentClip(r){return !!r&&activeRefUidSet().has(r.uid);}
 function audioActiveReason(r){
@@ -1108,10 +1112,15 @@ function audioRefsInH3Order(){
 }
 let __audioLabelMapCache=null;
 function resetDerivedCaches(){__audioLabelMapCache=null;__activeRefUidCache=null;}
+let __audioLabelMapBuilding=false;
 function audioLabelMap(){
   if(__audioLabelMapCache)return __audioLabelMapCache;
-  const m=new Map();audioRefsInH3Order().forEach((r,i)=>m.set(r.uid,i+1));
-  __audioLabelMapCache=m;return m;
+  if(__audioLabelMapBuilding)return new Map();
+  __audioLabelMapBuilding=true;
+  try{
+    const m=new Map();audioRefsInH3Order().forEach((r,i)=>m.set(r.uid,i+1));
+    __audioLabelMapCache=m;return m;
+  }finally{__audioLabelMapBuilding=false;}
 }
 function audioLabelNumber(r){
   if(!r||r.kind!=='Audio')return Number(r&&r.idx)||0;
@@ -2047,7 +2056,10 @@ function customCameraPovPattern(label){
 function cameraCustomPovUids(sh){
   if(!sh.camUseCustom)return [];
   const text=(sh.camCustomText||'').trim();if(!text)return [];
-  return subjectRefs().filter(r=>customCameraPovPattern(labelOf(r,refIndex(r))).test(text)).map(r=>r.uid);
+  // librarySubjectRefs + staticLabelOf: Subject labels are stable project identities,
+  // and this function runs inside activeRefUidSet's own computation, so it must not
+  // route back through orderedRefs/labelOf (per-clip active-ref machinery) or it recurses.
+  return librarySubjectRefs().filter(r=>customCameraPovPattern(staticLabelOf(r,refIndex(r))).test(text)).map(r=>r.uid);
 }
 function customCameraVisualText(sh){
   let text=(sh.camCustomText||'').trim();
@@ -4087,7 +4099,7 @@ function renderRefs(){
     c.querySelectorAll('[data-continuity-subject-uid]').forEach(ch=>ch.onclick=()=>{
       const id=ch.dataset.continuitySubjectUid,a=[...new Set(r.continuitySubjectUids||[])];r.continuitySubjectUids=a.includes(id)?a.filter(x=>x!==id):a.concat(id);render();
     });
-    c.querySelectorAll('[data-env-view-name]').forEach(inp=>inp.oninput=e=>{r.environmentViewNames=r.environmentViewNames||{};r.environmentViewNames[String(e.target.dataset.envViewName)]=e.target.value;saveSoon();});
+    c.querySelectorAll('[data-env-view-name]').forEach(inp=>inp.oninput=e=>{r.environmentViewNames=r.environmentViewNames||{};r.environmentViewNames[String(e.target.dataset.envViewName)]=e.target.value;buildOnly();});
     c.querySelectorAll('[data-env-view-role]').forEach(sel=>sel.onchange=e=>{r.environmentViewRoles=r.environmentViewRoles||{};r.environmentViewRoles[String(e.target.dataset.envViewRole)]=e.target.value;buildOnly();});
     const envViewDetails=c.querySelector('[data-env-view-details]');if(envViewDetails)envViewDetails.ontoggle=()=>{r.environmentViewRolesOpen=envViewDetails.open;};
 
@@ -4516,6 +4528,27 @@ function renderDur(){
 function refreshSidBadges(){
   const map=speakerMap();C().shots.forEach((sh,i)=>sh.dlg.forEach((d,j)=>{const n=document.querySelector(`[data-sidbadge="${i}-${j}"]`);if(n)n.textContent=sidForDialogue(d,map);}));
 }
+let __appErrors=[];
+function reportAppError(err,where){
+  try{
+    const msg=(err&&err.message)?err.message:String(err);
+    const stack=((err&&err.stack)||'').split('\n').slice(0,30).join('\n');
+    __appErrors.push({when:new Date().toISOString(),where:where||'',msg,stack});
+    if(__appErrors.length>20)__appErrors=__appErrors.slice(-20);
+    let bar=document.getElementById('appErrorBar');
+    if(!bar){
+      bar=document.createElement('div');bar.id='appErrorBar';
+      bar.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:200;background:#3a1418;border-top:2px solid #ff5a63;color:#ffd6d9;font:12px/1.5 system-ui,sans-serif;padding:9px 14px;display:flex;gap:12px;align-items:center';
+      bar.innerHTML='<b style="color:#ff8b92;white-space:nowrap">Internal error</b><span id="appErrorMsg" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="appErrorCopy" style="background:#5b1f26;color:#ffd6d9;border:1px solid #ff5a63;border-radius:5px;padding:3px 10px;cursor:pointer">Copy error report</button><button id="appErrorClose" style="background:none;color:#ffd6d9;border:1px solid #7a3a41;border-radius:5px;padding:3px 10px;cursor:pointer">Dismiss</button>';
+      document.body.appendChild(bar);
+      document.getElementById('appErrorClose').onclick=()=>bar.remove();
+      document.getElementById('appErrorCopy').onclick=async(ev)=>{const report=`H3 Prompt Composer ${APP_VERSION} error report\nmode=${S.mode} generations=${(S.clips||[]).length} active=${S.active} refs=${(S.refs||[]).length}\n\n`+__appErrors.map(e=>`[${e.when}] ${e.where}\n${e.msg}\n${e.stack}`).join('\n\n');const ok=await writeClipboard(report);flashButton(ev.currentTarget,ok?'Copied':'Copy failed',1200);};
+    }
+    const m=document.getElementById('appErrorMsg');if(m)m.textContent=`${where?where+': ':''}${msg} — the interface stays usable; use “Copy error report” and share it so this can be fixed.`;
+  }catch(e){}
+}
+window.addEventListener('error',e=>reportAppError(e.error||e.message,'window'));
+window.addEventListener('unhandledrejection',e=>reportAppError(e.reason,'promise'));
 function render(){
   resetDerivedCaches();
   syncAllAppearanceCarries();
@@ -4523,10 +4556,13 @@ function render(){
   document.body.dataset.uiMode=S.uiMode==='advanced'?'advanced':'basic';
   const vb=document.getElementById('viewBasic'),va=document.getElementById('viewAdvanced');if(vb)vb.classList.toggle('on',S.uiMode!=='advanced');if(va)va.classList.toggle('on',S.uiMode==='advanced');
   const a=document.activeElement,key=(a&&a.dataset)?a.dataset.key:null;let s0=null,s1=null;if(key){try{s0=a.selectionStart;s1=a.selectionEnd;}catch(e){}}
-  renderModes();renderRefs();renderClips();renderCurrentInputMap();renderShots();renderDur();renderPB();
+  [['renderModes',renderModes],['renderRefs',renderRefs],['renderClips',renderClips],['renderCurrentInputMap',renderCurrentInputMap],['renderShots',renderShots],['renderDur',renderDur],['renderPB',renderPB]].forEach(([name,fn])=>{try{fn();}catch(e){reportAppError(e,name);}});
+  try{
   document.getElementById('style').value=S.style;document.getElementById('ss').value=C().soundscape==='N/A'?'':C().soundscape;document.getElementById('ssExtra').value=C().soundscapeExtra||'';document.getElementById('nd').value=C().music==='N/A'?'':C().music;document.getElementById('dur').value=S.dur;
   document.getElementById('ssMode').value=C().soundscapeMode||'unset';document.getElementById('ndMode').value=C().musicMode||'unset';
-  document.getElementById('ss').disabled=(C().soundscapeMode==='silence');document.getElementById('ssExtra').disabled=(C().soundscapeMode==='silence');document.getElementById('nd').disabled=(C().musicMode==='none');buildOnly();
+  document.getElementById('ss').disabled=(C().soundscapeMode==='silence');document.getElementById('ssExtra').disabled=(C().soundscapeMode==='silence');document.getElementById('nd').disabled=(C().musicMode==='none');
+  }catch(e){reportAppError(e,'render fields');}
+  try{buildOnly();}catch(e){reportAppError(e,'buildOnly');const outEl=document.getElementById('out');if(outEl)outEl.textContent='The prompt for this Generation could not be built: '+((e&&e.message)||e)+'\n\nUse "Copy error report" in the red bar below and share it so the cause can be fixed. Other Generations remain selectable.';}
   if(key){const n=document.querySelector(`[data-key="${key}"]`);if(n){n.focus();if(s0!==null&&n.setSelectionRange){try{n.setSelectionRange(s0,s1);}catch(e){}}}}
 }
 
@@ -4821,8 +4857,9 @@ async function copyAll(ev){
   const old=S.active,parts=[];let errs=0;
   (S.clips||[]).forEach((cl,i)=>{
     S.active=i;resetDerivedCaches();
-    const prompt=build();
-    errs+=lint(prompt).filter(x=>x[0]==='err').length;
+    let prompt;
+    try{prompt=build();errs+=lint(prompt).filter(x=>x[0]==='err').length;}
+    catch(e){reportAppError(e,`copyAll/Generation ${i+1}`);prompt='[This Generation could not be built: '+((e&&e.message)||e)+']';errs++;}
     parts.push(`===== Generation ${i+1}${cl.name&&cl.name!==`Generation ${i+1}`?`: ${cl.name}`:''} =====\n\n${prompt}`);
   });
   S.active=old;resetDerivedCaches();buildOnly();
@@ -4831,8 +4868,10 @@ async function copyAll(ev){
   flashButton(ev&&ev.currentTarget,ok?'Copied all':'Copy failed',ok?1200:1800);
 }
 async function copyOut(ev){
-  resetDerivedCaches();const prompt=build();
-  const L=lint(prompt),errs=L.filter(x=>x[0]==='err').length;
+  resetDerivedCaches();let prompt;
+  try{prompt=build();}catch(e){reportAppError(e,'copyOut/build');alert('The prompt for this Generation could not be built:\n\n'+((e&&e.message)||e)+'\n\nNothing was copied. Use "Copy error report" in the red bar to capture details.');return;}
+  let L=[];try{L=lint(prompt);}catch(e){reportAppError(e,'copyOut/lint');}
+  const errs=L.filter(x=>x[0]==='err').length;
   if(errs&&!confirm(`The checker found ${errs} error${errs===1?'':'s'}. Copy the prompt anyway?`))return;
   const ok=await writeClipboard(prompt);
   flashButton(ev&&ev.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);
@@ -5120,7 +5159,7 @@ function initFrameGrabDropZones(){const stage=document.getElementById('frameStag
 function frameCanvasBlob(v){return new Promise(resolve=>{const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d',{alpha:false});ctx.drawImage(v,0,0,c.width,c.height);c.toBlob(resolve,'image/png');});}
 function downloadFrameBlob(blob,name){const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
 async function captureFrameGrab(){const v=document.getElementById('frameVideo');if(!v||!v.videoWidth||!v.videoHeight){alert('Open a video and seek to the frame you want first.');return;}v.pause();const name=updateFrameFilename(),blob=await frameCanvasBlob(v);if(!blob){alert('The browser could not capture this frame.');return;}if(__frameOutputDirHandle){try{const ok=await frameEnsureWritePermission(__frameOutputDirHandle);if(ok){const fh=await __frameOutputDirHandle.getFileHandle(name,{create:true}),w=await fh.createWritable();await w.write(blob);await w.close();setFrameOutputStatus(`Saved ${name} directly to “${__frameOutputDirHandle.name}”.`,'good');return;}setFrameOutputStatus('Write permission was not granted for the selected folder. The PNG was downloaded through the browser instead.','warn');}catch(e){setFrameOutputStatus(`Could not write directly to “${__frameOutputDirHandle.name}”: ${e.message||e}. The PNG was downloaded instead.`,'warn');}}downloadFrameBlob(blob,name);}
-async function copyFrameFilename(ev){const name=updateFrameFilename();const ok=await copyText(name);flashButton(ev?.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);}
+async function copyFrameFilename(ev){const name=updateFrameFilename();const ok=await writeClipboard(name);flashButton(ev?.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);}
 
 /* ---------------- V5.18 AI Project Setup ---------------- */
 let __aiPendingImport=null,__aiPendingPromptIssues=[],__aiPreviewTimer=null;
@@ -5178,21 +5217,6 @@ function aiComposerOnlyContext(){
   const transitions=[];(S.clips||[]).forEach((cl,ci)=>(cl.shots||[]).forEach((sh,si)=>(sh.appearanceTransitions||[]).forEach(tr=>{const r=refByUid(tr.subjectUid),a=r?appearanceStateByUid(r,tr.startStateUid):null,b=r?appearanceStateByUid(r,tr.endStateUid):null;if(r&&a&&b&&a.uid!==b.uid)transitions.push(`Generation ${ci+1} Shot ${si+1}: ${subjectName(r)} changes from "${a.name||'start'}" to "${b.name||'end'}".`);})));return {height,transitions};
 }
 function aiFidelityNoticeHTML(){const c=aiComposerOnlyContext(),bits=[];if(c.height.length)bits.push(`${c.height.length} text-only height rule${c.height.length===1?'':'s'}`);if(c.transitions.length)bits.push(`${c.transitions.length} appearance transition${c.transitions.length===1?'':'s'}`);return bits.length?`<div class="warnline">⚠ This project contains ${bits.join(' and ')}. <b>Append new Generations</b> keeps them intact. A full AI project replacement does not recreate these Composer-only histories, so re-enter them after a replacement if needed.</div>`:'';}
-function aiSetupInstructionsLegacy(mode='new'){
-  mode=['new','full','append'].includes(mode)?mode:'new';
-  let sample=aiStarterTemplate();
-  if(mode==='append')sample={format:AI_SETUP_FORMAT,schema_version:AI_SETUP_SCHEMA_VERSION,operation:'append_generations',assets:{subjects:[],environments:[],pictures:[],audio:[],videos:[]},generations:[{name:'Next Generation',overall_ambience:'Continue the established ambience.',music:'N/A',shots:[{cut_time_seconds:null,environment:'environment_1',presence:{subject_1:'on_screen'},opening_state:'Describe where the existing subject begins.',action:'Describe what happens next.',camera:{framing:'medium',primary:'subject_1',movement:'static'}}]}]};
-  const template=JSON.stringify(sample,null,2);
-  const exported=projectToAIInterchange();
-  const composerOnly=aiComposerOnlyContext();
-  const current=mode==='new'?'':`\n\nCURRENT PROJECT CONTEXT\n${JSON.stringify(exported,null,2)}\n\nCOMPOSER-ONLY CONTEXT (read-only; do not try to recreate these with undocumented JSON keys)\n${[...composerOnly.height,...composerOnly.transitions].join('\n')||'None.'}`;
-  const operationRule=mode==='append'
-    ? `Set operation to "append_generations". Return ONLY the new asset definitions that do not already exist plus ONLY the new Generation(s). Reference existing asset IDs exactly as they appear in CURRENT PROJECT CONTEXT. Do not repeat, rename, or redefine existing assets, and do not include existing Generations.`
-    : `Set operation to "replace_project". Return the complete project JSON that should exist after import.`;
-  return `You are preparing structured project data for H3 Prompt Composer. Your job is NOT to write the final MiniMax/H3 prompt. The Composer generates subject_definitions, summary, retention_analysis, detailed_description, overall_soundscape, non_diegetic_music, dialogue tags, and final H3 syntax itself.\n\nReturn exactly ONE valid JSON object and nothing else: no Markdown fence, commentary, preface, or trailing explanation. Use format "${AI_SETUP_FORMAT}", schema_version ${AI_SETUP_SCHEMA_VERSION}, and ${operationRule}\n\nWORKFLOW RULES\n1. Build reusable Subjects for characters, creatures, vehicles, and props. If reference images are available, inspect visible traits and write concise stable descriptions. Use only identities/names supplied by the user; do not guess a real person's identity from an image.\n2. A multi-view character sheet is one Subject. Subject assets may use current_appearance for the active wardrobe/temporary look. If the user explicitly pins a Subject to a physical Picture input, preserve that picture_slots assignment across Generations unless the user asks to change it.\n3. Build clean location views as Environments. Multiple pictures of one location remain one Environment. Each environment picture object should use {slot, name, contribution}: name is a stable slot-independent view identity such as "wide clearing", "shed-side view", "approach view", or "ramp detail"; contribution is "overall geography", "alternate view", "structural detail", "lighting reference", or "custom".\n\nENVIRONMENT ROUTING RULES\nA. Separate PROJECT MEDIA IDENTITY from PHYSICAL H3 SLOT ROUTING. Being the 10th uploaded image, being called "picture 10" conversationally, or having ENV03/V03 in a filename does NOT mean physical <Picture 10>. Only an intentional P## prefix or an explicit user statement such as "this is ComfyUI Picture 3" declares a physical slot.\nB. Environment routing is generation-specific and reusable. Different Environments MAY intentionally reuse the same legal Picture slots because they are alternatives. Example: with recurring Subjects pinned to Pictures 1-4, Jungle Clearing can use Pictures 5-6, Jungle Road can reuse Picture 5, and Broken Bridge can reuse Pictures 5-7. Within one Environment, simultaneously used views need unique slots.\nC. If the user has not given an explicit Environment slot plan, choose the lowest reusable legal Picture slots that do not collide with fixed/pinned references needed in that Generation. Treat these as routing suggestions the user can change in the Composer.\nD. Do not drop an Environment view because its project/media number exceeds the H3 Picture-input count. Remap the logical view to a legal reusable Environment slot instead. Only preserve an out-of-range conflict when the USER explicitly demanded that physical slot.\nE. The physical Picture limit applies to simultaneous ComfyUI inputs, not to the number of logical image assets across the whole project.\n\n4. Previous-generation screenshots use role "previous_generation_continuity". For a single-subject blocking screenshot, preserve that target's position/orientation relative to visible environment geometry; use the clean Environment to establish the complete location. Multiple separate one-shots may independently anchor different subjects in the same Environment. Do not treat continuity screenshots as clean Environment views merely because they show the location.\n5. Give continuity references explicit targets whenever they preserve subject blocking, object position, or appearance. continuity_type values: subject_blocking, object_position, environment_state, appearance_state, broad_scene.\n6. Use scale_reference only when extra relative-size guidance is genuinely needed. preserve_blocking is optional.\n7. In every Shot, opening_state describes the exact starting state; action describes what changes afterward.\n8. Presence values: on_screen, off_screen, not_present, auto. Use off_screen when a subject is audible/nearby but should not be visible.\n9. For ordered stages inside one continuous Shot, use timed_beats with stable ids and start_seconds/end_seconds relative to the Shot. Dialogue can bind to one Beat using timed_beat. Do not invent extra cuts merely to express timing.\n10. Camera fields are optional. Avoid over-constraining. If a push/zoom/pull remains a two-shot, normally leave movement_target omitted so the Composer follows the pair; set a single movement_target only when the camera should intentionally favor that one subject. Use view/angle/composition = "custom" only when the named choices truly do not fit, and then also provide custom_view, custom_angle, or custom_composition. The same rule applies to end_view/end_angle/end_composition with end_custom_view, end_custom_angle, and end_custom_composition.\n11. Dialogue supports speaker, speaker_name (for a narrator/custom speaker with no Subject), delivery, language, text, timed_beat, after_action, off_screen, voiceover, and cutoff. Preserve spoken wording exactly. Do not add <d> tags.\n12. sound_effects contains synchronized audible content for that Shot as natural sound prose, e.g. "soft kissing sounds and subtle clothing movement". Do not prefix it with "SFX:" or a field label. Put recurring ambience in overall_ambience. Use "N/A" for no audience-only music.\n13. Physical limits are Picture 1-${H3_LIMITS.img}, Video 1-${H3_LIMITS.vid}, Audio 1-${H3_LIMITS.aud}. Do not invent a fixed physical slot for persistent media from upload order alone. Environment views are the exception to fixed-slot thinking: route them into reusable legal Picture slots per the Environment Routing Rules above.\n14. If information is unknown, omit the optional field or use auto rather than fabricating details. User statements override visual inference.\n15. Filename guidance: P##/A##/V## denotes a physical slot only when intentionally used as that prefix. Prefer slot-independent names such as ENV03_BrokenBridge_V02_APPROACH.png for reusable Environment views. Treat ordinary upload order or labels like "image 10" as project-media identity, not physical slot routing. Inspect the actual media when available.\n16. Shot keys also support transition, additional_references, on_screen_text [{where,verb,text}], scale_reference, continuity_references, timed_beats, and sound_effects.\n17. Video roles: camera_reference, performance_reference, performance_and_camera, continuation_source, source_video_for_edit, source_video_for_subject_insertion, source_video_for_background_replacement_and_relighting, source_composite_for_relighting.\n18. Audio roles: voice, music, sfx, exact_dialogue, reuse. Picture roles: previous_generation_continuity, scale_reference, composition_anchor, storyboard_reference, wardrobe_reference, lighting_integration_reference, environment_state_reference, first_frame, keyframe, last_frame, edited_keyframe.\n19. Guided edit_workflow values: none, performance_transfer, insert_subject, background_relight, continuation. edit_settings may use source_video, target_subject, inserted_subject, performer, replacement_environment, lighting_reference, dialogue_treatment, placement, insert_action, source_audio_mode, preserve_audio, preserve_plate, use_occlusion, ground_subject, match_integration, stage, source_background_type, lighting_strength, lighting_details, preserve_performance, remove_spill, preserve_composite, preserve_subject_motion, preserve_camera_motion, preserve_environment, avoid_replay, handoff_notes.\n20. The interchange does not recreate the Composer's text-only height-rule list or multi-state appearance-transition history. Do not invent replacement keys. Append mode leaves the existing Composer data untouched; full replacement may require the user to re-enter it.
-21. The final H3 prompt has a hard ${H3_LIMITS.promptChars.toLocaleString()}-character ceiling per Generation. Keep project prose concise so the Composer has headroom: Subject identity descriptions should usually be one compact sentence; current_appearance one compact sentence; Environment descriptions one or two compact sentences; opening_state/action/Timed Beats should describe shot-specific state or change without re-stating full asset descriptions. Prefer enough detail to disambiguate over exhaustive prose.
-22. Do not silently drop an EXPLICIT user-specified physical media slot because it conflicts with the limits. Preserve explicit physical-slot conflicts so the Composer can report them. Do not apply this rule to logical Environment image numbering: those views should be remapped to legal reusable Environment slots instead of being discarded.\n\nCAMERA VALUES\nFraming: extreme_close_up, close_up, medium_close_up, medium, medium_wide, wide, extreme_wide, insert, two_shot, over_shoulder.\nView: front, front_3q_left, front_3q_right, left_profile, right_profile, rear_3q_left, rear_3q_right, behind, pov, custom.\nAngle: eye_level, slightly_low, low, ground, slightly_high, high, overhead, waist_level, chest_level, custom.\nComposition: centered, left_third, right_third, negative_left, negative_right, balanced_two, symmetrical, dirty_single, custom.\nMovement: static, push_in, pull_out, truck_left, truck_right, pan_left, pan_right, tilt_up, tilt_down, pedestal_up, pedestal_down, crane, dolly_diagonal, orbit, tracking, zoom_in, zoom_out, dolly_zoom, roll_clockwise, roll_counterclockwise, custom.\nSpeed: slow, normal, fast. Timing: after_opening_action, during_opening_action, during_dialogue, after_dialogue, throughout_shot. Stability: locked, smooth, subtle_handheld, strong_handheld, documentary, floating, auto. Custom companion fields: custom_view, custom_angle, custom_composition, end_custom_view, end_custom_angle, end_custom_composition.\n\n${aiNamingGuidance()}\n\nSCHEMA EXAMPLE\n${template}${current}`;
-}
 function aiSetupInstructions(mode='new'){
   mode=['new','full','append'].includes(mode)?mode:'new';
   let sample=aiStarterTemplate();
@@ -5312,23 +5336,6 @@ function aiAppendGenerations(raw,resolved){
   S.refs.push(...newClones);
   const appended=(temp.clips||[]).slice(oldCount).map(cl=>aiDeepRemapRefs(JSON.parse(JSON.stringify(cl)),uidMap));
   S.clips.push(...appended);S.active=oldCount;S.wired={img:Math.max(Number(S.wired?.img||0),Number(temp.wired?.img||0)),vid:Math.max(Number(S.wired?.vid||0),Number(temp.wired?.vid||0)),aud:Math.max(Number(S.wired?.aud||0),Number(temp.wired?.aud||0))};S.taskTypes=[...new Set([...(S.taskTypes||[]),...(temp.taskTypes||[])])].filter(x=>TASK_TYPES.includes(x));S.version=APP_VERSION;S=migrate(S);resetDerivedCaches();
-}
-function validateAIImportLegacy(o){
-  const errors=[],warnings=[];if(!o||typeof o!=='object')return {errors:['Top-level JSON must be an object.'],warnings,summary:null};
-  if(o.format!==AI_SETUP_FORMAT)errors.push(`format must be \"${AI_SETUP_FORMAT}\".`);const sv=Number(o.schema_version);if(![1,2,3,AI_SETUP_SCHEMA_VERSION].includes(sv))errors.push(`schema_version must be 1, 2, 3, or ${AI_SETUP_SCHEMA_VERSION}.`);
-  if(Number(o.schema_version)>=4&&!['replace_project','append_generations'].includes(o.operation))errors.push('schema v4 operation must be \"replace_project\" or \"append_generations\".');
-  const assets=o.assets&&typeof o.assets==='object'?o.assets:{};const groups=['subjects','environments','pictures','audio','videos'];const ids=new Map();
-  groups.forEach(g=>(Array.isArray(assets[g])?assets[g]:[]).forEach((x,i)=>{const id=aiNormalizeId(x&&x.id);if(!id)errors.push(`${g}[${i}] is missing id.`);else if(ids.has(id))errors.push(`Duplicate asset id "${id}".`);else ids.set(id,{group:g,item:x});}));
-  const picSlots=[],audSlots=[],vidSlots=[];const slot=(n,kind,label,max,arr)=>{if(n==null||n==='')return;const x=Number(n);if(!Number.isInteger(x)||x<1||x>max)errors.push(`${label} has invalid ${kind} slot ${n}; allowed 1-${max}.`);else arr.push(x);};
-  (assets.subjects||[]).forEach(x=>{(x.picture_slots||[]).forEach(n=>slot(n,'Picture',x.id,H3_LIMITS.img,picSlots));(x.video_slots||[]).forEach(n=>slot(n,'Video',x.id,H3_LIMITS.vid,vidSlots));if(!String(x.description||'').trim())warnings.push(`${x.id}: Subject description is blank; ask the LLM/user to describe the visible reference.`);});
-  (assets.environments||[]).forEach(x=>{const local=new Set();(x.pictures||[]).forEach((p,i)=>{if(p&&typeof p==='object'&&p.name!==undefined&&typeof p.name!=='string')errors.push(`${x.id}: pictures[${i}].name must be a string when provided.`);const raw=typeof p==='object'?p.slot:p;slot(raw,'Picture',x.id,H3_LIMITS.img,picSlots);const n=Number(raw);if(Number.isInteger(n)&&n>0&&n<=H3_LIMITS.img){if(local.has(n))errors.push(`${x.id}: multiple views inside this Environment use Picture ${n}. Views connected together for one Environment need unique physical slots.`);local.add(n);}});if(!String(x.description||'').trim())warnings.push(`${x.id}: Environment description is blank.`);});
-  (assets.pictures||[]).forEach(x=>slot(x.slot,'Picture',x.id,H3_LIMITS.img,picSlots));(assets.audio||[]).forEach(x=>slot(x.slot,'Audio',x.id,H3_LIMITS.aud,audSlots));(assets.videos||[]).forEach(x=>slot(x.slot,'Video',x.id,H3_LIMITS.vid,vidSlots));const explicitAudioSlots=new Map();(assets.audio||[]).forEach(x=>{const n=Number(x.slot);if(Number.isInteger(n)&&n>0){if(explicitAudioSlots.has(n))warnings.push(`${x.id}: Audio slot ${n} is also used by ${explicitAudioSlots.get(n)}; the importer will reassign one of them.`);else explicitAudioSlots.set(n,x.id);}});
-  (assets.pictures||[]).forEach(x=>{(x.targets||[]).forEach(id=>{if(!ids.get(String(id))||ids.get(String(id)).group!=='subjects')errors.push(`${x.id}: unknown target Subject \"${id}\".`);});if(x.target&&(!ids.get(String(x.target))||ids.get(String(x.target)).group!=='subjects'))errors.push(`${x.id}: unknown target Subject \"${x.target}\".`);});(assets.audio||[]).forEach(x=>{if(x.subject&&(!ids.get(String(x.subject))||ids.get(String(x.subject)).group!=='subjects'))errors.push(`${x.id}: unknown bound Subject \"${x.subject}\".`);});
-  const gens=Array.isArray(o.generations)?o.generations:[];if(!gens.length)errors.push('At least one generation is required.');let shotCount=0;
-  const get=id=>ids.get(aiNormalizeId(id));
-  gens.forEach((g,gi)=>{const wf=g.edit_workflow||'none',es=g.edit_settings||{};if(!['none','performance_transfer','insert_subject','background_relight','continuation'].includes(wf))errors.push(`Generation ${gi+1}: unknown edit_workflow \"${wf}\".`);const need=(key,group)=>{if(es[key]&&(!get(es[key])||get(es[key]).group!==group))errors.push(`Generation ${gi+1}: edit_settings.${key} references unknown ${group} asset \"${es[key]}\".`);};if(wf==='performance_transfer'){need('target_subject','subjects');need('source_video','videos');}if(wf==='insert_subject'){need('inserted_subject','subjects');need('source_video','videos');}if(wf==='background_relight'){need('performer','subjects');need('replacement_environment','environments');need('source_video','videos');if(es.lighting_reference)need('lighting_reference','pictures');}if(wf==='continuation')need('source_video','videos');const shots=Array.isArray(g.shots)?g.shots:[];if(!shots.length)errors.push(`Generation ${gi+1} has no shots.`);shotCount+=shots.length;let last=-1;shots.forEach((sh,si)=>{const p=`Generation ${gi+1} Shot ${si+1}`;if(sh.environment&&!get(sh.environment))errors.push(`${p}: unknown environment id "${sh.environment}".`);if(sh.environment&&get(sh.environment)?.group!=='environments')errors.push(`${p}: "${sh.environment}" is not an Environment asset.`);Object.keys(sh.presence||{}).forEach(id=>{if(!get(id)||get(id).group!=='subjects')errors.push(`${p}: presence references unknown Subject "${id}".`);});(sh.continuity_references||[]).forEach(id=>{const x=get(id);if(!x||x.group!=='pictures'||x.item.role!=='previous_generation_continuity')errors.push(`${p}: continuity reference "${id}" is missing or has the wrong role.`);});if(sh.scale_reference){const x=get(sh.scale_reference);if(!x||x.group!=='pictures'||x.item.role!=='scale_reference')errors.push(`${p}: scale_reference "${sh.scale_reference}" is missing or not a scale_reference.`);}const c=sh.camera||{};['primary','secondary','movement_target','end_primary','end_secondary'].forEach(k=>{if(c[k]&&(!get(c[k])||!['subjects','environments'].includes(get(c[k]).group)))errors.push(`${p}: camera.${k} references unknown visual asset "${c[k]}".`);});const beatIds=new Set();(sh.timed_beats||[]).forEach((b,bi)=>{const id=String(b.id||`beat_${bi+1}`);if(beatIds.has(id))errors.push(`${p}: duplicate Timed Beat id "${id}".`);beatIds.add(id);});(sh.dialogue||[]).forEach((d,di)=>{if(d.speaker&&(!get(d.speaker)||get(d.speaker).group!=='subjects'))errors.push(`${p} dialogue ${di+1}: unknown speaker "${d.speaker}".`);if(d.timed_beat&&!beatIds.has(String(d.timed_beat)))errors.push(`${p} dialogue ${di+1}: timed_beat "${d.timed_beat}" does not match a Timed Beat id in this Shot.`);});if(si>0&&sh.cut_time_seconds!=null){const t=Number(sh.cut_time_seconds),dur=Number(o.project?.duration_seconds||10);if(!Number.isFinite(t)||t<=0||t<=last)errors.push(`${p}: cut_time_seconds must be greater than zero and strictly increase.`);else if(t>=dur)errors.push(`${p}: cut_time_seconds must be earlier than the target duration (${dur}s).`);else last=t;}(sh.timed_beats||[]).forEach((b,bi)=>{const a=Number(b.start_seconds),z=Number(b.end_seconds);if(!Number.isFinite(a)||!Number.isFinite(z)||a<0||z<=a)errors.push(`${p} timed beat ${bi+1}: use non-negative start_seconds and end_seconds greater than start_seconds.`);});});});
-  (assets.pictures||[]).filter(x=>x.role==='previous_generation_continuity'&&['subject_blocking','object_position','appearance_state'].includes(x.continuity_type||'subject_blocking')&&!(x.targets||[]).length).forEach(x=>warnings.push(`${x.id}: continuity reference should identify target Subjects/objects.`));
-  const maxPic=aiMaxSlot(picSlots),maxAud=aiMaxSlot(audSlots),maxVid=aiMaxSlot(vidSlots);return {errors,warnings,summary:{subjects:(assets.subjects||[]).length,environments:(assets.environments||[]).length,pictures:(assets.pictures||[]).length,audio:(assets.audio||[]).length,videos:(assets.videos||[]).length,generations:gens.length,shots:shotCount,maxPic,maxAud,maxVid}};
 }
 function validateAIImport(o){
   const errors=[],warnings=[],isObject=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
