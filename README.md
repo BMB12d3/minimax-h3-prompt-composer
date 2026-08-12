@@ -1,6 +1,6 @@
 # H3 Prompt Composer
 
-**Version 5.18.7**
+**Version 5.18.8**
 
 A free, standalone prompt-building tool for **MiniMax H3** video generation, designed primarily for **ComfyUI** reference workflows.
 
@@ -9,6 +9,18 @@ A free, standalone prompt-building tool for **MiniMax H3** video generation, des
 ![H3 Prompt Composer V5.18.6 overview](assets/v5186-overview.png)
 
 H3 Prompt Composer turns filmmaking-oriented choices - Subjects, references, Shots, timing, camera behavior, dialogue, continuity, editing, and audio - into structured H3 prompts while checking for common conflicts.
+
+## What's New in V5.18.8
+
+V5.18.8 is a pre-publication bug-fix release built from a full headless audit of V5.18.7.
+
+- **Copy all generations** now works; it previously threw a silent error and copied nothing.
+- Base-mode Shot 1 capitalization now matches the MiniMax guide (`Live-action, cinematic, the baker opens...`), and lowercase user-typed actions are capitalized when they start a new sentence.
+- A standalone Picture that shares a physical slot with an active Environment view in the same Generation now raises a clear Prompt Check warning instead of a soft note.
+- The AI Setup import panel now explains that the JSON's `operation` field decides replace vs. append, renames Preview import to **Re-check import**, and points to **Copy next-Generation context** when a replace JSON is pasted over an existing project.
+- Automatic summaries fix a singular/plural slip ("preserves"), and Restore previous now includes the V5.18.6/V5.18.7 backup keys.
+
+All six built-in example prompts are byte-identical to V5.18.7. Full details in the [V5.18.8 changelog](H3_Prompt_Composer_V5_18_8_CHANGELOG.md).
 
 ## What's New in V5.18.7
 
@@ -35,7 +47,7 @@ V5.18.5 formalized the difference between a persistent project-media identity an
 - Existing projects retain their current wiring during migration; V5.18.6 never silently rewires them.
 - The V5.18.5 routing work preserved all six built-in workflow prompts byte-for-byte relative to V5.18.4.
 
-The full compatibility and QA notes are in the [V5.18.7 changelog](H3_Prompt_Composer_V5_18_7_CHANGELOG.md).
+The full compatibility and QA notes are in the [V5.18.8 changelog](H3_Prompt_Composer_V5_18_8_CHANGELOG.md) and the [V5.18.7 changelog](H3_Prompt_Composer_V5_18_7_CHANGELOG.md).
 
 ## What It Supports
 
@@ -49,7 +61,7 @@ Ref2VA includes reusable Subjects, multi-view Environments, voice mapping, appea
 
 ## Quick Start
 
-1. Open `H3_Prompt_Composer_V5_18_7.html` in a modern browser.
+1. Open `H3_Prompt_Composer_V5_18_8.html` in a modern browser.
 2. Choose the H3 mode you are using.
 3. Set duration and style.
 4. In Ref2VA, set **Connected ComfyUI inputs** to match the physical Images / Videos / Audio sockets you connected.
@@ -243,13 +255,13 @@ Use **Load example** for working templates:
 - **Copy prompt** copies the active Generation.
 - **Copy all generations** copies the complete multi-Generation sequence.
 
-V5.18.7 migrates supported older projects forward without silently changing existing Picture routing. Environment view names and contribution roles survive AI export/import.
+V5.18.8 migrates V5.18.7 local projects and backups forward, with a V5.18.6 fallback, without silently changing existing Picture routing. Environment view names and contribution roles survive AI export/import.
 
 ## Privacy and Security
 
-H3 Prompt Composer V5.18.7 is designed to run locally.
+H3 Prompt Composer V5.18.8 is designed to run locally.
 
-The audited V5.18.7 HTML:
+The audited V5.18.8 HTML:
 
 - contains no external JavaScript or stylesheet dependencies
 - does not use `fetch()`, XMLHttpRequest, WebSockets, EventSource, or `sendBeacon`
@@ -263,10 +275,10 @@ The complete application source is contained in the HTML file and can be inspect
 
 ## Documentation
 
-- **[Full V5.18.6 User Guide](H3_Prompt_Composer_V5_18_6_User_Guide.pdf)** - current workflow reference; its interface guidance remains compatible with V5.18.7.
-- **[V5.18.6 Illustrated User Guide](H3_Prompt_Composer_V5_18_6_Illustrated_User_Guide.pdf)** - current visual quick-start guide; V5.18.7 does not change the illustrated workflow.
-- [`H3_Prompt_Composer_V5_18_7_CHANGELOG.md`](H3_Prompt_Composer_V5_18_7_CHANGELOG.md) - focused cleanup changes, compatibility notes, and QA results.
-- `H3_Prompt_Composer_V5_18_7_SHA256.txt` - checksum for the standalone V5.18.7 HTML.
+- **[Full V5.18.6 User Guide](H3_Prompt_Composer_V5_18_6_User_Guide.pdf)** - current workflow reference; its workflow guidance remains compatible with V5.18.8.
+- **[V5.18.6 Illustrated User Guide](H3_Prompt_Composer_V5_18_6_Illustrated_User_Guide.pdf)** - current visual quick-start guide. Its AI Setup screenshot may show **Preview import** instead of the V5.18.8 **Re-check import** label; the underlying workflow is unchanged.
+- [`H3_Prompt_Composer_V5_18_8_CHANGELOG.md`](H3_Prompt_Composer_V5_18_8_CHANGELOG.md) - bug fixes, compatibility notes, known non-changes, and QA results.
+- `H3_Prompt_Composer_V5_18_8_SHA256.txt` - checksum for the standalone V5.18.8 HTML.
 
 ## What the Composer Does Not Do
 
@@ -274,9 +286,9 @@ H3 Prompt Composer does not run MiniMax H3, upload your reference media, change 
 
 ## Version
 
-**H3 Prompt Composer V5.18.7**
+**H3 Prompt Composer V5.18.8**
 
-V5.18.7 tightens prompt grammar, chronological dialogue identity, and AI-import safety without changing the established workflow or reference-routing model.
+V5.18.8 repairs multi-Generation copying, tightens base-mode capitalization and import guidance, and improves migration and Prompt Check coverage without changing the established workflow or reference-routing model.
 
 ## Disclaimer
 
