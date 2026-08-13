@@ -6,7 +6,13 @@ A free, standalone prompt-building tool for **MiniMax H3** video generation, des
 
 **Single HTML file - no installation - runs locally in your browser**
 
-![H3 Prompt Composer V5.19.4 overview](assets/v5194-overview.png)
+## ▶ Tutorial
+
+[![▶ H3 Prompt Composer Tutorial — click to watch on YouTube](assets/v5194-overview.png)](https://youtu.be/Dpu-V7lITZk)
+
+**▶ [Watch the H3 Prompt Composer Tutorial on YouTube](https://youtu.be/Dpu-V7lITZk)**
+
+> Click the image above to open the video tutorial on YouTube.
 
 > **Screenshot note:** Most feature screenshots below were captured from V5.19.4 because V5.19.5 intentionally leaves those interfaces unchanged. The project-save control is shown separately with a fresh V5.19.5 capture.
 
