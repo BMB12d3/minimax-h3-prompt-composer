@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>H3 Prompt Composer V5.18.8</title>
+<title>H3 Prompt Composer V5.19.5</title>
 <style>
 :root{
   --bg:#14161c; --panel:#1b1e26; --panel2:#212530; --line:#2c313d;
@@ -96,7 +96,7 @@ textarea{resize:vertical;line-height:1.5}
 .ref-identity{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:2px 7px;min-width:0}
 .ref-kind{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .ref-name{grid-column:1/-1;min-width:0;line-height:1.25;overflow-wrap:anywhere}
-.ref-actions{display:flex;align-items:flex-start;gap:5px;min-width:0}
+.ref-actions{display:flex;align-items:flex-start;justify-content:flex-end;gap:5px;min-width:0;max-width:100%;flex-wrap:wrap}
 .ref-actions .btn{flex:0 0 auto}
 .ref-badge{font-family:var(--mono);font-size:11px;color:var(--green);font-weight:700}
 @media(max-width:420px){.ref-actions .auto-pill{display:none}.card{padding:9px}.chead{gap:6px}}
@@ -122,6 +122,40 @@ pre.out{background:#0e1015;border:1px solid var(--line);border-radius:7px;paddin
 .lint.warn{background:#2a2113;border-color:var(--amber);color:#ffd89b}
 .lint.ok{background:#132a20;border-color:var(--green);color:#9fe8c4}
 .lint.info{background:#132132;border-color:var(--blue);color:#a8d3f7}
+.lint.suggest{background:#1d1a2e;border-color:#8b7ae8;color:#cdc4f5}
+.sug-item{border:1px solid #8b7ae8;background:#1d1a2e;color:#cdc4f5;border-radius:6px;padding:9px 11px;margin:0 0 7px;font-size:12.5px;line-height:1.55}
+.sug-item .sug-head{display:flex;gap:8px;align-items:baseline;margin-bottom:3px}
+.sug-item .sug-where{font:600 11px/1.4 var(--mono);color:#a89ceb;white-space:nowrap}
+.sug-item .sug-title{font-weight:600;color:#e6e1ff;flex:1}
+.sug-item .sug-acts{display:flex;gap:6px;margin-top:7px}
+.sug-item button{background:#2b2545;color:#cdc4f5;border:1px solid #6f5fd0;border-radius:5px;padding:3px 9px;font-size:11.5px;cursor:pointer}
+.sug-item button:hover{background:#372f57}
+.sug-item code{font-family:var(--mono);background:#00000040;padding:0 3px;border-radius:2px}
+.sug-item .sug-fix{margin:5px 0 0;padding-left:16px}
+.sug-item .sug-fix li{margin:2px 0}
+.sug-item .sug-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin:0 0 5px}
+.sug-item .sug-meta .tag{margin-right:0}
+.sug-item .tag.coach{background:#2b2141;color:#d7c3ff;border-color:#7657b7}
+.sug-item .tag.rel{background:#302419;color:#ffd29a;border-color:#8c6334}
+.sug-item .tag.ref{background:#142b30;color:#9fe8e3;border-color:#377b82}
+.sug-item .tag.adh{background:#1b293b;color:#b8d8ff;border-color:#45698f}
+.sug-empty{border:1px solid var(--green);background:#132a20;color:#9fe8c4;border-radius:6px;padding:10px 12px;font-size:12.5px}
+.suggestion-locate-pulse{outline:2px solid var(--violet)!important;outline-offset:3px;animation:suggestionLocatePulse 1.45s ease-out 1}
+@keyframes suggestionLocatePulse{0%{box-shadow:0 0 0 0 #8b7cf688}45%{box-shadow:0 0 0 8px #8b7cf622}100%{box-shadow:0 0 0 0 #8b7cf600}}
+.guide-overlay{position:fixed;inset:0;background:#000000c4;z-index:150;display:flex;align-items:center;justify-content:center;padding:24px}
+.guide-overlay[hidden]{display:none}
+.guide-modal{background:var(--panel,#151821);border:1px solid #6f5fd0;border-radius:10px;max-width:760px;width:100%;max-height:86vh;overflow:auto;padding:18px 20px}
+.guide-modal h3{margin:0 0 4px;font-size:16px;color:#e6e1ff}
+.guide-modal h4{margin:16px 0 4px;font-size:13px;color:#cdc4f5}
+.guide-modal p,.guide-modal li{font-size:12.5px;line-height:1.6;color:var(--dim,#b9c0cf)}
+.guide-modal pre{background:#00000055;border:1px solid #ffffff14;border-radius:6px;padding:9px 11px;font:11.5px/1.5 var(--mono);white-space:pre-wrap;color:#cfe6ff;margin:6px 0}
+.guide-modal .tag{display:inline-block;font:600 10px/1.4 var(--mono);padding:1px 5px;border-radius:3px;margin-right:5px;vertical-align:1px}
+.guide-modal .tag.off{background:#173a2a;color:#8fe3b6;border:1px solid #2f7d55}
+.guide-modal .tag.com{background:#332a14;color:#e8cf90;border:1px solid #7d652f}
+.guide-modal .tag.tst{background:#132132;color:#a8d3f7;border:1px solid #2f5f7d}
+.guide-toc{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.guide-toc div{border:1px solid #6f5fd0;background:#2b2545;color:#cdc4f5;border-radius:5px;padding:3px 9px;font-size:11.5px;cursor:pointer}
+.guide-toc div.on{background:#6f5fd0;color:#fff}
 .lint code{font-family:var(--mono);background:#00000040;padding:0 3px;border-radius:2px}
 
 /* phrase bank */
@@ -220,7 +254,7 @@ body[data-ui-mode="basic"] .advanced-only{display:none!important}
 .card-body{display:block}
 .card.collapsed .card-body{display:none}
 .card.collapsed{padding-bottom:8px}
-.collapse-btn{min-width:27px;font-family:var(--mono)}
+.collapse-btn{min-width:27px;font-family:var(--mono);font-size:12px;line-height:1}.shot-actions{display:flex;align-items:flex-start;justify-content:flex-end;gap:5px;flex-wrap:wrap;min-width:0;max-width:100%}.shot-add-footer{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin:4px 0 14px}.shot-add-footer .hint{margin:0}.retention-summary span{flex:1;min-width:0}.retention-summary code{color:#d9d1ff}.lint-row{display:flex;align-items:flex-start;gap:7px}.lint-row .lint{flex:1;margin-bottom:0}.lint-wrap{margin-bottom:6px}.lint-locate{flex:0 0 auto;margin-top:3px}
 .ref-purpose{background:#141821;border:1px solid #303747;border-radius:6px;padding:8px;margin:7px 0}
 .influence-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:6px 0 9px}
 .influence-summary{font-size:10.5px;color:#b8c2d8;line-height:1.45}
@@ -354,7 +388,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 <body>
 
 <header>
-  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.18.8</small></div>
+  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.19.5</small></div>
   <div class="tag" id="modeTag">T2VA</div>
   <div class="view-toggle" id="viewToggle" title="Basic hides technical schema controls; Advanced reveals everything.">
     <button id="viewBasic" onclick="setUIMode('basic')">Basic</button>
@@ -377,7 +411,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
   </details>
   <button class="btn sm good" onclick="openAISetup()">✨ AI Setup</button>
   <button class="btn sm" onclick="openFrameGrabber()">🎞 Frame Grabber</button>
-  <button class="btn sm" onclick="saveJSON()">Save .json</button>
+  <button class="btn sm" onclick="saveJSON()" title="Save the editable project JSON. Chrome/Edge open a Save As dialog; other browsers use their normal download behavior.">Save .json…</button>
   <button class="btn sm" onclick="document.getElementById('fi').click()">Open</button>
   <datalist id="verbs"><option>says</option><option>replies</option><option>answers</option><option>shouts</option><option>yells</option><option>whispers</option><option>murmurs</option><option>mutters</option><option>calls out</option><option>sings</option><option>shout together</option></datalist>
 <datalist id="styles"><option>Live-action, cinematic</option><option>Cinematic</option><option>2D-animated</option><option>3D CG</option><option>claymation</option><option>watercolor</option><option>vintage film</option></datalist>
@@ -403,6 +437,19 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
   </div>
 </div>
 
+<div class="guide-overlay" id="guideModal" hidden onclick="if(event.target===this)closeGuide()">
+  <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle" tabindex="-1">
+    <div style="display:flex;align-items:flex-start;gap:10px">
+      <div style="flex:1">
+        <h3 id="guideTitle">H3 Adherence Field Guide</h3>
+        <p style="margin:0">Condensed working notes on prompt adherence, reference routing, and field-aware prompt clarity. <span class="tag off">OFFICIAL</span>from MiniMax docs &middot; <span class="tag com">COMMUNITY</span>third-party guide &middot; <span class="tag tst">TESTED</span>reproducible community test.</p>
+      </div>
+      <button class="btn sm ghost" onclick="closeGuide()">Close</button>
+    </div>
+    <div class="guide-toc" id="guideToc"></div>
+    <div id="guideBody"></div>
+  </div>
+</div>
 <div class="frame-overlay" id="frameGrabModal" hidden onclick="if(event.target===this)closeFrameGrabber()">
   <div class="frame-modal" role="dialog" aria-modal="true" aria-labelledby="frameGrabTitle">
     <div class="frame-head"><h2 id="frameGrabTitle">🎞 Previous-Generation Frame Grabber</h2><span class="tag">local video · native-resolution PNG</span><div class="sp"></div><button class="btn sm ghost" onclick="closeFrameGrabber()">Close</button></div>
@@ -503,6 +550,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
     <div class="tabs">
       <div class="tab on" data-t="out" onclick="tab('out')">Prompt</div>
       <div class="tab" data-t="lint" onclick="tab('lint')">Check <span id="lintCount"></span></div>
+      <div class="tab" data-t="sug" onclick="tab('sug')">Suggestions <span id="sugCount"></span></div>
       <div class="tab" data-t="pb" onclick="tab('pb')">Phrases</div>
     </div>
 
@@ -518,6 +566,15 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 
     <div id="pane-lint" style="display:none"></div>
 
+    <div id="pane-sug" style="display:none">
+      <div style="display:flex;gap:8px;align-items:center;margin:0 0 9px">
+        <button class="btn sm" onclick="openGuide()">Open Adherence Guide</button>
+        <button class="btn sm ghost" onclick="restoreDismissedSuggestions()" id="sugRestoreBtn" hidden>Restore dismissed</button>
+      </div>
+      <div id="sugList"></div>
+      <p class="hint"><b>Suggestions run automatically.</b> Evidence-backed H3 adherence checks are combined with lightweight Composer coaching for under-specified actions, repeated Opening/Action information, ambiguous identity wording, timing pressure, and competing reference/camera ownership. Coaching is heuristic and rule-based &mdash; it never blocks a prompt or claims to replace an LLM review. Use <b>Locate</b> to jump to the relevant field and dismiss anything that does not apply.</p>
+    </div>
+
     <div id="pane-pb" style="display:none">
       <div class="pb-cats" id="pbCats"></div>
       <div class="pb-list" id="pbList"></div>
@@ -529,11 +586,11 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
 
 <script>
 /* ============================================================
-   MiniMax H3 Prompt Composer V5.18.8
+   MiniMax H3 Prompt Composer V5.19.5
    Implements the schema from MiniMax's official prompt guides:
    VIDEO_PROMPT_WRITING_GUIDE_base_en.md  (T2VA/I2VA/FL2VA/L2VA)
    VIDEO_PROMPT_WRITING_GUIDE_ref_en.md   (full-reference mode)
-   V5.18.8: custom-camera crash fix, visible error reporting, resilient rendering, Copy-all-generations repair, and base-mode capitalization fixes.
+   V5.19.5: final project-save polish. Save .json now opens a native Save As picker when the browser supports the File System Access API, with the legacy download path retained as a compatibility fallback. Prompt generation is unchanged from V5.19.4.
    ============================================================ */
 
 const FPS = 24;
@@ -645,9 +702,9 @@ const REF_KINDS = ['Subject','Picture','Video','Audio'];
 const RETENTION_V = ['fully_preserved','partially_preserved','attribute_transfer','weak_reference'];
 const TASK_TYPES = ['video editing','video continuation','keyframe completion',
   'reference generation','audio reuse','audio reference'];
-const APP_VERSION = '5.18.8';
-const STORAGE_KEY = 'h3_prompt_composer_v5_18_8';
-const BACKUP_KEY  = 'h3_prompt_composer_v5_18_8_backup';
+const APP_VERSION = '5.19.5';
+const STORAGE_KEY = 'h3_prompt_composer_v5_19_5';
+const BACKUP_KEY  = 'h3_prompt_composer_v5_19_5_backup';
 
 /* ---------------- state ---------------- */
 let S = blank();
@@ -655,14 +712,14 @@ function uid(prefix='r'){
   return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
 }
 function blank(){
-  return {
+  return {suggestDismissed:[],
     version:APP_VERSION, mode:'T2VA', dur:10, style:'Live-action, cinematic',
     wired:{img:0,vid:0,aud:0}, refs:[], taskTypes:['reference generation'],
     guardDistinct:true, uiMode:'basic', scaleRules:[], clips:[ newClip('Generation 1') ], active:0
   };
 }
 function newClip(name){
-  return { name:name||'Generation', summary:'', editWorkflow:'none', editSettings:{}, shots:[ newShot(true) ],
+  return { uid:uid('gen'), name:name||'Generation', summary:'', editWorkflow:'none', editSettings:{}, shots:[ newShot(true) ],
     soundscape:'', soundscapeExtra:'', soundscapeMode:'unset', music:'', musicMode:'unset' };
 }
 function C(){
@@ -920,7 +977,7 @@ function newAppearanceTransition(sh,shotIndex){
   appearanceTransitions(sh).push({uid:uid('atr'),subjectUid:r.uid,startStateUid:start,endStateUid:start});syncAppearanceCarry(r);render();
 }
 function newShot(first){
-  return { cutMs:first?null:3000, environmentUid:'', scaleReferenceUid:'', subjectUids:[], subjectPresence:{}, continuityReferenceUids:[], referenceUids:[],
+  return { uid:uid('shot'), cutMs:first?null:3000, environmentUid:'', scaleReferenceUid:'', subjectUids:[], subjectPresence:{}, continuityReferenceUids:[], referenceUids:[],
     camFraming:'',camFocusUid:'',camFocusArea:'',camFocusDetail:'',camSecondaryFocusUid:'',camForegroundUid:'',
     camViewpoint:'',camViewpointCustom:'',camPovSubjectUid:'',camAngle:'',camAngleCustom:'',
     camComposition:'',camCompositionCustom:'',camType:'',camTargetUid:'',camTargetCustom:'',
@@ -2643,7 +2700,7 @@ function referencePresetSummary(r){
   if(r.kind==='Video'&&(r.role||'')==='continuation source')return 'Transfers the ending temporal/spatial state into the new video opening; continue forward without replaying the source.';
   if(r.kind==='Picture'&&r.role==='wardrobe reference')return 'Transfers clothing, accessories, colors, materials, and fit only.';
   if(r.kind==='Picture'&&r.role==='storyboard reference')return 'Transfers shot order, framing, blocking, action direction, and planning timing; annotations do not appear in the video.';
-  if(r.kind==='Picture'&&r.role==='character scale reference')return scalePlacementEnabled(r)?'Attribute transfer: relative physical size, proportions, floor contact, and approximate multi-subject placement when selected by a Shot; never an exact target frame.':'Attribute transfer: relative physical scale and proportions only when selected by a Shot; never a target frame.';
+  if(r.kind==='Picture'&&r.role==='character scale reference')return scalePlacementEnabled(r)?'Attribute transfer: relative overall physical size, standing-height relationship, floor contact, and approximate multi-subject placement when selected by a Shot; never an exact target frame.':'Attribute transfer: relative overall physical size and standing-height relationship only when selected by a Shot; never a target frame.';
   if(r.kind==='Picture'&&r.role==='lighting integration reference')return 'Attribute transfer: lighting direction/color, shadow, exposure balance, and foreground/background integration only; never pose, framing, or placement.';
   if(r.kind==='Picture'&&r.role==='previous generation continuity')return 'Carries forward only the selected state from a successful previous Generation; trim or edit the screenshot so visible content supports that job.';
   return '';
@@ -2669,8 +2726,8 @@ function definitionFor(r,i,map=speakerMap()){
   if(r.kind==='Picture'){
     const role=r.role||'composition anchor',shots=computedShotList(r).map(n=>`[Shot ${n}]`),name=(r.name||'the reference image').trim(),details=(r.details||'').trim().replace(/[.\s]+$/,''),forShots=shots.length?` for ${listJoin(shots)}`:'';
     if(role==='character scale reference'){
-      const subjects=scaleSubjects(r),targets=listJoin(subjects.map(s=>labelOf(s,refIndex(s))))||'the assigned subjects',useShots=scaleReferenceShotList(r),where=useShots.length?listJoin(useShots.map(n=>`[Shot ${n}]`)):'the selected Shot',order=subjects.length>1?` Left-to-right identity order is ${listJoin(subjects.map(scaleSubjectDisplay))}.`:'';
-      const core=scalePlacementEnabled(r)?`is a shot-planning scale/placement guide for ${targets}, used in ${where}.${order} Only relative physical scale, proportions, and approximate placement transfer; the current Shot and Environment control pose, perspective, lighting, and final composition.`:`is a relative-size calibration guide for ${targets}, used in ${where}.${order} Only relative physical scale and proportions transfer; positions, spacing, depth, perspective, poses, lighting, shadows, and composition come from the current Shot and Environment.`;
+      const subjects=scaleSubjects(r),targets=listJoin(subjects.map(s=>labelOf(s,refIndex(s))))||'the assigned subjects',useShots=scaleReferenceShotList(r),where=useShots.length?listJoin(useShots.map(n=>`[Shot ${n}]`)):'the selected Shot',order=subjects.length>1?` For figure identification only, the figures shown from left to right correspond to ${listJoin(subjects.map(scaleSubjectDisplay))}; this ordering is not target blocking unless placement transfer is enabled.`:'';
+      const core=scalePlacementEnabled(r)?`is a shot-planning scale/placement guide for ${targets}, used in ${where}.${order} Transfer only relative overall physical size, standing-height relationship where applicable, floor contact, and approximate placement. Subject references remain authoritative for identity, anatomy, body proportions, wardrobe, and appearance; the current Shot and Environment control perspective, lighting, camera viewpoint, and final composition.`:`is a relative-size calibration guide for ${targets}, used in ${where}.${order} Transfer only relative overall physical size and standing-height relationship where applicable. Subject references remain authoritative for identity, anatomy, body proportions, wardrobe, and appearance; positions, spacing, depth, perspective, poses, lighting, shadows, and composition come from the current Shot and Environment.`;
       return `${core}${details?` ${ensureSentence(upperInitial(details))}`:''}`;
     }
     if(role==='previous generation continuity'){
@@ -2794,7 +2851,7 @@ function retentionNoteFor(r,i){
     const targets=listJoin(scaleSubjects(r).map(x=>labelOf(x,refIndex(x))))||'the assigned subjects';
     const shots=scaleReferenceShotList(r),where=shots.length?shots.map(n=>`[Shot ${n}]`).join(shots.length>1?' and ':''):'the selected Shot';
     if(scalePlacementEnabled(r))return `relative physical size, body/object scale, proportions, floor-plane contact, and approximate left-to-right placement/blocking transfer to ${targets} in ${where} only; the guide is not an exact target frame.`;
-    return `only relative physical scale and proportions transfer to ${targets} in ${where}; left-to-right order identifies the figures but does not define target blocking.`;
+    return `only relative overall physical size and standing-height relationship transfer to ${targets} in ${where}; the left-to-right mapping identifies the figures but does not define target blocking, and Subject references remain authoritative for anatomy and body proportions.`;
   }
   if(r.kind==='Picture'&&(r.role||'')==='lighting integration reference'){
     const target=refByUid(r.targetSubjectUid);return `only the lighting and foreground/background integration relationship transfers to ${target?labelOf(target,refIndex(target)):'the assigned performer'}; pose, framing, placement, and background geometry do not.`;
@@ -2925,7 +2982,7 @@ function pictureCuesForShot(sh,idx){
       let cue=`Begin with ${listJoin(clauses)}.`;
       const env=refByUid(sh.environmentUid);
       if(env&&subjectType(env)==='environment')cue+=` Use ${labelOf(env,refIndex(env))} to reconcile these continuity positions within the complete location layout.`;
-      cue+=' The current Shot camera instructions control framing rather than the framing of the continuity images.';
+      cue+=' Reconstruct these environment-relative spatial states through the current Shot camera; the continuity images do not control the new framing.';
       cues.push(cue);
     }
   }
@@ -2949,7 +3006,7 @@ function pictureCuesForShot(sh,idx){
       else if(kind==='broad_scene')cue=labs?`Carry forward the scene state and spatial relationships involving ${labs} established by ${lab}.`:`Carry forward the scene state and spatial relationships established by ${lab}.`;
       else cue=targets.length===1?`Begin with ${labs} at the environment-relative starting position and orientation established by ${lab}.`:labs?`Begin with ${labs} in the starting positions and blocking established by ${lab}.`:`Begin from the subject blocking established by ${lab}.`;
       if(!r.continuityPreserveFraming){const env=refByUid(sh.environmentUid);if(env&&subjectType(env)==='environment'&&['subject_blocking','object_position'].includes(kind))cue+=` Use ${labelOf(env,refIndex(env))} for the complete location layout.`;}
-      cues.push(`${cue} ${r.continuityPreserveFraming?'Use its approximate framing as supporting continuity.':'The current Shot camera instructions control framing rather than the framing of the continuity image.'}`);
+      cues.push(`${cue} ${r.continuityPreserveFraming?'Use its approximate framing as supporting continuity.':'Use only the environment-relative spatial state from this Picture and reconstruct it through the current Shot camera; the continuity image does not control the new framing.'}`);
     }
     // Character-height/scale references are intentionally NOT repeated inside
     // detailed_description. Their global attribute-transfer role is already explicit
@@ -3081,8 +3138,55 @@ function detailedDescriptionWordCount(promptText){
   if(!m)return 0;
   return m[1].trim().split(/\s+/).filter(Boolean).length;
 }
+function generationDescriptionWordCount(promptText){
+  const text=String(promptText||'');
+  if(S.mode==='REF')return detailedDescriptionWordCount(text);
+  const m=/integrated_multimodal_description:\s*([\s\S]*?)\n\noverall_soundscape:/.exec(text);
+  if(!m)return 0;
+  return m[1].trim().split(/\s+/).filter(Boolean).length;
+}
 
 /* ---------------- validation ---------------- */
+function escapeRegexText(s){return String(s||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function shotInstructionRecords(sh,shotIdx){
+  const a=[];const add=(label,text)=>{const t=String(text||'').trim();if(t)a.push({label,text:t});};
+  add('Opening State',sh?.openingState);add('Main Action',sh?.action);
+  timedActionBeats(sh).forEach((b,j)=>add(`Timed Action Beat ${j+1}`,b.text));
+  (sh?.dlg||[]).forEach((d,j)=>add(`Dialogue ${j+1} after-action`,d.afterAction));
+  add('Shot Sound',sh?.soundEffects);
+  if(sh?.camUseCustom)add('Custom Camera',sh.camCustomText);
+  else{add('Camera custom movement',sh?.camMovementCustom);add('Camera reveal',sh?.camReveal);add('Start Frame note',sh?.camStartFrameNote);add('End Frame note',sh?.camEndFrameNote);}
+  return a;
+}
+function canonicalReferenceSyntaxProblems(text){
+  const t=String(text||''),issues=[];
+  for(const m of t.matchAll(/<(subject|picture|video|audio)\s*\d+\s*>/gi))if(!/^<(Subject|Picture|Video|Audio) \d+>$/.test(m[0]))issues.push(m[0]);
+  const stripped=t.replace(/<(Subject|Picture|Video|Audio) \d+>/g,' ');
+  for(const m of stripped.matchAll(/(?:\[\s*)?\b(?:Subject|Picture|Video|Audio)\s*\d+\b(?:\s*\])?/gi))issues.push(m[0]);
+  for(const m of stripped.matchAll(/\bS\d+\b/g))issues.push(m[0]);
+  return [...new Set(issues.map(x=>x.trim()).filter(Boolean))];
+}
+function rawH3StructureProblems(text){
+  const t=String(text||''),hits=[];
+  const tests=[
+    ['Shot marker',/\[Shot\s+\d+\]/i],['dialogue tag',/<\/?d>/i],['scene-transition tag',/<\/?scenetrans>/i],['cutoff tag',/<\/?cutoff>/i],
+    ['subject_definitions field',/\bsubject_definitions\s*:/i],['retention_analysis field',/\bretention_analysis\s*:/i],['detailed_description field',/\bdetailed_description\s*:/i],['overall_soundscape field',/\boverall_soundscape\s*:/i],['non_diegetic_music field',/\bnon_diegetic_music\s*:/i]
+  ];
+  tests.forEach(([n,re])=>{if(re.test(t))hits.push(n);});return hits;
+}
+function knownSubjectNameHits(text){
+  if(S.mode!=='REF')return [];
+  const t=String(text||''),hits=[];
+  libraryIdentitySubjectRefs().forEach(r=>{
+    const name=String(subjectName(r)||'').trim();if(!name||/^Subject \d+$/i.test(name)||name.length<2)return;
+    const re=new RegExp(`(^|[^A-Za-z0-9_])${escapeRegexText(name)}(?=$|[^A-Za-z0-9_])`,'i');
+    if(re.test(t))hits.push({name,label:labelOf(r,refIndex(r))});
+  });
+  return hits;
+}
+function assignedFrameAnchorsForShot(shotNo,roles){
+  const wanted=new Set(roles||[]);return pictureRefs().filter(r=>wanted.has(r.role||'')&&computedShotList(r).includes(shotNo));
+}
 function lint(prompt=null,bodyWordCount=null){
   const L=[]; const map=speakerMap(); const effMs=effSec(S.dur)*1000;
   scaleRules().forEach((sr,idx)=>{
@@ -3126,6 +3230,17 @@ function lint(prompt=null,bodyWordCount=null){
     L.push(['info',`Duration snaps up to <code>${f}</code> frames = <code>${effSec(S.dur).toFixed(2)}s</code> on the 17n+5 frame grid.`]);
   let prev=0;
   C().shots.forEach((sh,i)=>{
+    if(S.mode==='REF'){
+      shotInstructionRecords(sh,i).forEach(rec=>{
+        const malformed=canonicalReferenceSyntaxProblems(rec.text);
+        if(malformed.length)L.push(['warn',`Shot ${i+1} ${esc(rec.label)} contains non-canonical reference syntax (${malformed.slice(0,3).map(x=>`<code>${esc(x)}</code>`).join(', ')}). Use the exact Composer label form such as <code>&lt;Subject 1&gt;</code>; the inline buttons can insert it safely.`]);
+        const names=knownSubjectNameHits(rec.text);
+        if(names.length)L.push(['warn',`Shot ${i+1} ${esc(rec.label)} uses known Subject name${names.length===1?'':'s'} instead of the canonical H3 label: ${names.slice(0,4).map(x=>`<code>${esc(x.name)}</code> → <code>${esc(x.label)}</code>`).join(', ')}. Keep literal names in spoken/on-screen text, but use <code>&lt;Subject N&gt;</code> in instructional prose.`]);
+        const raw=rawH3StructureProblems(rec.text);
+        if(raw.length)L.push(['warn',`Shot ${i+1} ${esc(rec.label)} contains raw H3 structure (${raw.join(', ')}). Enter only the content for this field; the Composer adds Shot markers, section labels, and dialogue/control tags automatically.`]);
+      });
+      (sh.dlg||[]).forEach((d,j)=>{if(/<(?:Subject|Picture|Video|Audio) \d+>/.test(String(d.text||'')))L.push(['warn',`Shot ${i+1} dialogue ${j+1} contains a reference label inside the literal spoken words. Dialogue text is emitted verbatim; use the character/object name if the speaker is meant to say it aloud.`]);});
+    }
     if(sourceVideoOwnsCamera()&&cameraBuilderHasInput(sh))L.push(['info',`Shot ${i+1}: Camera Builder settings are ignored in this source-video edit workflow because the source camera is preserved frame for frame.`]);
     if(i>0){
       if(sh.cutMs==null) L.push(['err',`Shot ${i+1} has no cut time.`]);
@@ -3341,6 +3456,10 @@ function lint(prompt=null,bodyWordCount=null){
         if(assigned.length>1)L.push(['warn',`${esc(labelOf(r,refIndex(r)))} is assigned as a ${role} in multiple shots. Concrete frame anchors normally belong to one specific shot.`]);
       }
       const lab=labelOf(r,refIndex(r));
+      if(['first frame','keyframe','last frame','edited keyframe'].includes(role)){
+        const slot=Number(r.idx)||0,owners=subjectRefs().filter(su=>sourcePicNumbers(su).includes(slot));
+        if(slot&&owners.length)L.push(['warn',`${esc(lab)} is both a concrete ${esc(role)} anchor and an appearance/source image for ${owners.map(su=>`${esc(labelOf(su,refIndex(su)))} (${esc(subjectName(su))})`).join(', ')}. This is only correct if the same connected image is literally intended to appear at that frame; otherwise use a separate Picture slot so a character sheet/source image is not mistaken for composition.`]);
+      }
       if(role==='character scale reference'){
         const ids=scaleSubjectUids(r),subjects=ids.map(refByUid);
         if(!ids.length)L.push(['err',`${esc(lab)} is a visual scale / placement reference but no Subject is identified in the left-to-right list.`]);
@@ -3380,6 +3499,13 @@ function lint(prompt=null,bodyWordCount=null){
       if(role==='sfx'&&!soundscapeCombinedText().includes(lab)&&!shotSoundText.includes(lab))L.push(['warn',`${esc(lab)} is a sound-texture reference but is not cited in a Shot sound field or overall_soundscape.`]);
       if(role==='exact_dialogue'&&rel==='fully_copy')L.push(['warn',`${esc(lab)} is Exact performed dialogue but uses fully_copy. Exact dialogue is normally one copied dialogue layer, so partially_copy is usually the correct marker; use fully_copy only if this Audio is literally the complete final audio track.`]);
       if(role==='reuse'&&!body.includes(lab)&&!soundscapeCombinedText().includes(lab)&&!(C().music||'').includes(lab))L.push(['warn',`${esc(lab)} is marked for audio reuse but is not cited in detailed_description, overall_soundscape, or non_diegetic_music.`]);
+      if((role==='exact_soundtrack'||rel==='fully_copy')&&role!=='exact_dialogue'){
+        const generatedSpeech=C().shots.some(sh=>(sh.dlg||[]).some(d=>String(d.text||'').trim()));
+        const generatedSfx=C().shots.some(sh=>String(sh.soundEffects||'').trim());
+        const sceneAudioText=soundscapeCombinedText();const extraSceneAudio=(C().soundscapeMode||'unset')==='custom'&&!!sceneAudioText.trim()&&!sceneAudioText.includes(lab);
+        const extraMusic=(C().musicMode||'unset')==='custom'&&!!String(C().music||'').trim();
+        if(generatedSpeech||generatedSfx||extraSceneAudio||extraMusic)L.push(['warn',`${esc(lab)} is configured as a complete fully-copied soundtrack, but this Generation also requests generated ${[generatedSpeech?'dialogue':'',generatedSfx?'Shot sound':'',extraSceneAudio?'ambience':'',extraMusic?'music':''].filter(Boolean).join(', ')}. Use partially_copy/reuse if new audio layers should be added, or remove the additional generated audio instructions.`]);
+      }
     });
 
     const timedAudio=externalAudioRefs().filter(r=>Number(r.durationSec)>0);
@@ -3420,10 +3546,8 @@ function lint(prompt=null,bodyWordCount=null){
       if(!String(C().shots[0]?.action||'').trim())L.push(['warn','Describe the new action that begins after the continuation source ends.']);
     }
     if(coPresentSubjectGroups().length&&!S.guardDistinct) L.push(['info','Multiple subjects share at least one Shot. Enabling the distinct-subject guard can reduce cloning, merging, and identity swaps.']);
-    const bodyWords=bodyWordCount==null?detailedDescriptionWordCount(prompt==null?build():prompt):bodyWordCount;
-    const isEdit=effectiveTaskTypes().includes('video editing')||effectiveTaskTypes().includes('video continuation');
-    if(bodyWords&&!isEdit&&bodyWords<250) L.push(['info',`detailed_description is about ${bodyWords} words. That can be appropriate for a simple Generation; add detail only where composition, blocking, action progression, dialogue, camera behavior, or synchronized sound is genuinely under-specified.`]);
-    if(bodyWords&&!isEdit&&bodyWords>500) L.push(['info',`detailed_description is about ${bodyWords} words. MiniMax's guide gives 350–500 as a normal generation range; keep extra detail only when the scene complexity needs it.`]);
+    // Word-count guidance lives in Suggestions, not Prompt Check. Check is reserved
+    // for structural/schema problems and workflow conflicts that can make a prompt invalid.
     const activeSummary=(C().summary||'').trim()||autoSummary();
     const edits=directEditVideoRefs();if(edits.length){const expected=`The target video is an edited version of ${labelOf(edits[0],refIndex(edits[0]))}.`;if(!activeSummary.startsWith(expected))L.push(['warn',`For a direct video edit, the summary should begin exactly with “${esc(expected)}” as required by the full-reference guide.`]);}
     const defined=orderedRefs().map(r=>labelOf(r,refIndex(r)));
@@ -3444,6 +3568,11 @@ function lint(prompt=null,bodyWordCount=null){
     if(sh.environmentUid){const env=refByUid(sh.environmentUid);if(!env||subjectType(env)!=='environment')L.push(['err',`Shot ${i+1} points to a missing or invalid Environment reference.`]);}
     if(sh.scaleReferenceUid){const sr=refByUid(sh.scaleReferenceUid);if(!sr||sr.kind!=='Picture'||(sr.role||'')!=='character scale reference')L.push(['err',`Shot ${i+1} points to a missing or invalid height / scale / placement reference.`]);}
     shotSelectedContinuityReferenceUids(sh).forEach(id=>{const r=refByUid(id);if(!r)L.push(['err',`Shot ${i+1} points to a missing continuity reference.`]);else{if(['subject_blocking','object_position','appearance_state'].includes(r.continuityType||'subject_blocking')&&!(r.continuitySubjectUids||[]).length)L.push(['warn',`Shot ${i+1}: ${esc(staticLabelOf(r,refIndex(r)))} is a ${esc((r.continuityType||'subject_blocking').replaceAll('_',' '))} continuity reference but no target Subjects/objects are identified. Choose the targets on the left so H3 knows whose prior state should carry forward.`]);const blocked=(r.continuitySubjectUids||[]).map(refByUid).filter(Boolean).filter(su=>['off','none'].includes(shotPresenceMode(sh,su.uid)));if(blocked.length)L.push(['warn',`Shot ${i+1}: ${esc(staticLabelOf(r,refIndex(r)))} carries forward ${blocked.map(su=>esc(labelOf(su,refIndex(su)))).join(', ')}, but those targets are marked off-screen/not present. Remove those continuity targets or change their Shot presence.`]);}});
+    const spatialContinuity=shotSelectedContinuityReferenceUids(sh).map(refByUid).filter(Boolean).filter(r=>['subject_blocking','object_position'].includes(r.continuityType||'subject_blocking'));
+    const continuityOwners=new Map();spatialContinuity.forEach(r=>(r.continuitySubjectUids||[]).forEach(uid=>{const arr=continuityOwners.get(uid)||[];arr.push(r);continuityOwners.set(uid,arr);}));
+    continuityOwners.forEach((arr,uid)=>{if(arr.length>1){const su=refByUid(uid);L.push(['warn',`Shot ${i+1}: ${su?esc(labelOf(su,refIndex(su))):'one target'} receives starting placement/blocking from multiple continuity Pictures (${arr.map(r=>esc(staticLabelOf(r,refIndex(r)))).join(', ')}). Keep both only if they describe the same spatial state; otherwise choose one authoritative continuity source.`]);}});
+    if(sh.scaleReferenceUid){const sr=refByUid(sh.scaleReferenceUid);if(sr&&scalePlacementEnabled(sr)){const scaleIds=new Set(scaleSubjectUids(sr));const overlap=[...continuityOwners.keys()].filter(uid=>scaleIds.has(uid));if(overlap.length)L.push(['warn',`Shot ${i+1}: ${esc(staticLabelOf(sr,refIndex(sr)))} is allowed to transfer approximate placement while previous-generation continuity also controls placement for ${overlap.map(uid=>{const su=refByUid(uid);return su?esc(labelOf(su,refIndex(su))):'a target';}).join(', ')}. Confirm both spatial guides agree, or switch the scale guide to Height / scale only.`]);}}
+
     libraryIdentitySubjectRefs().forEach(r=>{const mode=shotPresenceMode(sh,r.uid),lab=labelOf(r,refIndex(r)),mentioned=combinedActionText(sh).includes(lab),textOffscreen=subjectMentionedOnlyOffscreen(sh,r),cameraVisible=cameraVisualShotList(r).includes(i+1),speaks=(sh.dlg||[]).some(d=>(d.text||'').trim()&&dialogueSubjectUids(d).includes(r.uid)),speaksOnscreen=(sh.dlg||[]).some(d=>(d.text||'').trim()&&dialogueSubjectUids(d).includes(r.uid)&&!d.offscreen&&!d.vo);if(mode==='none'&&(mentioned||cameraVisible||speaks))L.push(['err',`Shot ${i+1}: ${esc(lab)} is marked “Not present” but is still referenced by the Shot action, camera, or dialogue.`]);if(mode==='off'&&cameraVisible)L.push(['err',`Shot ${i+1}: ${esc(lab)} is marked off-screen but Camera Builder frames that Subject.`]);if(mode==='auto'&&textOffscreen&&cameraVisible)L.push(['warn',`Shot ${i+1}: ${esc(lab)} is described as off-screen in the Shot text but Camera Builder frames it. Mark the Subject On-screen or change the camera/text so the visibility state is unambiguous.`]);if(mode==='off'&&speaksOnscreen)L.push(['warn',`Shot ${i+1}: ${esc(lab)} is marked off-screen but its dialogue is not marked off-screen/voiceover.`]);});
     if(sh.scaleReferenceUid){const sr=refByUid(sh.scaleReferenceUid);if(sr){const notVisible=(sr.scaleSubjectUids||[]).map(refByUid).filter(Boolean).filter(r=>shotPresenceMode(sh,r.uid)==='off'||shotPresenceMode(sh,r.uid)==='none');if(notVisible.length)L.push(['warn',`Shot ${i+1}: the selected scale/placement guide includes ${notVisible.map(r=>esc(labelOf(r,refIndex(r)))).join(', ')}, but those Subjects are explicitly off-screen/not present. Consider removing the scale guide from this Shot.`]);}}
     const actionComplexity=((sh.action||'').match(/\b(?:then|after that|before|while|and then)\b|;|,\s+(?:and|then)\s+/gi)||[]).length;if((sh.action||'').trim().length>180&&actionComplexity>=2&&!timedActionBeats(sh).length)L.push(['info',`Shot ${i+1}: the main Action contains several sequential changes. Timed Action Beats may make the physical progression and pacing clearer.`]);
@@ -3528,7 +3657,7 @@ function lint(prompt=null,bodyWordCount=null){
     if(sh.camUseCustom&&!String(sh.camCustomText||'').trim())L.push(['err',`Shot ${i+1}: custom camera override is enabled but no camera sentence has been entered.`]);
     if(/(?:^|[.;]\s+)<Subject \d+>\s+(standing|sitting|seated|walking|running|leaning|lying|crouched|positioned)\b/i.test(sh.action))L.push(['warn',`Shot ${i+1} contains a subject-state sentence fragment such as “<Subject 1> seated on…”. Use a complete verb such as “is seated,” “stands,” “sits,” or “walks.”`]);
   });
-  if(!L.some(x=>x[0]==='err'||x[0]==='warn')) L.push(['ok','No blocking issues found. The prompt structure and mappings look ready.']);
+  if(!L.some(x=>x[0]==='err'||x[0]==='warn')) L.push(['ok','Prompt Check passed. No structural, timing, reference, dialogue, audio, camera, continuity, or mapping problems were detected.']);
   return L;
 }
 
@@ -4027,10 +4156,14 @@ function renderRefs(){
         <div class="fld"><label class="f">Optional details</label><textarea data-f="details" data-key="ref-${i}-details" rows="2" placeholder="${videoDetailsPlaceholder}">${esc(r.details||'')}</textarea></div>`;
     }
     const refDisplayName=r.kind==='Subject'?subjectName(r):(r.name||referencePresetSummary(r)||'');
-    const c=el(`<div class="card ${cls} ${r.collapsed?'collapsed':''}"><div class="chead"><div class="ref-identity"><span class="ref-kind"><span class="kind-icon">${icon}</span><span class="kind-title">${r.kind}</span></span><span class="ref-badge">${esc(displayLab)}</span><span class="ref-name" title="${esc(refDisplayName)}">${esc(refDisplayName)}</span></div><div class="ref-actions">${!r.useCustomDef?'<span class="auto-pill">auto definition</span>':''}<button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand">${r.collapsed?'＋':'−'}</button><button class="btn sm danger" data-a="del" title="Remove this reference">✕</button></div></div><div class="card-body">
-      <div class="active-state ${refActiveInCurrentClip(r)?'':'off'}"><b>${refActiveInCurrentClip(r)?'Used by current Generation':'Project library only'}</b><span>${refActiveInCurrentClip(r)?'This reference is currently reached from the middle-column Shot/workflow controls.':'Saved for reuse. It will not be sent to H3 until a Shot, dialogue/camera control, or guided workflow uses it.'}</span></div><div class="row fld advanced-only"><select data-f="kind" data-key="ref-${i}-kind">${REF_KINDS.map(k=>`<option ${k===r.kind?'selected':''}>${k}</option>`).join('')}</select>${slotField}</div>
+    const basicRetention=retentionMarkerFor(r),basicRetentionNote=fixedRetentionPic
+      ? (continuityPic?'This role deliberately carries forward selected prior state rather than the full screenshot.':scaleRef?'This role transfers scale/placement attributes without preserving the guide as a target frame.':'This role transfers lighting/integration attributes only.')
+      : 'Advanced mode lets you change how strongly this reference is preserved or transferred.';
+    const basicRetentionHTML=`<div class="active-state basic-only retention-summary"><b>Preservation: <code>${esc(basicRetention)}</code></b><span>${basicRetentionNote}</span>${fixedRetentionPic?'':`<button class="btn sm" data-a="editRetention">Edit in Advanced</button>`}</div>`;
+    const c=el(`<div class="card ${cls} ${r.collapsed?'collapsed':''}" data-ref-card="${i}" data-ref-uid="${esc(r.uid)}"><div class="chead"><div class="ref-identity"><span class="ref-kind"><span class="kind-icon">${icon}</span><span class="kind-title">${r.kind}</span></span><span class="ref-badge">${esc(displayLab)}</span><span class="ref-name" title="${esc(refDisplayName)}">${esc(refDisplayName)}</span></div><div class="ref-actions">${!r.useCustomDef?'<span class="auto-pill">auto definition</span>':''}<button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand" aria-label="${r.collapsed?'Expand':'Collapse'} ${esc(displayLab)}">${r.collapsed?'▸':'▾'}</button><button class="btn sm danger" data-a="del" title="Remove this reference">✕</button></div></div><div class="card-body">
+      <div class="active-state ${refActiveInCurrentClip(r)?'':'off'}"><b>${refActiveInCurrentClip(r)?'Used by current Generation':'Project library only'}</b><span>${refActiveInCurrentClip(r)?'This reference is currently reached from the middle-column Shot/workflow controls.':'Saved for reuse. It will not be sent to H3 until a Shot, dialogue/camera control, or guided workflow uses it.'}</span></div>${basicRetentionHTML}<div class="row fld advanced-only"><select data-f="kind" data-key="ref-${i}-kind">${REF_KINDS.map(k=>`<option ${k===r.kind?'selected':''}>${k}</option>`).join('')}</select>${slotField}</div>
       ${main}
-      ${fixedRetentionPic?`<div class="active-state advanced-only"><b>${continuityPic?'partially_preserved':'attribute_transfer'}</b><span>${continuityPic?'Fixed for previous-generation continuity references: preserve only the selected prior state, not the entire screenshot.':scaleRef?'Fixed for visual scale/placement references so the guide is not preserved as a target frame.':'Fixed for lighting-integration references so only lighting relationships transfer.'}</span></div>`:`<div class="row fld advanced-only"><select data-f="ret" data-key="ref-${i}-ret">${opts.map(o=>`<option ${o===rc(r).ret?'selected':''}>${o}</option>`).join('')}</select><input type="text" data-f="retNote" data-key="ref-${i}-retNote" placeholder="Optional override, e.g. preserve only the jacket color and fabric texture" value="${esc(rc(r).retNote||'')}"></div>`}
+      ${fixedRetentionPic?`<div class="active-state advanced-only"><b>${continuityPic?'partially_preserved':'attribute_transfer'}</b><span>${continuityPic?'Fixed for previous-generation continuity references: preserve only the selected prior state, not the entire screenshot.':scaleRef?'Fixed for visual scale/placement references so the guide is not preserved as a target frame.':'Fixed for lighting-integration references so only lighting relationships transfer.'}</span></div>`:`<div class="row fld advanced-only"><select data-f="ret" data-key="ref-${i}-ret" aria-label="Retention / transfer strength">${opts.map(o=>`<option ${o===rc(r).ret?'selected':''}>${o}</option>`).join('')}</select><input type="text" data-f="retNote" data-key="ref-${i}-retNote" placeholder="Optional override, e.g. preserve only the jacket color and fabric texture" value="${esc(rc(r).retNote||'')}"></div>`}
       ${fixedRetentionPic?'':`<details class="adv advanced-only"><summary>Advanced custom definition</summary><label class="chk"><input type="checkbox" data-f="useCustomDef" ${r.useCustomDef?'checked':''}> Replace the generated definition with my own text</label><textarea data-f="desc" data-key="ref-${i}-desc" rows="3" style="margin-top:6px" placeholder="Advanced: write the complete reference definition that should follow ${esc(lab)}">${esc(r.desc||'')}</textarea></details>`}</div></div>`);
 
     c.querySelectorAll('[data-f]').forEach(inp=>{
@@ -4085,6 +4218,7 @@ function renderRefs(){
       }
     });
     c.querySelector('[data-a=collapse]').onclick=()=>{r.collapsed=!r.collapsed;render();};
+    const editRetention=c.querySelector('[data-a=editRetention]');if(editRetention)editRetention.onclick=()=>{S.uiMode='advanced';r.collapsed=false;render();requestAnimationFrame(()=>{const card=document.querySelector(`[data-ref-uid="${r.uid}"]`),target=card?.querySelector('[data-f=ret]')||card;target?.scrollIntoView({behavior:'smooth',block:'center'});if(target){pulseSuggestionTarget(target);if(typeof target.focus==='function')target.focus({preventScroll:true});}});};
     c.querySelector('[data-a=del]').onclick=()=>{if(confirm(`Remove ${lab}?`)){detachRef(r);S.refs.splice(i,1);render();}};
     const toEnv=c.querySelector('[data-a=toEnv]'); if(toEnv)toEnv.onclick=()=>convertPictureToEnvironment(r);
     c.querySelectorAll('[data-scale-subject-select]').forEach(sel=>{sel.onchange=e=>{const j=Number(e.target.dataset.scaleSubjectSelect);r.scaleSubjectUids=scaleSubjectUids(r);r.scaleSubjectUids[j]=e.target.value;render();};});
@@ -4412,7 +4546,7 @@ function renderShots(){
   C().shots.forEach((sh,i)=>{
     if(!sh.stageOpen)sh.stageOpen={scene:true,opening:true,action:true,camera:false,dialogue:false,sound:false};if(sh.openingState===undefined)sh.openingState='';if(!sh.subjectPresence)sh.subjectPresence={};if(!Array.isArray(sh.continuityReferenceUids))sh.continuityReferenceUids=[];
     const hiddenGuidance=[];const scaleActive=refByUid(sh.scaleReferenceUid);if(scaleActive)hiddenGuidance.push(`${staticLabelOf(scaleActive,refIndex(scaleActive))} · ${scaleActive.name||'Scale / placement guide'} · scale guidance`);shotSelectedReferenceUids(sh).map(refByUid).filter(Boolean).forEach(r=>hiddenGuidance.push(`${staticLabelOf(r,refIndex(r))} · ${r.name||r.role||'Shot reference'} · ${r.role||'reference'}`));
-    const card=el(`<div class="card shot ${sh.collapsed?'collapsed':''}" data-shot-card="${i}"><div class="chead"><span class="n">Shot ${i+1}</span>${i>0?`<input type="text" data-f="ts" data-key="shot-${i}-ts" value="${ms2ts(sh.cutMs||0)}" style="width:92px;font-family:var(--mono);font-size:11px">`:'<span style="font-size:11px;color:var(--dimmer)">opens — no timestamp</span>'}<div class="sp"></div><button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand">${sh.collapsed?'＋':'−'}</button><button class="btn sm" data-a="up" title="Move shot up">↑</button><button class="btn sm" data-a="down" title="Move shot down">↓</button><button class="btn sm" data-a="dup">Duplicate</button>${C().shots.length>1?'<button class="btn sm danger" data-a="del">✕</button>':''}</div><div class="card-body">
+    const card=el(`<div class="card shot ${sh.collapsed?'collapsed':''}" data-shot-card="${i}"><div class="chead"><div><span class="n">Shot ${i+1}</span>${i>0?`<input type="text" data-f="ts" data-key="shot-${i}-ts" value="${ms2ts(sh.cutMs||0)}" style="width:92px;font-family:var(--mono);font-size:11px;margin-left:8px">`:'<span style="font-size:11px;color:var(--dimmer);margin-left:8px">opens — no timestamp</span>'}</div><div class="shot-actions"><button class="btn sm collapse-btn" data-a="collapse" title="Collapse or expand" aria-label="${sh.collapsed?'Expand':'Collapse'} Shot ${i+1}">${sh.collapsed?'▸':'▾'}</button><button class="btn sm" data-a="up" title="Move shot up">↑</button><button class="btn sm" data-a="down" title="Move shot down">↓</button><button class="btn sm" data-a="dup">Duplicate</button>${C().shots.length>1?'<button class="btn sm danger" data-a="del">✕</button>':''}</div></div><div class="card-body">
       <div class="workflow-strip basic-only"><span class="workflow-step ${sh.environmentUid?'done':'current'}">1 Scene</span><span class="workflow-step ${(sh.openingState||'').trim()?'done':'current'}">2 Opening</span><span class="workflow-step ${(sh.action||'').trim()||timedActionBeats(sh).length?'done':'current'}">3 Action</span><span class="workflow-step ${cameraBuilderHasInput(sh)?'done':'current'}">4 Camera</span><span class="workflow-step ${(sh.dlg||[]).length?'done':''}">5 Dialogue</span><span class="workflow-step ${(sh.soundEffects||'').trim()?'done':''}">6 Sound</span></div>
       ${i>0?`<div class="fld advanced-only"><label class="f">Transition</label><select data-f="cutVerb" data-key="shot-${i}-cutVerb">${CUT_VERBS.map(v=>`<option ${v===sh.cutVerb?'selected':''}>${v}</option>`).join('')}</select></div>`:''}
       <details class="shot-stage" data-stage="scene" ${shotStageOpen(sh,'scene',true)?'open':''}><summary><span class="stage-num2">1</span>Scene & continuity<span class="stage-summary">${esc((refByUid(sh.environmentUid)&&subjectName(refByUid(sh.environmentUid)))||'Choose environment')} · ${esc(shotPresenceSummary(sh))}</span></summary><div class="shot-stage-body">
@@ -4467,6 +4601,7 @@ function renderShots(){
     const dz=card.querySelector('[data-dlgs]');sh.dlg.forEach((d,j)=>{const sid=sidForDialogue(d,map);const voices=resolvedVoiceRefs(d);const subject=subjectForDialogue(d);const dc=el(`<div class="dlg" data-dialogue-card="${i}-${j}"><div class="chead"><span class="sid" data-sidbadge="${i}-${j}">${esc(sid)}</span><b>${esc(displaySpeaker(d)||'Choose speaker')}</b><div class="sp"></div><button class="btn sm danger" data-a="x">✕</button></div><div class="fld"><label class="f">Speaker</label><select data-d="subjectUid" data-key="dlg-${i}-${j}-subject"><option value="">— custom speaker —</option>${subs.map(r=>`<option value="${r.uid}" ${r.uid===d.subjectUid?'selected':''}>${esc(labelOf(r,refIndex(r)))} — ${esc(subjectName(r))}</option>`).join('')}</select></div>${!subject?`<div class="fld"><input type="text" data-d="who" data-key="dlg-${i}-${j}-who" placeholder="Narrator, radio announcer, child off-screen…" value="${esc(d.who)}"></div>`:''}<div class="voice-resolved ${voices.length?'':'none'}">${voices.length?`Voice${voices.length>1?'s':''}: <b>${voices.map(esc).join(' + ')}</b> — applied automatically from the subject binding${voices.length>1?'s':''}.`:'No voice reference is currently resolved for this speaker.'}</div>${timedActionBeats(sh).length?`<div class="dialogue-timing-row"><label class="f" style="margin:0">Timing</label><select data-d="timedBeatUid"><option value="" ${!d.timedBeatUid?'selected':''}>Automatic — after Shot action / beats</option>${timedActionBeats(sh).map((b,bi)=>`<option value="${b.uid}" ${d.timedBeatUid===b.uid?'selected':''}>During Beat ${bi+1} · ${formatBeatSec(b.startSec)}–${formatBeatSec(b.endSec)} sec</option>`).join('')}</select>${d.timedBeatUid?'<span class="timing-pill">beat-linked</span>':''}</div>`:''}<div class="fld"><label class="f">Delivery / emotion</label><input type="text" data-d="delivery" data-key="dlg-${i}-${j}-delivery" placeholder="in an urgent, frightened whisper, breathy and barely controlling panic" value="${esc(d.delivery)}"></div><div class="row fld"><textarea data-d="text" data-key="dlg-${i}-${j}-text" rows="2" placeholder="I don’t think I’m ready to open it.">${esc(d.text)}</textarea><input type="text" data-d="lang" data-key="dlg-${i}-${j}-lang" value="${esc(d.lang)}" style="max-width:88px"></div><details class="adv after-line"><summary>Action after this line — optional</summary><div class="fld inline-write-field"><textarea class="reference-insert-target" data-d="afterAction" data-key="dlg-${i}-${j}-afterAction" rows="2" placeholder="She closes her lips, lowers the envelope, and looks toward <Subject 2>.">${esc(d.afterAction||'')}</textarea>${inlineSubjectButtonsHTML()}</div></details><details class="adv advanced-only"><summary>Advanced dialogue settings</summary>${subs.length>1?`<label class="f">Additional speakers saying the same line</label><div class="pb-cats" data-extra-speakers>${subs.filter(r=>r.uid!==d.subjectUid).map(r=>`<div class="pb-cat ${(d.additionalSubjectUids||[]).includes(r.uid)?'on':''}" data-extra="${r.uid}">${esc(subjectName(r))}</div>`).join('')}</div>`:''}<div class="fld"><input type="text" data-d="identity" placeholder="Optional speaker identity note" value="${esc(d.identity)}"></div>${libraryAudioRefs().filter(a=>['voice','exact_dialogue'].includes(a.audioRole||'voice')).length?`<div class="fld"><label class="f">Voice override</label><select data-d="voiceRefUid"><option value="auto" ${dialogueVoiceOverride(d)==='auto'?'selected':''}>Automatic from subject</option><option value="" ${dialogueVoiceOverride(d)===''?'selected':''}>No voice reference</option>${libraryAudioRefs().filter(a=>['voice','exact_dialogue'].includes(a.audioRole||'voice')).map(a=>`<option value="${esc(a.uid)}" ${a.uid===dialogueVoiceOverride(d)?'selected':''}>${esc(staticLabelOf(a,refIndex(a)))}${a.name?' — '+esc(a.name):''}</option>`).join('')}</select></div>`:''}<div class="row fld"><input type="text" data-d="verb" list="verbs" value="${esc(d.verb||'says')}"><select data-d="punct" style="max-width:64px"><option value=":" ${(d.punct||':')===':'?'selected':''}>:</option><option value="," ${d.punct===','?'selected':''}>,</option></select></div><select data-d="scenetrans"><option value="" ${!d.scenetrans?'selected':''}>— no cut crossing —</option><option value="out" ${(d.scenetrans===true||d.scenetrans==='out')?'selected':''}>continues into next shot</option><option value="in" ${d.scenetrans==='in'?'selected':''}>carries over from previous</option></select><div class="row" style="margin-top:7px"><label class="chk"><input type="checkbox" data-d="vo" ${d.vo?'checked':''}> voiceover</label><label class="chk"><input type="checkbox" data-d="offscreen" ${d.offscreen?'checked':''}> off-screen</label><label class="chk"><input type="checkbox" data-d="cutoff" ${d.cutoff?'checked':''}> cut off by end</label></div></details></div>`);dc.querySelectorAll('[data-d]').forEach(inp=>{const apply=e=>{const f=e.target.dataset.d;d[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;if(f==='subjectUid'){const r=refByUid(d.subjectUid);d.who=r?subjectName(r):d.who;d.additionalSubjectUids=(d.additionalSubjectUids||[]).filter(id=>id!==d.subjectUid);d.voiceRef='auto';d.voiceRefUid='auto';render();return;}if(f==='text'||f==='timedBeatUid'){render();return;}buildOnly();if(f==='who')refreshSidBadges();};if(inp.tagName==='SELECT'||inp.type==='checkbox')inp.onchange=apply;else inp.oninput=apply;});dc.querySelectorAll('[data-extra]').forEach(ch=>ch.onclick=()=>{d.additionalSubjectUids=d.additionalSubjectUids||[];const id=ch.dataset.extra;d.additionalSubjectUids=d.additionalSubjectUids.includes(id)?d.additionalSubjectUids.filter(x=>x!==id):d.additionalSubjectUids.concat(id);render();});dc.querySelectorAll('[data-inline-ref]').forEach(btn=>{btn.onmousedown=e=>e.preventDefault();btn.onclick=()=>{const box=btn.closest('.inline-write-field'),ta=box?.querySelector('textarea,input[type=text]');if(ta)insertAt(ta,btn.dataset.inlineRef);};});dc.querySelector('[data-a=x]').onclick=()=>{sh.dlg.splice(j,1);render();};dz.appendChild(dc);});
     c.appendChild(card);
   });
+  const addFooter=el(`<div class="shot-add-footer"><span class="hint">Continue the timeline without scrolling back to the toolbar.</span><button class="btn" id="addShotBottom">+ Add Shot</button></div>`);addFooter.querySelector('#addShotBottom').onclick=addShot;c.appendChild(addFooter);
 }
 
 // Returns null for unparseable input so the caller can keep the previous value
@@ -4483,8 +4618,341 @@ function parseTs(v){
   const n=Number(t);return Number.isFinite(n)?Math.round(n*1000):null;
 }
 
+/* ============================================================
+   ADHERENCE + PROMPT COACH (V5.19.5)
+   Heuristic checks derived from the MiniMax H3 Adherence Field
+   Guide. Deliberately separate from lint(): these are advisory,
+   never block, and are individually dismissible. Cross-field
+   checks (structured data vs. prose) come first because they
+   are high-precision; pure phrase heuristics are last.
+   ============================================================ */
+const GUIDE_SECTIONS=[
+  {id:'skeleton',title:'Terse skeleton, verbose descriptions',html:`
+    <p><span class="tag off">OFFICIAL</span>H3 was trained on the output of its own prompt rewriter, not casual prose. The <b>skeleton</b> is a closed, terse vocabulary; the <b>descriptions inside it</b> should be long, explicit, and physical.</p>
+    <h4>Be terse / exact</h4>
+    <p>Field labels, <code>[Shot N]</code>, timestamps, camera vocabulary, <code>&lt;d&gt;</code> tags, retention markers. Exact strings, nothing extra.</p>
+    <h4>Be verbose / explicit</h4>
+    <p>Subject appearance and state (identity, wardrobe, position, orientation, lighting); actions as causal chains of observable physics in time order; audio as direct sound behavior (source, distance, decay, timing).</p>
+    <p><span class="tag off">OFFICIAL</span>Ref2VA <code>detailed_description</code> target is <b>350&ndash;500 English words</b> for generation tasks. A single shot does not justify a short description.</p>
+    <p><span class="tag com">COMMUNITY</span>Verbose does not mean more events. Spend the complexity budget on <b>one main action arc plus one primary camera move per shot</b>; detail the physics of one beat rather than stacking four.</p>
+    <p><b>Repetition is intentional.</b> Repeating the same visual description across <code>subject_definitions</code>, <code>retention_analysis</code>, and <code>detailed_description</code> is reinforcement, not redundancy. Trimming it to avoid repeating yourself weakens conditioning.</p>`},
+  {id:'turnaway',title:'The turn-away problem',html:`
+    <p>Turn-away actions are a commonly reported orientation stress case in reference mode. Ref2VA is optimized to match the supplied identity images, which often show a face; asking that face to disappear can compete with the identity-match signal the model is also trying to preserve.</p>
+    <h4>1. Cut to the reversed state (most reliable)</h4>
+    <p>Start a new Shot with the character <i>already</i> facing away. Static orientation is easy; mid-shot rotation is hard.</p>
+    <pre>[Shot 2] At 00:04.000, the shot cuts to a medium shot from behind
+&lt;Subject 2&gt;: the back of his head, shoulders, and dark-grey jacket
+fill the left of frame, his face fully hidden.</pre>
+    <h4>2. Enumerate the rotating body parts</h4>
+    <p>Name each part and where it ends up, so the model cannot satisfy you by turning only the head.</p>
+    <pre>He pivots on his feet a full half-turn away from her: his hips,
+shoulders, and head rotate together until his back is squarely to
+her and to the camera. His face is no longer visible.</pre>
+    <h4>3. Describe the end state, not the verb</h4>
+    <p>&ldquo;Turns around&rdquo; is ambiguous. State what the lens sees at the end, with intermediate stages: <i>rotating from front view, through left profile, to full back view.</i></p>
+    <h4>4. Release the face in retention_analysis</h4>
+    <p><span class="tag com">COMMUNITY</span>Per-Shot retention splits are a working solution in H3 prompts: keep stronger identity retention where the face is visible and relax it where the face must disappear.</p>
+    <p><b>Composer note:</b> V5.19.5 still stores retention at the Generation level. Changing a Subject to <code>partially_preserved</code> affects every Shot in that Generation. If only one Shot needs a sustained rear-facing state, consider a separate Generation or a rear-view reference rather than weakening identity everywhere.</p>
+    <h4>5. Supply a back-view reference</h4>
+    <p><span class="tag com">COMMUNITY</span>Identity lives in the reference files. For a sustained back-to-camera beat, add a rear or three-quarter-rear image and define it as an additional appearance source.</p>
+    <h4>6. Prove it at low resolution</h4>
+    <p><span class="tag tst">TESTED</span>Orientation guidance weakens at 768p. Prove the turn at ~416p first.</p>`},
+  {id:'negatives',title:'Negatives are soft',html:`
+    <p><span class="tag tst">TESTED</span>Prohibitions written in prose are intermittently ignored. &ldquo;No background music.&rdquo; at the end of a prompt was dropped in community testing, while <code>non_diegetic_music: N/A</code> in its proper field held.</p>
+    <p>State the desired positive end-state in the right field instead of prohibiting things in prose. The docs never promise negative-phrase control.</p>
+    <p><b>Exception:</b> orientation locks are the documented case where an explicit negative works, because it is paired with a positive anatomical statement: <i>&ldquo;her feet, hips, shoulders and head remain oriented in the same direction; she does not track the camera.&rdquo;</i></p>`},
+  {id:'behavior',title:'Behavior beats aesthetics',html:`
+    <p>Observable physical instruction outperforms intent language. Describe anatomy and physics, not quality.</p>
+    <p><b>Works:</b> <i>her feet, hips, shoulders and head remain oriented in the same direction.</i><br>
+       <b>Underperforms:</b> <i>realistic, cinematic quality, don't look AI, 4k, masterpiece.</i></p>
+    <p>Quality tokens are diffusion-image habits. H3 conditions on described behavior; a word like &ldquo;stunning&rdquo; describes your reaction, not anything the camera can see. Style belongs in the style label at the head of Shot 1, not sprinkled through the action.</p>`},
+  {id:'relationships',title:'Reference jobs and ownership',html:`
+    <p>Every active reference should have one declared job: what source contributes which attribute to which target, and what must remain controlled elsewhere. This is especially important when multiple references touch camera motion, blocking, scale, wardrobe, or continuity.</p>
+    <p><b>Useful mental model:</b> source &rarr; contribution &rarr; target &rarr; boundaries. Two sources can reinforce the same attribute when they agree, but competing independent authorities can reduce adherence.</p>
+    <p>For specialized Picture roles, transfer only the selected relationship: a scale-only guide should not become a composition anchor; a previous-generation blocking image should carry world-space state without silently owning the new camera.</p>`},
+  {id:'labels',title:'Canonical labels in instructional prose',html:`
+    <p>In Ref2VA, use the Composer's canonical labels such as <code>&lt;Subject 1&gt;</code>, <code>&lt;Picture 2&gt;</code>, and <code>&lt;Video 1&gt;</code> when instructional prose refers to defined references. The human-readable names remain useful in definitions and the interface, but the label is the stable routing identity H3 sees across the structured prompt.</p>
+    <p><b>Prefer:</b> <i>&lt;Subject 1&gt; runs toward &lt;Subject 2&gt;.</i><br><b>Avoid in instructional prose:</b> <i>Jane runs toward John.</i></p>
+    <p>Literal dialogue and on-screen text are different: a character may genuinely say or display a person's name. Prompt Check therefore avoids rewriting names inside spoken words or displayed text.</p>`},
+  {id:'cuts',title:'Cuts vs. camera moves',html:`
+    <p><span class="tag off">OFFICIAL</span>A cut must introduce new information: a new subject, space, state, viewpoint, or time. If only distance or angle changes, use camera motion instead.</p>
+    <p>Misused cuts get merged or ignored, which usually reads as the model &ldquo;skipping&rdquo; your second shot. Reaching for a tighter framing of the same subject in the same place is a push in, not a cut.</p>`},
+  {id:'resolution',title:'Resolution vs. adherence',html:`
+    <p><span class="tag tst">TESTED</span>Multiple community reports confirm H3 follows Ref2VA, keyframe, and shot guidance significantly better at <b>352&ndash;416p</b> than at 768p. More resolution means quadratically more visual tokens competing with your text.</p>
+    <p>Extra steps at the same seed polish the image but do not recover ignored instructions. For adherence-critical shots: prove the prompt at ~416p, then re-run or upscale rather than fighting at 768p.</p>
+    <p>This is a generation setting, not a prompt property &mdash; nothing in the Composer changes it.</p>`},
+  {id:'retry',title:'One variable per retry',html:`
+    <p>When a prompt fails, change exactly one thing &mdash; an orientation clause, a retention marker, the resolution &mdash; so you can attribute the fix. Multi-edit retries teach you nothing.</p>
+    <p>Every reference also needs a declared job. Unassigned references get mined for whatever the model finds useful, which is how the wrong element gets copied and styles bleed between subjects.</p>`}
+];
+function guideSection(id){return GUIDE_SECTIONS.find(g=>g.id===id)||null;}
+let __guideOpen='skeleton',__guideReturnFocus=null;
+function openGuide(id,returnFocus=null){
+  __guideOpen=id&&guideSection(id)?id:__guideOpen;
+  const m=document.getElementById('guideModal');if(!m)return;
+  __guideReturnFocus=returnFocus||document.activeElement||null;
+  m.hidden=false;renderGuide();
+  requestAnimationFrame(()=>m.querySelector('.guide-modal')?.focus());
+}
+function closeGuide(){
+  const m=document.getElementById('guideModal');if(!m||m.hidden)return;
+  m.hidden=true;
+  const back=__guideReturnFocus;__guideReturnFocus=null;
+  if(back&&typeof back.focus==='function'&&document.contains(back))requestAnimationFrame(()=>back.focus());
+}
+document.addEventListener('keydown',e=>{const m=document.getElementById('guideModal');if(e.key==='Escape'&&m&&!m.hidden){e.preventDefault();closeGuide();}});
+function renderGuide(){
+  const toc=document.getElementById('guideToc'),body=document.getElementById('guideBody');
+  if(!toc||!body)return;
+  toc.innerHTML='';
+  GUIDE_SECTIONS.forEach(g=>{
+    const b=el(`<div class="${g.id===__guideOpen?'on':''}">${esc(g.title)}</div>`);
+    b.onclick=()=>{__guideOpen=g.id;renderGuide();};
+    toc.appendChild(b);
+  });
+  const g=guideSection(__guideOpen);
+  body.innerHTML=g?`<h4 style="margin-top:14px">${esc(g.title)}</h4>${g.html}`:'';
+}
+
+/* ---------- shared text helpers ---------- */
+function suggestShotFields(sh,shotIdx=null){
+  const out=[];
+  const add=(text,stage,selector,field='')=>{if(String(text||'').trim())out.push({text:String(text),stage,selector,field});};
+  add(sh?.openingState,'opening','[data-f="openingState"]','opening');
+  add(sh?.action,'action','[data-f="action"]','action');
+  timedActionBeats(sh).forEach((b,j)=>add(b.text,'action',`.timed-beat[data-beat-row="${j}"] [data-beat="text"]`,'beat'));
+  (sh?.dlg||[]).forEach((d,j)=>add(d.afterAction,'dialogue',shotIdx==null?'[data-d="afterAction"]':`[data-dialogue-card="${shotIdx}-${j}"] [data-d="afterAction"]`,'after'));
+  return out;
+}
+function suggestShotProse(sh,shotIdx=null){return suggestShotFields(sh,shotIdx).map(x=>x.text).join(' ');}
+function suggestSentences(text){return String(text||'').split(/(?<=[.!?])\s+|[\r\n]+/).map(x=>x.trim()).filter(Boolean);}
+function firstSuggestionField(sh,shotIdx,test){return suggestShotFields(sh,shotIdx).find(x=>test(x.text))||null;}
+
+// Keep the high-confidence "face/back is no longer toward the lens" case separate
+// from ambiguous rotation wording. In particular, "turns back toward the camera"
+// and "turns around the corner" are not turn-away events.
+const ORIENT_EXPLICIT_AWAY=/\b(?:turn(?:s|ing)?|pivot(?:s|ing)?|spin(?:s|ning)?|rotat(?:es?|ing)|swivel(?:s|ing)?)\b[^.;]{0,70}?\b(?:his|her|their) back (?:to|toward) (?:the )?(?:camera|lens|viewer)\b|\b(?:turn(?:s|ing)?|pivot(?:s|ing)?|spin(?:s|ning)?|rotat(?:es?|ing)|swivel(?:s|ing)?|face(?:s|d|ing)?)\b[^.;]{0,70}?\baway from (?:the )?(?:camera|lens|viewer)\b|\bwith (?:his|her|their) back to (?:the )?(?:camera|lens|viewer)\b|\b(?:his|her|their) back (?:is|was|remains?) (?:squarely )?to (?:the )?(?:camera|lens|viewer)\b|\bfaces? away from (?:the )?(?:camera|lens|viewer)\b/i;
+const ORIENT_ROTATION_VERB=/\b(?:turn(?:s|ing)?|pivot(?:s|ing)?|spin(?:s|ning)?|rotat(?:es?|ing)|swivel(?:s|ing)?)\b/i;
+const ORIENT_AMBIGUOUS_AROUND=/\b(?:turn(?:s|ing)?|spin(?:s|ning)?)\s+around(?=\s*(?:[,.;!?]|$|\b(?:to|and|until|then|before|after)\b))/i;
+const ORIENT_ENDSTATE=/\bback of (?:his|her|their|the)\b|\bno longer visible\b|\bnot visible\b|\bfully hidden\b|\bfull back view\b|\bonly the back\b|\bface (?:is|remains) (?:hidden|obscured)\b|\b(?:his|her|their) back (?:is|was|remains?) (?:squarely )?to (?:the )?(?:camera|lens|viewer)\b|\bhips,? (?:and )?shoulders\b|\bshoulders,? and head\b|\bfeet, hips\b|\bthrough (?:left|right) profile\b/i;
+
+const AESTHETIC_PATTERNS=[
+  ['4k',/\b4k\b/i],['8k',/\b8k\b/i],['ultra hd',/\bultra[ -]?hd\b/i],['uhd',/\buhd\b/i],
+  ['masterpiece',/\bmasterpiece\b/i],['best quality',/\bbest quality\b/i],['high quality',/\bhigh quality\b/i],['highest quality',/\bhighest quality\b/i],
+  ['hyper-detailed',/\bhyper[ -]?detailed\b/i],['highly detailed',/\bhighly detailed\b/i],['ultra-detailed',/\bultra[ -]?detailed\b/i],
+  ['award-winning',/\baward[ -]?winning\b/i],['cinematic quality',/\bcinematic quality\b/i],['movie quality',/\bmovie quality\b/i],
+  ['film quality',/\bfilm quality\b/i],['professional quality',/\bprofessional quality\b/i],['photorealistic quality',/\bphotorealistic quality\b/i],
+  ["don't look AI",/\b(?:don['’]?t|dont|do not)\s+look\s+ai\b/i],['not AI',/\bnot\s+(?:ai|ai[ -]?generated)\b/i],
+  ['AI-generated look',/\bai[ -]?generated look\b/i],['realistic looking',/\brealistic[ -]?looking\b/i],['looks realistic',/\blooks realistic\b/i],['very realistic',/\bvery realistic\b/i]
+];
+function aestheticHits(text){return AESTHETIC_PATTERNS.filter(([,re])=>re.test(String(text||''))).map(([label])=>label);}
+const AUDIO_NEGATIVE=/\bno (?:background |non-?diegetic )?(?:music|score|soundtrack|bgm)\b|\bwithout (?:any )?(?:background )?(?:music|score|soundtrack)\b|\bno (?:sound|audio|ambience|ambient sound)\b|\bmusic-free\b|\bavoid (?:any )?(?:background )?music\b/i;
+
+const COACH_STOPWORDS=new Set('a an the and or but then after before while as at by for from in into of on onto to with is are was were be being been this that these those his her their its he she they it him them very just really already'.split(/\s+/));
+function coachNormalized(text){return String(text||'').toLowerCase().replace(/<(Subject|Picture|Video|Audio)\s+(\d+)>/g,(_,k,n)=>`${k.toLowerCase()}_${n}`).replace(/[^a-z0-9_]+/g,' ').trim();}
+function coachTokens(text){return coachNormalized(text).split(/\s+/).filter(x=>x&&!COACH_STOPWORDS.has(x));}
+function coachSimilarity(a,b){const A=new Set(coachTokens(a)),B=new Set(coachTokens(b));if(!A.size||!B.size)return 0;let hit=0;A.forEach(x=>B.has(x)&&hit++);return hit/Math.max(A.size,B.size);}
+function wordCountLoose(text){return String(text||'').trim().split(/\s+/).filter(Boolean).length;}
+const LOCOMOTION_RE=/\b(?:walk(?:s|ed|ing)?|run(?:s|ning)?|ran|sprint(?:s|ed|ing)?|jog(?:s|ged|ging)?|move(?:s|d|ing)?|step(?:s|ped|ping)?|stride(?:s|d|ing)?|crawl(?:s|ed|ing)?|drive(?:s|d|driving)?|race(?:s|d|racing)?|retreat(?:s|ed|ing)?)\b/i;
+const PATH_OR_RESULT_RE=/\b(?:toward|towards|into|onto|across|along|past|through|around|away from|forward|backward|left|right|upward|downward|behind|beside|next to|near|reaches?|arrives?|stops?|halts?|comes? to rest|ends? up|until|from\s+<Subject|to\s+<Subject|toward\s+<Subject)\b/i;
+const ORIENT_SIMPLE_RE=/\b(?:turn(?:s|ed|ing)?|pivot(?:s|ed|ing)?|rotat(?:e|es|ed|ing)|face(?:s|d|ing)?|look(?:s|ed|ing)?)\b/i;
+const ORIENT_TARGET_RE=/\b(?:left|right|toward|towards|away|back|front|behind|profile|camera|lens|viewer|up|down|over|at\s+<Subject|toward\s+<Subject|to face\s+<Subject)\b|<Subject\s+\d+>/i;
+const MANIPULATION_RE=/\b(?:grab(?:s|bed|bing)?|pick(?:s|ed|ing)? up|lift(?:s|ed|ing)?|open(?:s|ed|ing)?|close(?:s|d|ing)?|push(?:es|ed|ing)?|pull(?:s|ed|ing)?|place(?:s|d|ing)?|set(?:s|ting)? down|throw(?:s|ing)?|threw|catch(?:es|ing)?|caught)\b/i;
+const MANIP_DETAIL_RE=/\b(?:with|using|from|into|onto|toward|towards|until|then|while|as|hand|hands|arm|arms|door|handle|lid|edge|surface|floor|table|counter|pocket|grip)\b/i;
+const OPENING_STATE_RE=/\b(?:is|are|stands?|sits?|seated|remains?|waits?|holds?|leans?|lies?|lying|crouch(?:es|ed)?|positioned|already|stationary|faces?)\b/i;
+function ambiguousPronounSentence(text){const ss=suggestSentences(text);for(let i=1;i<ss.length;i++){const prev=[...ss[i-1].matchAll(/<Subject\s+\d+>/g)].map(m=>m[0]);if(new Set(prev).size>=2&&/^(?:he|she|they|it|him|her|them|his|their)\b/i.test(ss[i]))return ss[i];}return '';}
+function cameraMotionMentions(text){
+  const t=String(text||'');if(!/\b(?:camera|shot|lens)\b/i.test(t))return [];
+  const defs=[['Push In',/\b(?:camera|shot|lens)[^.]{0,35}\b(?:push(?:es|ing)? in|doll(?:y|ies) in|moves? closer)\b/i],['Pull Out',/\b(?:camera|shot|lens)[^.]{0,35}\b(?:pull(?:s|ing)? out|doll(?:y|ies) out|moves? back)\b/i],['Pan Left',/\b(?:camera|shot|lens)[^.]{0,35}\bpans? left\b/i],['Pan Right',/\b(?:camera|shot|lens)[^.]{0,35}\bpans? right\b/i],['Truck Left',/\b(?:camera|shot|lens)[^.]{0,35}\btrucks? left\b/i],['Truck Right',/\b(?:camera|shot|lens)[^.]{0,35}\btrucks? right\b/i],['Tilt Up',/\b(?:camera|shot|lens)[^.]{0,35}\btilts? up\b/i],['Tilt Down',/\b(?:camera|shot|lens)[^.]{0,35}\btilts? down\b/i],['Zoom In',/\b(?:camera|shot|lens)[^.]{0,35}\bzooms? in\b/i],['Zoom Out',/\b(?:camera|shot|lens)[^.]{0,35}\bzooms? out\b/i],['Orbit / Arc',/\b(?:camera|shot|lens)[^.]{0,35}\b(?:orbit(?:s|ing)?|arcs?)\b/i],['Tracking Shot',/\b(?:camera|shot|lens)[^.]{0,35}\btrack(?:s|ing)?\b/i]];
+  return defs.filter(([,re])=>re.test(t)).map(([n])=>n);
+}
+function cutIntroducesStructuredViewpoint(prev,sh){
+  const a=cameraFrameSemanticState(prev,true),b=cameraFrameSemanticState(sh,false);
+  const viewA=[a.viewpoint,a.viewpointCustom,a.povSubjectUid].join('|'),viewB=[b.viewpoint,b.viewpointCustom,b.povSubjectUid].join('|');
+  const viewpointChanged=viewA!==viewB&&!!(viewA.replace(/\|/g,'')||viewB.replace(/\|/g,''));
+  const focusChanged=!!(a.focusUid&&b.focusUid&&a.focusUid!==b.focusUid);
+  const foregroundChanged=!!(a.foregroundUid&&b.foregroundUid&&a.foregroundUid!==b.foregroundUid);
+  const specialFramingChanged=(a.framing==='over_shoulder')!==(b.framing==='over_shoulder')||(a.viewpoint==='pov')!==(b.viewpoint==='pov');
+  return viewpointChanged||focusChanged||foregroundChanged||specialFramingChanged;
+}
+function suggestionLocateForField(field,shot){return field?{shot,stage:field.stage,selector:field.selector}:{shot,stage:'action',selector:'[data-f="action"]'};}
+
+function suggestions(promptText=null,descriptionWordCount=null){
+  const out=[];if(!C())return out;
+  const shots=C().shots||[],genUid=C().uid||(C().uid=uid('gen')),coachCounts=new Map();
+  const push=(o)=>{
+    const shotKey=o.shot==null?'-':(shots[o.shot]?.uid||(shots[o.shot].uid=uid('shot'))),key=`${genUid}:${o.id}:${shotKey}:${o.extra||''}`;
+    if((S.suggestDismissed||[]).includes(key))return;
+    if(o.category==='coaching'&&Number.isInteger(o.shot)){const n=coachCounts.get(o.shot)||0;if(n>=2)return;coachCounts.set(o.shot,n+1);}
+    out.push(Object.assign({key},o));
+  };
+  const flags=shots.map(()=>new Set());
+
+  /* --- 1. Turn-away vs. retention marker / ambiguous rotation --- */
+  shots.forEach((sh,i)=>{
+    const prose=suggestShotProse(sh,i);if(!prose)return;
+    const awaySentences=suggestSentences(prose).filter(s=>ORIENT_EXPLICIT_AWAY.test(s)),awayField=firstSuggestionField(sh,i,t=>ORIENT_EXPLICIT_AWAY.test(t));
+    if(awaySentences.length){
+      const onScreen=identitySubjectRefs().filter(r=>shotPresenceMode(sh,r.uid)!=='none'&&refActiveInCurrentClip(r));let subj=null;
+      for(const sentence of awaySentences){const hit=onScreen.filter(r=>sentence.includes(labelOf(r,refIndex(r))));if(hit.length===1){subj=hit[0];break;}}
+      if(!subj&&onScreen.length===1)subj=onScreen[0];const lab=subj?`${labelOf(subj,refIndex(subj))} (${subjectName(subj)})`:'the rear-facing subject';
+      if(subj&&S.mode==='REF'&&retentionMarkerFor(subj)==='fully_preserved')push({id:'turnaway_retention',shot:i,extra:subj.uid,sev:'high',evidence:'community',category:'adherence',where:`Shot ${i+1}`,title:'Rear-facing action competes with fully_preserved retention',body:`${esc(lab)} is asked to turn or remain away from the lens while its Generation-level retention marker is <code>fully_preserved</code>. Those signals can compete: the reference strongly reinforces facial identity while this Shot asks the face to disappear. Turn-away actions are a commonly reported Ref2VA stress case.`,fixes:[`This Composer build stores retention per Generation, not per Shot. If only this Shot needs the face hidden and strong facial retention matters elsewhere, consider putting the rear-facing beat in its own Generation.`,`If the Shots must stay together, consider <code>partially_preserved</code>, state the rear-facing lens-visible end state explicitly, and add a rear / three-quarter-rear appearance reference when practical.`],locate:suggestionLocateForField(awayField,i),guide:'turnaway'});
+    }
+    const rotationField=firstSuggestionField(sh,i,t=>suggestSentences(t).some(s=>(ORIENT_EXPLICIT_AWAY.test(s)&&ORIENT_ROTATION_VERB.test(s))||ORIENT_AMBIGUOUS_AROUND.test(s))),rotationSentences=suggestSentences(prose).filter(s=>(ORIENT_EXPLICIT_AWAY.test(s)&&ORIENT_ROTATION_VERB.test(s))||ORIENT_AMBIGUOUS_AROUND.test(s));
+    if(rotationSentences.length&&!rotationSentences.some(s=>ORIENT_ENDSTATE.test(s))){flags[i].add('orientation');const explicit=rotationSentences.some(s=>ORIENT_EXPLICIT_AWAY.test(s));push({id:'turnaway_endstate',shot:i,extra:'',sev:'med',evidence:'community',category:'adherence',where:`Shot ${i+1}`,title:'Rotation needs a clearer lens-visible end state',body:explicit?`This Shot asks for a turn away from the lens but does not clearly state the final whole-body view. A motion verb can be satisfied too weakly (for example by rotating only the head).`:`This Shot uses an ambiguous rotation phrase such as &ldquo;turns around&rdquo; without describing what the lens sees when the rotation finishes.`,fixes:explicit?[`Enumerate the body chain: <i>hips, shoulders, and head rotate together until the back is squarely to the camera.</i>`,`Close with a lens-visible state: <i>by the end of the shot only the back of the jacket and hair are visible.</i>`]:[`State the ending orientation relative to the lens or another fixed subject: front, left/right profile, rear three-quarter, or full back view.`,`Describe any necessary intermediate stage so the rotation is a physical path rather than a bare verb.`],locate:suggestionLocateForField(rotationField,i),guide:'turnaway'});}
+  });
+
+  /* --- 2. Weak cut: no new information --- */
+  shots.forEach((sh,i)=>{if(i===0)return;const prev=shots[i-1];if((sh.environmentUid||'')!==(prev.environmentUid||''))return;if((sh.dlg||[]).some(d=>(d.text||'').trim()))return;const cast=s=>identitySubjectRefs().filter(r=>shotPresenceMode(s,r.uid)!=='none').map(r=>r.uid).sort().join(',');if(cast(sh)!==cast(prev)||cutIntroducesStructuredViewpoint(prev,sh))return;const act=[sh.openingState,sh.action,timedActionText(sh)].filter(Boolean).join(' ').trim(),framingOnly=/^(?:a |an |the )?(?:wide|wider|medium|close|closer|tight|tighter|extreme|low|high|overhead)\b[^.]{0,60}(?:shot|angle|view|framing)?\.?$/i.test(act);if(act&&!framingOnly)return;push({id:'weak_cut',shot:i,extra:'',sev:'med',evidence:'official',category:'adherence',where:`Shot ${i+1}`,title:'Cut may not introduce new information',body:`This Shot keeps the same environment and cast, has no dialogue or new action beat, and the structured Camera Builder does not establish a materially different viewpoint or focal subject. MiniMax guidance says a cut should introduce new subject, space, state, viewpoint, or time; distance/angle-only changes are better expressed as camera motion.`,fixes:[`Fold this into the previous Shot as a camera move (push in, pull out, arc) tied to what it reveals.`,`Or make the cut genuinely informative: change focal subject/viewpoint, introduce a new state/action beat, move to a different space, or advance time.`],locate:{shot:i,stage:'camera',selector:'details[data-stage="camera"]'},guide:'cuts'});});
+
+  /* --- 3. Audio prohibitions written in prose --- */
+  const audioTargets=[];shots.forEach((sh,i)=>{const f=firstSuggestionField(sh,i,t=>AUDIO_NEGATIVE.test(t));if(f)audioTargets.push({where:`Shot ${i+1}`,locate:suggestionLocateForField(f,i)});if(AUDIO_NEGATIVE.test(sh.soundEffects||''))audioTargets.push({where:`Shot ${i+1} sound`,locate:{shot:i,stage:'sound',selector:'[data-f="soundEffects"]'}});});
+  [['Overall ambience',C().soundscape,'#ss'],['Additional recurring sounds',C().soundscapeExtra,'#ssExtra'],['Music field',C().music,'#nd']].forEach(([where,text,selector])=>{if(AUDIO_NEGATIVE.test(text||''))audioTargets.push({where,locate:{selector}});});
+  if(audioTargets.length){const unique=[...new Map(audioTargets.map(x=>[x.where,x])).values()];push({id:'audio_negative',shot:null,extra:'',sev:'high',evidence:'tested',category:'adherence',where:unique.map(x=>x.where).join(', '),title:'Audio prohibition written in prose',body:`Prose negatives about music and sound are intermittently ignored in community testing. The more reliable pattern is to put the desired state in the dedicated field &mdash; especially <code>non_diegetic_music: N/A</code> for no audience-only score.`,fixes:[`If you mean no audience-only score, set <b>Music status</b> to <i>No non-diegetic music</i> so the field emits <code>N/A</code>.`,`If you mean complete scene silence, use <b>Soundscape status</b>. Otherwise describe the sound that <i>is</i> present instead of a broad prohibition.`],locate:unique[0].locate,guide:'negatives'});}
+
+  /* --- 4. Aesthetic / intent language --- */
+  shots.forEach((sh,i)=>{const fields=suggestShotFields(sh,i),matched=[];let firstField=null;fields.forEach(f=>{const hits=aestheticHits(f.text);if(hits.length&&!firstField)firstField=f;matched.push(...hits);});const hits=[...new Set(matched)];if(!hits.length)return;push({id:'aesthetic',shot:i,extra:hits[0],sev:'med',evidence:'community',category:'adherence',where:`Shot ${i+1}`,title:'Quality language instead of observable behavior',body:`This Shot uses image-prompt quality language (${hits.slice(0,3).map(h=>`<code>${esc(h)}</code>`).join(', ')}). These phrases describe desired quality or reaction rather than visible behavior; H3 is better served by explicit anatomy, physics, lighting, material response, and camera-observable state.`,fixes:[`Replace the quality phrase with what the camera can actually see or hear.`,`Keep style in the style declaration at the head of Shot 1 rather than sprinkling quality tokens through the action.`],locate:suggestionLocateForField(firstField,i),guide:'behavior'});});
+
+  /* --- 5. Field-aware Prompt Coach --- */
+  shots.forEach((sh,i)=>{
+    const opening=String(sh.openingState||'').trim(),action=String(sh.action||'').trim();
+    const similar=opening&&action&&(coachNormalized(opening)===coachNormalized(action)||coachSimilarity(opening,action)>=0.82);
+    if(similar){flags[i].add('opening_action_duplicate');push({id:'opening_action_duplicate',shot:i,extra:'',sev:'med',category:'coaching',where:`Shot ${i+1}`,title:'Opening State and Main Action do not establish a clear progression',body:`The Opening State and Main Action repeat essentially the same information. Opening State should describe what is already true at frame 0; Main Action should describe what changes afterward.`,fixes:[`Use Opening State for initial position, orientation, occlusion, or motion already underway.`,`Use Main Action for the path/change that follows and the visible state reached by the end of the beat.`],locate:{shot:i,stage:'action',selector:'[data-f="action"]'},guide:'behavior'});}
+    else if(opening&&wordCountLoose(opening)<=10&&(LOCOMOTION_RE.test(opening)||ORIENT_SIMPLE_RE.test(opening)||MANIPULATION_RE.test(opening))&&!OPENING_STATE_RE.test(opening)){
+      push({id:'action_like_opening',shot:i,extra:'',sev:'low',category:'coaching',where:`Shot ${i+1} Opening State`,title:'Opening State reads like an action rather than a frame-zero state',body:`The Opening State is very action-like and does not clearly establish where the Subject is or how the Shot begins. H3 benefits when frame 0 is described as a state before the action progression starts.`,fixes:[`State the initial position/orientation first, then note if the Subject is already moving.`,`Keep the change that happens after frame 0 in Main Action or Timed Action Beats.`],locate:{shot:i,stage:'opening',selector:'[data-f="openingState"]'},guide:'behavior'});
+    }
+    if(action&&!flags[i].has('opening_action_duplicate')){
+      if(LOCOMOTION_RE.test(action)&&wordCountLoose(action)<=12&&!PATH_OR_RESULT_RE.test(action))push({id:'bare_locomotion',shot:i,extra:'',sev:'low',category:'coaching',where:`Shot ${i+1} Main Action`,title:'Movement may be under-specified',body:`The Action identifies locomotion but gives little or no path, destination, environment-relative relationship, or visible result. A bare instruction such as <code>&lt;Subject 1&gt; walks</code> leaves H3 to invent most of the motion.`,fixes:[`Add the path or destination: toward/away from/across/along/into a specific Subject or environment feature.`,`Add the visible result when it matters: where the Subject reaches, stops, or ends relative to the scene.`],locate:{shot:i,stage:'action',selector:'[data-f="action"]'},guide:'behavior'});
+      else if(!flags[i].has('orientation')&&ORIENT_SIMPLE_RE.test(action)&&wordCountLoose(action)<=10&&!ORIENT_TARGET_RE.test(action))push({id:'bare_orientation',shot:i,extra:'',sev:'low',category:'coaching',where:`Shot ${i+1} Main Action`,title:'Orientation change has no clear target or direction',body:`The Action contains a turn/look/face instruction without clearly saying what the Subject turns toward, looks at, or faces when the move resolves.`,fixes:[`Name the target or fixed relationship: toward <Subject N>, camera left/right, profile to the lens, facing the doorway, etc.`,`For a large rotation, add the lens-visible ending state rather than relying on the verb alone.`],locate:{shot:i,stage:'action',selector:'[data-f="action"]'},guide:'behavior'});
+      else if(MANIPULATION_RE.test(action)&&wordCountLoose(action)<=7&&!MANIP_DETAIL_RE.test(action))push({id:'bare_manipulation',shot:i,extra:'',sev:'low',category:'coaching',where:`Shot ${i+1} Main Action`,title:'Object interaction may need one more physical detail',body:`The Action names an object interaction but gives almost no physical path or result. This can be enough for a trivial beat, but H3 generally follows concrete mechanics more reliably than an abstract verb alone.`,fixes:[`When the interaction matters, identify the hand/contact point, direction of movement, or resulting object state.`,`Do not add extra events; add physical detail to the same beat.`],locate:{shot:i,stage:'action',selector:'[data-f="action"]'},guide:'behavior'});
+    }
+    const pron=ambiguousPronounSentence([opening,action,timedActionText(sh)].filter(Boolean).join(' '));if(pron)push({id:'ambiguous_pronoun',shot:i,extra:'',sev:'low',category:'coaching',where:`Shot ${i+1}`,title:'Pronoun may be ambiguous with multiple Subjects',body:`A sentence follows a clause containing multiple <code>&lt;Subject N&gt;</code> labels and begins with a pronoun (<i>${esc(pron.slice(0,45))}${pron.length>45?'…':''}</i>). H3 may have to guess which defined Subject the pronoun refers to.`,fixes:[`Repeat the canonical <code>&lt;Subject N&gt;</code> label at the start of the ambiguous sentence.`,`Pronouns are fine when the antecedent is unambiguous; this warning only targets a common multi-Subject handoff pattern.`],locate:{shot:i,stage:'action',selector:'[data-f="action"]'},guide:'skeleton'});
+
+    if(!sh.camUseCustom&&sh.camType&&sh.camType!=='Static Shot'){
+      const typed=cameraMotionMentions([opening,action,timedActionText(sh)].join(' ')).filter(x=>x!==sh.camType);
+      if(typed.length)push({id:'competing_camera_prose',shot:i,extra:typed[0],sev:'med',category:'relationship',where:`Shot ${i+1} Camera`,title:'Camera motion has two different instructions',body:`Camera Builder specifies <code>${esc(sh.camType)}</code>, while Shot prose also describes ${typed.slice(0,2).map(x=>`<code>${esc(x)}</code>`).join(', ')}. H3 can receive competing camera trajectories when both are emitted.`,fixes:[`Let Camera Builder own the camera trajectory and keep subject action in the Action field.`,`If the prose motion is intentional, change Camera Builder to match it or use the Custom Camera override.`],locate:{shot:i,stage:'camera',selector:'details[data-stage="camera"]'},guide:'cuts'});
+    }
+    const cameraRefs=shotSelectedReferenceUids(sh).map(refByUid).filter(r=>r&&r.kind==='Video'&&((r.role||'')==='camera movement reference'||(r.role||'')==='performance and camera reference'&&videoInfluenceFlags(r).camera));
+    if(cameraRefs.length&&cameraBuilderHasInput(sh)&&!sourceVideoOwnsCamera())push({id:'camera_dual_owner',shot:i,extra:cameraRefs.map(r=>r.uid).join(','),sev:'med',category:'relationship',where:`Shot ${i+1} Camera`,title:'Camera behavior has more than one authority',body:`${cameraRefs.map(r=>`<code>${esc(labelOf(r,refIndex(r)))}</code>`).join(' and ')} is assigned to contribute camera motion while Camera Builder also defines the target camera. These can reinforce each other when they agree, but they can also compete.`,fixes:[`Decide whether the Video reference owns the camera path or merely inspires it.`,`If the Video owns the path, avoid independently specifying a different movement in Camera Builder; if Camera Builder is authoritative, disable camera transfer from the Video.`],locate:{shot:i,stage:'camera',selector:'details[data-stage="camera"]'},guide:'cuts'});
+
+    const sr=refByUid(sh.scaleReferenceUid);if(sr&&sr.kind==='Picture'&&(sr.role||'')==='character scale reference'&&!scalePlacementEnabled(sr)){
+      const lab=labelOf(sr,refIndex(sr)),txt=[opening,action,timedActionText(sh)].join(' ');if(txt.includes(lab)&&/\b(?:match|copy|use|follow|preserve)[^.]{0,60}\b(?:position|placement|blocking|spacing|composition|framing)\b/i.test(txt))push({id:'scale_role_conflict',shot:i,extra:sr.uid,sev:'med',category:'relationship',where:`Shot ${i+1}`,title:'Scale-only Picture is being asked to control placement/composition',body:`${esc(lab)} is configured as Height / scale only, but the Shot prose appears to ask it to influence placement, blocking, framing, or composition.`,fixes:[`If you want placement from this Picture, switch the guide to <b>Height / scale + approximate placement</b>.`,`Otherwise remove the placement/framing instruction and let the current Shot/Environment own composition.`],locate:{shot:i,stage:'scene',selector:'[data-f="scaleReferenceUid"]'},guide:'relationships'});}
+
+    // Dialogue timing estimate (150 wpm / 2.5 words per second) is advisory only.
+    const beatByUid=new Map(timedActionBeats(sh).map(b=>[b.uid,b]));let timingFlagged=false;
+    (sh.dlg||[]).forEach((d,j)=>{if(timingFlagged||!String(d.text||'').trim()||!d.timedBeatUid)return;const b=beatByUid.get(d.timedBeatUid);if(!b)return;const words=wordCountLoose(d.text),est=words/2.5,window=Math.max(0,Number(b.endSec)-Number(b.startSec));if(words>=8&&window>0&&est>window*1.15+0.5){timingFlagged=true;push({id:'dialogue_timing',shot:i,extra:d.uid||j,sev:'low',category:'coaching',where:`Shot ${i+1} Dialogue`,title:'Dialogue may be tight for its Timed Beat',body:`This line is ${words} words and is assigned to a ${window.toFixed(2)}-second Beat. At a normal ~150 words/minute it is roughly ${est.toFixed(1)} seconds before pauses or acting beats.`,fixes:[`Shorten the line, lengthen the Beat, or intentionally direct a faster delivery.`,`Treat this as a timing estimate, not a hard limit; performance speed varies.`],locate:{shot:i,stage:'dialogue',selector:`[data-dialogue-card="${i}-${j}"]`},guide:'skeleton'});}});
+  });
+
+  /* --- 6. Ref2VA description target: generated output is the source of truth --- */
+  if(S.mode==='REF'&&!(effectiveTaskTypes().includes('video editing')||effectiveTaskTypes().includes('video continuation'))){const prompt=promptText==null?build():promptText,words=descriptionWordCount==null?generationDescriptionWordCount(prompt):descriptionWordCount;if(words>0&&words<350)push({id:'short_body',shot:null,extra:'',sev:'low',evidence:'official',category:'adherence',where:'detailed_description',title:`Description is ${words} words; the normal Ref2VA target is 350–500`,body:`MiniMax gives 350&ndash;500 English words as the normal range for Ref2VA generation tasks and notes that a single Shot does not itself justify a short description. Dialogue-heavy clips can legitimately prioritize fitting the spoken timeline over the range.`,fixes:[`Add physical detail to what is already there &mdash; orientation, blocking, lighting, material behavior, action progression, camera reveal, and synchronized sound.`,`Do not add extra events just to hit a number. Spend the added detail on the same action arc.`],locate:{shot:0,stage:'action',selector:'[data-f="action"]'},guide:'skeleton'});else if(words>500)push({id:'long_body',shot:null,extra:'',sev:'low',evidence:'official',category:'adherence',where:'detailed_description',title:`Description is ${words} words; review the normal 350–500 target`,body:`MiniMax gives 350&ndash;500 English words as the normal Ref2VA generation range. Going longer can be justified by dialogue or genuine scene complexity, but excess events and repeated instructions can compete for adherence.`,fixes:[`Keep detail that maps to something visible or audible; trim plot-summary language, decorative quality wording, or extra action beats that are not essential.`,`Do not remove purposeful identity/retention reinforcement merely because similar facts appear in more than one H3 section.`],locate:{shot:0,stage:'action',selector:'[data-f="action"]'},guide:'skeleton'});}
+  return out;
+}
+function dismissSuggestion(key){S.suggestDismissed=[...new Set([...(S.suggestDismissed||[]),key])];buildOnly();}
+function restoreDismissedSuggestions(){S.suggestDismissed=[];buildOnly();}
+function suggestionEvidenceHTML(kind){
+  const map={official:['off','OFFICIAL'],community:['com','COMMUNITY'],tested:['tst','TESTED']},x=map[kind];return x?`<span class="tag ${x[0]}">${x[1]}</span>`:'';
+}
+function suggestionCategoryHTML(kind){
+  const map={coaching:['coach','PROMPT COACH'],relationship:['rel','RELATIONSHIP'],reference:['ref','REFERENCE SYNTAX'],adherence:['adh','H3 ADHERENCE']},x=map[kind];return x?`<span class="tag ${x[0]}">${x[1]}</span>`:'';
+}
+function pulseSuggestionTarget(target){
+  if(!target)return;target.classList.remove('suggestion-locate-pulse');void target.offsetWidth;target.classList.add('suggestion-locate-pulse');
+  setTimeout(()=>target.classList.remove('suggestion-locate-pulse'),1600);
+}
+function locateSuggestion(loc){
+  if(!loc)return;
+  if(Number.isInteger(loc.shot)){
+    const sh=C().shots?.[loc.shot];if(!sh)return;
+    sh.collapsed=false;sh.stageOpen=sh.stageOpen||{};if(loc.stage)sh.stageOpen[loc.stage]=true;
+    render();tab('sug');
+    requestAnimationFrame(()=>{
+      const card=document.querySelector(`[data-shot-card="${loc.shot}"]`);if(!card)return;
+      const stage=loc.stage?card.querySelector(`details[data-stage="${loc.stage}"]`):null;if(stage)stage.open=true;
+      const target=(loc.selector&&card.querySelector(loc.selector))||stage||card;
+      target.scrollIntoView({behavior:'smooth',block:'center'});pulseSuggestionTarget(target);
+      if(/^(?:INPUT|TEXTAREA|SELECT|BUTTON)$/.test(target.tagName)&&!target.disabled)target.focus({preventScroll:true});
+    });
+    return;
+  }
+  const target=loc.selector?document.querySelector(loc.selector):null;if(!target)return;
+  target.scrollIntoView({behavior:'smooth',block:'center'});pulseSuggestionTarget(target);if(!target.disabled&&typeof target.focus==='function')target.focus({preventScroll:true});
+}
+function renderSuggestions(promptText=null,descriptionWordCount=null){
+  const pane=document.getElementById('sugList');if(!pane)return;
+  const list=suggestions(promptText,descriptionWordCount);
+  const rank={high:0,med:1,low:2};
+  list.sort((a,b)=>(rank[a.sev]??3)-(rank[b.sev]??3)||(a.shot??-1)-(b.shot??-1));
+  pane.innerHTML=list.length?list.map((s,idx)=>`
+    <div class="sug-item">
+      <div class="sug-meta">${suggestionCategoryHTML(s.category)}${suggestionEvidenceHTML(s.evidence)}</div>
+      <div class="sug-head"><span class="sug-where">${esc(s.where)}</span><span class="sug-title">${esc(s.title)}</span></div>
+      <div>${s.body}</div>
+      ${s.fixes&&s.fixes.length?`<ul class="sug-fix">${s.fixes.map(f=>`<li>${f}</li>`).join('')}</ul>`:''}
+      <div class="sug-acts">
+        ${s.locate?`<button data-sug-locate="${idx}">Locate</button>`:''}
+        ${s.guide?`<button data-sug-guide="${esc(s.guide)}">Why?</button>`:''}
+        <button data-sug-dismiss="${esc(s.key)}">Dismiss</button>
+      </div>
+    </div>`).join(''):
+    `<div class="sug-empty"><b>No known rule-based issues or coaching opportunities detected.</b><br>Suggestions run automatically as you write. A clean result means the current rules did not find a known H3 adherence problem, relationship conflict, or obviously under-specified field &mdash; not that every possible prompt issue has been proven absent.</div>`;
+  pane.querySelectorAll('[data-sug-locate]').forEach(b=>b.onclick=()=>locateSuggestion(list[Number(b.dataset.sugLocate)]?.locate));
+  pane.querySelectorAll('[data-sug-guide]').forEach(b=>b.onclick=()=>openGuide(b.dataset.sugGuide,b));
+  pane.querySelectorAll('[data-sug-dismiss]').forEach(b=>b.onclick=()=>dismissSuggestion(b.dataset.sugDismiss));
+  const rb=document.getElementById('sugRestoreBtn');if(rb)rb.hidden=!((S.suggestDismissed||[]).length);
+  const badge=document.getElementById('sugCount');if(badge)badge.innerHTML=list.length?`<b style="color:#b9a9ff">${list.length}</b>`:'';
+}
+
+function lintLocateForMessage(message){
+  const html=String(message||''),plain=html.replace(/<[^>]*>/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/g,' ').trim();
+  if(/Target duration/.test(plain))return {selector:'#dur'};
+  if(/overall_soundscape|Soundscape status|scene sound \/ silence/i.test(plain))return {selector:'#ssMode'};
+  if(/non_diegetic_music|Music status|audience-only score/i.test(plain))return {selector:'#ndMode'};
+  if(/overall visual style|Full-reference style/i.test(plain))return {selector:'#style'};
+  if(/image input|Picture .*connected|connected Picture/i.test(plain)&&!/Appearance State/.test(plain))return {selector:'#wImg'};
+  if(/video input|reference video totals|reference-video duration/i.test(plain))return {selector:'#wVid'};
+  if(/audio input|reference-audio total|reference audio/i.test(plain)&&!/dialogue/i.test(plain))return {selector:'#wAud'};
+  const sm=/Shot\s+(\d+)/i.exec(plain);if(sm){
+    const shot=Math.max(0,Number(sm[1])-1);let stage='action',selector='';
+    if(/Opening State/i.test(plain)){stage='opening';selector='[data-f="openingState"]';}
+    else if(/Main Action|Timed Action Beat|non-canonical reference syntax|known Subject name|raw H3 structure/i.test(plain)){stage='action';selector='[data-f="action"]';}
+    else if(/camera|framing|POV|viewpoint|angle|focus|lens/i.test(plain)){stage='camera';}
+    else if(/dialogue|speaker|voice|spoken words|cutoff|carry-over/i.test(plain)){stage='dialogue';}
+    else if(/sound effect|Shot sound/i.test(plain)){stage='sound';selector='[data-f="soundEffects"]';}
+    else if(/continuity|scale|Subject presence|off-screen|not present|Environment reference/i.test(plain)){stage='scene';}
+    else if(/cut time|Transition/i.test(plain)){stage='scene';selector='[data-f="ts"]';}
+    else if(/Action|appearance transition/i.test(plain)){stage='action';selector='[data-f="action"]';}
+    return {shot,stage,selector};
+  }
+  const ref=libraryRefs().find(r=>{const name=subjectName(r),lab=staticLabelOf(r,refIndex(r));return (name&&plain.includes(name))||(lab&&plain.includes(lab));});
+  if(ref){
+    let selector='';let advanced=false;
+    if(/Appearance State/.test(plain)&&/valid connected Picture/.test(plain))selector='[data-app-current-field="pictureNumber"]';
+    else if(/Appearance State/.test(plain)&&/text-only/.test(plain))selector='[data-app-current-field="details"]';
+    else if(/Appearance State/.test(plain)&&/multi-state sheet/.test(plain))selector='[data-app-current-field="panelLabel"]';
+    else if(/performance reference.*target Subject|wardrobe reference.*target Subject|lighting-integration reference.*target Subject/i.test(plain))selector='[data-f="targetSubjectUid"]';
+    else if(/retention|preserv|transfer marker/i.test(plain)){selector='[data-f="ret"]';advanced=true;}
+    else if(/duration/i.test(plain)&&ref.kind==='Video')selector='[data-f="durationSec"]';
+    else if(/duration/i.test(plain)&&ref.kind==='Audio')selector='[data-f="durationSec"]';
+    else if(/source views|Picture .*base source|Picture slot|physical .* slot/i.test(plain))selector='[data-pic], [data-f="idx"], [data-f="inputSlot"]';
+    return {refUid:ref.uid,selector,advanced};
+  }
+  return null;
+}
+function locateLint(loc){
+  if(!loc)return;
+  tab('lint');
+  if(loc.refUid){
+    const r=refByUid(loc.refUid);if(!r)return;r.collapsed=false;if(loc.advanced)S.uiMode='advanced';render();tab('lint');requestAnimationFrame(()=>{const card=document.querySelector(`[data-ref-uid="${loc.refUid}"]`);if(!card)return;const target=(loc.selector&&card.querySelector(loc.selector))||card;target.scrollIntoView({behavior:'smooth',block:'center'});pulseSuggestionTarget(target);if(typeof target.focus==='function'&&!target.disabled)target.focus({preventScroll:true});});return;
+  }
+  if(Number.isInteger(loc.shot)){
+    const sh=C().shots[loc.shot];if(!sh)return;sh.collapsed=false;sh.stageOpen=sh.stageOpen||{};if(loc.stage)sh.stageOpen[loc.stage]=true;render();tab('lint');requestAnimationFrame(()=>{const card=document.querySelector(`[data-shot-card="${loc.shot}"]`);if(!card)return;const stage=loc.stage?card.querySelector(`details[data-stage="${loc.stage}"]`):null;if(stage)stage.open=true;const target=(loc.selector&&card.querySelector(loc.selector))||stage||card;target.scrollIntoView({behavior:'smooth',block:'center'});pulseSuggestionTarget(target);if(typeof target.focus==='function'&&!target.disabled)target.focus({preventScroll:true});});return;
+  }
+  const target=loc.selector?document.querySelector(loc.selector):null;if(target){target.scrollIntoView({behavior:'smooth',block:'center'});pulseSuggestionTarget(target);if(typeof target.focus==='function'&&!target.disabled)target.focus({preventScroll:true});}
+}
 function renderLint(prompt=null,bodyWordCount=null){
-  const L=lint(prompt,bodyWordCount);const p=document.getElementById('pane-lint');p.innerHTML=L.map(([k,m])=>`<div class="lint ${k}">${m}</div>`).join('');
+  const L=lint(prompt,bodyWordCount),p=document.getElementById('pane-lint');
+  p.innerHTML=L.map(([k,m],i)=>{const loc=lintLocateForMessage(m);return `<div class="lint-wrap"><div class="lint-row"><div class="lint ${k}">${m}</div>${loc?`<button class="btn sm lint-locate" data-lint-locate="${i}">Locate</button>`:''}</div></div>`;}).join('');
+  p.querySelectorAll('[data-lint-locate]').forEach(b=>b.onclick=()=>locateLint(lintLocateForMessage(L[Number(b.dataset.lintLocate)]?.[1])));
   const errs=L.filter(x=>x[0]==='err').length,warns=L.filter(x=>x[0]==='warn').length;
   document.getElementById('lintCount').innerHTML=errs?`<b style="color:var(--red)">${errs}</b>`:(warns?`<b style="color:var(--amber)">${warns}</b>`:'');
   const h=document.getElementById('health');if(h){const pill=h.querySelector('.status-pill');
@@ -4512,14 +4980,14 @@ function promptSectionCharCounts(t){
 function buildOnly(){
   resetDerivedCaches();
   const t=build();document.getElementById('out').textContent=t;
-  const map=speakerMap();const bodyWords=C().shots.map((sh,i)=>shotText(sh,i,map)).join(' ').split(/\s+/).filter(Boolean).length;
+  const bodyWords=generationDescriptionWordCount(t);
   document.getElementById('wc').textContent=bodyWords;
   const tc=document.getElementById('tc');
   tc.textContent=t.length.toLocaleString();
   tc.style.color=t.length>H3_LIMITS.promptChars?'var(--red)':(t.length>H3_LIMITS.promptChars*0.9?'var(--amber)':'');
   document.getElementById('sc').textContent=C().shots.length;
   const bd=document.getElementById('budgetBreakdown');if(bd){const c=promptSectionCharCounts(t);bd.innerHTML=`<span>Definitions <b>${c.definitions.toLocaleString()}</b></span><span>Retention <b>${c.retention.toLocaleString()}</b></span><span>Description <b>${c.description.toLocaleString()}</b></span><span>Audio <b>${c.audio.toLocaleString()}</b></span>`;}
-  renderLint(t,bodyWords);refreshTimedBeatUI();persist();
+  renderLint(t,bodyWords);try{renderSuggestions(t,bodyWords);}catch(e){reportAppError(e,'renderSuggestions');}refreshTimedBeatUI();persist();
 }
 function renderDur(){
   const f=snapFrames(S.dur),effective=effSec(S.dur);
@@ -4598,14 +5066,18 @@ function addShot(){
   const last=C().shots[C().shots.length-1],endMs=Math.round(effSec(S.dur)*1000),prev=(last&&last.cutMs)||0,maxCut=endMs-250;
   if(prev>=maxCut){alert('There is not enough time remaining to add another shot. Extend the target duration or move the previous cut earlier.');return;}
   C().shots.forEach(x=>x.collapsed=true);const sh=newShot(false);sh.cutMs=Math.min(prev+3000,maxCut);sh.environmentUid=(last&&last.environmentUid)||((environmentRefs()[0]||{}).uid||'');sh.collapsed=false;C().shots.push(sh);ensureCutOrder();render();
+  requestAnimationFrame(()=>{const i=C().shots.length-1,card=document.querySelector(`[data-shot-card="${i}"]`),target=card?.querySelector('[data-f=openingState]')||card;if(target){target.scrollIntoView({behavior:'smooth',block:'center'});pulseSuggestionTarget(target);if(typeof target.focus==='function')target.focus({preventScroll:true});}});
 }
 function deleteShot(i){
   if(C().shots.length<=1)return;const removed=i+1;C().shots.splice(i,1);remapShotSelections(n=>n===removed?null:(n>removed?n-1:n));remapScalePlacement(n=>n===removed?null:(n>removed?n-1:n));ensureCutOrder();render();
 }
 function refreshShotLocalUids(sh){
   if(!sh)return sh;
-  sh.timedBeats=(sh.timedBeats||[]).map(b=>({...b,uid:uid('beat')}));
+  sh.uid=uid('shot');
+  const beatMap=new Map();
+  sh.timedBeats=(sh.timedBeats||[]).map(b=>{const old=b.uid,next={...b,uid:uid('beat')};if(old)beatMap.set(old,next.uid);return next;});
   sh.appearanceTransitions=(sh.appearanceTransitions||[]).map(tr=>({...tr,uid:uid('atr')}));
+  sh.dlg=(sh.dlg||[]).map(d=>({...d,uid:uid('dlg'),timedBeatUid:d.timedBeatUid?(beatMap.get(d.timedBeatUid)||''):''}));
   return sh;
 }
 function duplicateShot(i){
@@ -4821,7 +5293,7 @@ function setMusicMode(mode){
   else if(C().music==='N/A')C().music='';
   render();if(C().musicMode==='custom')document.getElementById('nd').focus();
 }
-function tab(t){['out','lint','pb'].forEach(x=>{document.getElementById('pane-'+x).style.display=x===t?'':'none';document.querySelector(`.tab[data-t=${x}]`).classList.toggle('on',x===t);});}
+function tab(t){['out','lint','sug','pb'].forEach(x=>{document.getElementById('pane-'+x).style.display=x===t?'':'none';document.querySelector(`.tab[data-t=${x}]`).classList.toggle('on',x===t);});}
 function fillSummary(){C().summary='';render();}
 function autoTidy(){
   S.taskTypes=effectiveTaskTypes();
@@ -4877,11 +5349,12 @@ async function copyOut(ev){
   flashButton(ev&&ev.currentTarget,ok?'Copied':'Copy failed',ok?1000:1800);
 }
 function backupProject(){try{localStorage.setItem(BACKUP_KEY,JSON.stringify(S));}catch(e){}}
-function restorePrevious(){try{const raw=localStorage.getItem(BACKUP_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup')||localStorage.getItem('h3_prompt_composer_v5_18_5_backup')||localStorage.getItem('h3_prompt_composer_v5_18_4_backup')||localStorage.getItem('h3_prompt_composer_v5_18_3_backup')||localStorage.getItem('h3_prompt_composer_v5_18_2_backup')||localStorage.getItem('h3_prompt_composer_v5_18_1_backup')||localStorage.getItem('h3_prompt_composer_v5_18_0_backup')||localStorage.getItem('h3_prompt_composer_v5_17_2_backup')||localStorage.getItem('h3_prompt_composer_v5_17_1_backup')||localStorage.getItem('h3_prompt_composer_v5_17_0_backup')||localStorage.getItem('h3_prompt_composer_v5_16_1_backup')||localStorage.getItem('h3_prompt_composer_v5_16_0_backup')||localStorage.getItem('h3_prompt_composer_v5_15_1_backup')||localStorage.getItem('h3_prompt_composer_v5_15_0_backup')||localStorage.getItem('h3_prompt_composer_v5_14_3_backup')||localStorage.getItem('h3_prompt_composer_v5_14_2_backup')||localStorage.getItem('h3_prompt_composer_v5_14_1_backup')||localStorage.getItem('h3_prompt_composer_v5_14_0_backup')||localStorage.getItem('h3_prompt_composer_v5_13_0_backup')||localStorage.getItem('h3_prompt_composer_v5_12_4_backup')||localStorage.getItem('h3_prompt_composer_v5_12_3_backup')||localStorage.getItem('h3_prompt_composer_v5_12_2_backup')||localStorage.getItem('h3_prompt_composer_v5_12_1_backup')||localStorage.getItem('h3_prompt_composer_v5_12_0_backup')||localStorage.getItem('h3_prompt_composer_v5_11_1_backup')||localStorage.getItem('h3_prompt_composer_v5_11_0_backup')||localStorage.getItem('h3_prompt_composer_v5_10_6_backup')||localStorage.getItem('h3_prompt_composer_v5_10_5_backup')||localStorage.getItem('h3_prompt_composer_v5_10_4_backup')||localStorage.getItem('h3_prompt_composer_v5_10_3_backup')||localStorage.getItem('h3_prompt_composer_v5_10_2_backup')||localStorage.getItem('h3_prompt_composer_v5_10_1_backup')||localStorage.getItem('h3_prompt_composer_v5_10_0_backup')||localStorage.getItem('h3_prompt_composer_v5_9_9_backup')||localStorage.getItem('h3_prompt_composer_v5_9_8_backup')||localStorage.getItem('h3_prompt_composer_v5_9_7_backup')||localStorage.getItem('h3_prompt_composer_v5_9_6_backup')||localStorage.getItem('h3_prompt_composer_v5_9_5_backup')||localStorage.getItem('h3_prompt_composer_v5_9_4_backup')||localStorage.getItem('h3_prompt_composer_v5_9_3_backup')||localStorage.getItem('h3_prompt_composer_v5_9_2_backup')||localStorage.getItem('h3_prompt_composer_v5_9_1_backup')||localStorage.getItem('h3_prompt_composer_v5_9_backup')||localStorage.getItem('h3_prompt_composer_v5_8_3_backup')||localStorage.getItem('h3_prompt_composer_v5_8_2_backup')||localStorage.getItem('h3_prompt_composer_v5_8_1_backup')||localStorage.getItem('h3_prompt_composer_v5_8_backup')||localStorage.getItem('h3_prompt_composer_v5_7_1_backup')||localStorage.getItem('h3_prompt_composer_v5_7_backup')||localStorage.getItem('h3_prompt_composer_v5_6_backup');if(!raw){alert('No previous project backup is available.');return;}backupProject();S=migrate(JSON.parse(raw));render();}catch(e){alert('The previous project backup could not be restored.');}}
+function restorePrevious(){try{const raw=localStorage.getItem(BACKUP_KEY)||localStorage.getItem('h3_prompt_composer_v5_19_4_backup')||localStorage.getItem('h3_prompt_composer_v5_19_3_backup')||localStorage.getItem('h3_prompt_composer_v5_19_2_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_1_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_0_backup')||localStorage.getItem('h3_prompt_composer_v5_18_8_backup')||localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup')||localStorage.getItem('h3_prompt_composer_v5_18_5_backup')||localStorage.getItem('h3_prompt_composer_v5_18_4_backup')||localStorage.getItem('h3_prompt_composer_v5_18_3_backup')||localStorage.getItem('h3_prompt_composer_v5_18_2_backup')||localStorage.getItem('h3_prompt_composer_v5_18_1_backup')||localStorage.getItem('h3_prompt_composer_v5_18_0_backup')||localStorage.getItem('h3_prompt_composer_v5_17_2_backup')||localStorage.getItem('h3_prompt_composer_v5_17_1_backup')||localStorage.getItem('h3_prompt_composer_v5_17_0_backup')||localStorage.getItem('h3_prompt_composer_v5_16_1_backup')||localStorage.getItem('h3_prompt_composer_v5_16_0_backup')||localStorage.getItem('h3_prompt_composer_v5_15_1_backup')||localStorage.getItem('h3_prompt_composer_v5_15_0_backup')||localStorage.getItem('h3_prompt_composer_v5_14_3_backup')||localStorage.getItem('h3_prompt_composer_v5_14_2_backup')||localStorage.getItem('h3_prompt_composer_v5_14_1_backup')||localStorage.getItem('h3_prompt_composer_v5_14_0_backup')||localStorage.getItem('h3_prompt_composer_v5_13_0_backup')||localStorage.getItem('h3_prompt_composer_v5_12_4_backup')||localStorage.getItem('h3_prompt_composer_v5_12_3_backup')||localStorage.getItem('h3_prompt_composer_v5_12_2_backup')||localStorage.getItem('h3_prompt_composer_v5_12_1_backup')||localStorage.getItem('h3_prompt_composer_v5_12_0_backup')||localStorage.getItem('h3_prompt_composer_v5_11_1_backup')||localStorage.getItem('h3_prompt_composer_v5_11_0_backup')||localStorage.getItem('h3_prompt_composer_v5_10_6_backup')||localStorage.getItem('h3_prompt_composer_v5_10_5_backup')||localStorage.getItem('h3_prompt_composer_v5_10_4_backup')||localStorage.getItem('h3_prompt_composer_v5_10_3_backup')||localStorage.getItem('h3_prompt_composer_v5_10_2_backup')||localStorage.getItem('h3_prompt_composer_v5_10_1_backup')||localStorage.getItem('h3_prompt_composer_v5_10_0_backup')||localStorage.getItem('h3_prompt_composer_v5_9_9_backup')||localStorage.getItem('h3_prompt_composer_v5_9_8_backup')||localStorage.getItem('h3_prompt_composer_v5_9_7_backup')||localStorage.getItem('h3_prompt_composer_v5_9_6_backup')||localStorage.getItem('h3_prompt_composer_v5_9_5_backup')||localStorage.getItem('h3_prompt_composer_v5_9_4_backup')||localStorage.getItem('h3_prompt_composer_v5_9_3_backup')||localStorage.getItem('h3_prompt_composer_v5_9_2_backup')||localStorage.getItem('h3_prompt_composer_v5_9_1_backup')||localStorage.getItem('h3_prompt_composer_v5_9_backup')||localStorage.getItem('h3_prompt_composer_v5_8_3_backup')||localStorage.getItem('h3_prompt_composer_v5_8_2_backup')||localStorage.getItem('h3_prompt_composer_v5_8_1_backup')||localStorage.getItem('h3_prompt_composer_v5_8_backup')||localStorage.getItem('h3_prompt_composer_v5_7_1_backup')||localStorage.getItem('h3_prompt_composer_v5_7_backup')||localStorage.getItem('h3_prompt_composer_v5_6_backup');if(!raw){alert('No previous project backup is available.');return;}backupProject();S=migrate(JSON.parse(raw));render();}catch(e){alert('The previous project backup could not be restored.');}}
 function newProject(){if(confirm('Start a new project? The current project will be kept as “Restore previous.”')){backupProject();S=blank();render();}}
 function migrate(o){
   if(!o||typeof o!=='object')o=blank();
   const sourceVersion=String(o.version||'');
+  if(!Array.isArray(o.suggestDismissed))o.suggestDismissed=[];
   if(!o.clips){
     o.clips=[{name:'Clip 1',summary:o.summary||'',shots:o.shots||[newShot(true)],soundscape:o.soundscape||'',music:o.music||''}];
     o.active=0;delete o.shots;delete o.summary;delete o.soundscape;delete o.music;
@@ -4960,12 +5433,12 @@ function migrate(o){
   });
 
   (o.clips||[]).forEach((cl,ci)=>{
-    cl.name=cl.name||`Generation ${ci+1}`;if(/^Clip \d+$/.test(cl.name))cl.name=`Generation ${ci+1}`;cl.summary=cl.summary||'';cl.soundscape=cl.soundscape||'';cl.soundscapeExtra=cl.soundscapeExtra||'';cl.music=cl.music||'';
+    cl.uid=cl.uid||uid('gen');cl.name=cl.name||`Generation ${ci+1}`;if(/^Clip \d+$/.test(cl.name))cl.name=`Generation ${ci+1}`;cl.summary=cl.summary||'';cl.soundscape=cl.soundscape||'';cl.soundscapeExtra=cl.soundscapeExtra||'';cl.music=cl.music||'';
     cl.soundscapeMode=cl.soundscapeMode||((cl.soundscape||'').trim()==='N/A'?'silence':(cl.soundscape||'').trim()?'custom':'unset');
     cl.musicMode=cl.musicMode||((cl.music||'').trim()==='N/A'?'none':(cl.music||'').trim()?'custom':'unset');
     cl.editWorkflow=cl.editWorkflow||'none';cl.editSettings=cl.editSettings||{};cl.shots=cl.shots||[newShot(true)];
     cl.shots.forEach((sh,si)=>{
-      sh.cutMs=si===0?null:(sh.cutMs==null?3000:sh.cutMs);sh.environmentUid=sh.environmentUid||'';sh.scaleReferenceUid=sh.scaleReferenceUid||'';sh.subjectUids=Array.isArray(sh.subjectUids)?sh.subjectUids:[];sh.referenceUids=Array.isArray(sh.referenceUids)?sh.referenceUids:[];sh.soundEffects=sh.soundEffects||'';
+      sh.uid=sh.uid||uid('shot');sh.cutMs=si===0?null:(sh.cutMs==null?3000:sh.cutMs);sh.environmentUid=sh.environmentUid||'';sh.scaleReferenceUid=sh.scaleReferenceUid||'';sh.subjectUids=Array.isArray(sh.subjectUids)?sh.subjectUids:[];sh.referenceUids=Array.isArray(sh.referenceUids)?sh.referenceUids:[];sh.soundEffects=sh.soundEffects||'';
       sh.openingState=sh.openingState||'';sh.subjectPresence=(sh.subjectPresence&&typeof sh.subjectPresence==='object')?sh.subjectPresence:{};sh.subjectUids.forEach(id=>{if(!sh.subjectPresence[id])sh.subjectPresence[id]='on';});
       sh.continuityReferenceUids=Array.isArray(sh.continuityReferenceUids)?sh.continuityReferenceUids:[];sh.stageOpen=(sh.stageOpen&&typeof sh.stageOpen==='object')?sh.stageOpen:{scene:true,opening:true,action:true,camera:false,dialogue:false,sound:false};
       sh.camType=sh.camType||'';sh.camAmp=sh.camAmp||'';sh.camSpd=sh.camSpd||'';sh.camNote=sh.camNote||'';
@@ -5123,6 +5596,18 @@ function migrate(o){
       }else st.sourceAudioUid='';
     }
   });
+
+  // V5.19.0 keyed dismissed suggestions by mutable Generation/Shot array indexes.
+  // Convert those legacy keys to stable Generation/Shot UIDs so deletes, reordering,
+  // duplication, and insertions cannot make a dismissal drift onto another item.
+  o.suggestDismissed=[...new Set((o.suggestDismissed||[]).map(raw=>{
+    const key=String(raw||'');
+    const m=/^(\d+):([^:]+):(-|\d+):(.*)$/.exec(key);
+    if(!m)return key;
+    const ci=Number(m[1]),cl=o.clips?.[ci];if(!cl)return '';
+    const shotKey=m[3]==='-'?'-':(cl.shots?.[Number(m[3])]?.uid||'-');
+    return `${cl.uid}:${m[2]}:${shotKey}:${m[4]||''}`;
+  }).filter(Boolean))];
 
   o.refs=o.refs.filter(r=>!r._removeLegacyInsertEnvironment);
 
@@ -5434,7 +5919,7 @@ function preflightAIImportedProject(obj,appendRaw=null){
     if(appendRaw&&aiOperation(appendRaw)==='append_generations'){
       S=migrate(JSON.parse(JSON.stringify(old)));resetDerivedCaches();start=S.clips.length;aiAppendGenerations(appendRaw,obj);
     }else{S=migrate(aiImportToState(obj));resetDerivedCaches();}
-    (S.clips||[]).forEach((cl,i)=>{if(i<start)return;S.active=i;resetDerivedCaches();const prompt=build(),wc=detailedDescriptionWordCount(prompt);lint(prompt,wc).forEach(([kind,msg])=>{if(kind==='err'||kind==='warn')issues.push({kind,generation:i+1,msg:String(msg).replace(/<[^>]+>/g,'')});});});
+    (S.clips||[]).forEach((cl,i)=>{if(i<start)return;S.active=i;resetDerivedCaches();const prompt=build(),wc=generationDescriptionWordCount(prompt);lint(prompt,wc).forEach(([kind,msg])=>{if(kind==='err'||kind==='warn')issues.push({kind,generation:i+1,msg:String(msg).replace(/<[^>]+>/g,'')});});});
   }catch(e){issues.push({kind:'fatal',generation:0,msg:`Conversion failed: ${e.message}`});}finally{S=old;resetDerivedCaches();}return issues;
 }
 function previewAIImport(){
@@ -5469,7 +5954,7 @@ function aiImportToState(o){
   generations.forEach((g,gi)=>{
     const cl=newClip(String(g.name||`Generation ${gi+1}`));cl.summary=String(g.summary||'');cl.soundscape=String(g.overall_ambience||'');cl.soundscapeExtra=String(g.additional_ambience||'');cl.soundscapeMode=cl.soundscape==='N/A'?'silence':cl.soundscape?'custom':'unset';cl.music=String(g.music||'N/A');cl.musicMode=cl.music==='N/A'?'none':cl.music?'custom':'unset';
     const srcShots=Array.isArray(g.shots)&&g.shots.length?g.shots:[{}];
-    cl.shots=srcShots.map((x,si)=>{const sh=newShot(si===0);const even=Math.round(durSec*1000*si/srcShots.length);sh.cutMs=si===0?null:(Number.isFinite(Number(x.cut_time_seconds))?Math.round(Number(x.cut_time_seconds)*1000):even);sh.cutVerb=CUT_VERBS.includes(x.transition)?x.transition:'the shot cuts to';sh.environmentUid=map.get(String(x.environment||''))?.uid||'';Object.entries(x.presence||{}).forEach(([id,v])=>{const rr=map.get(String(id));if(rr&&rr.kind==='Subject'&&subjectType(rr)!=='environment')sh.subjectPresence[rr.uid]=aiPresenceToInternal(v);});sh.continuityReferenceUids=(x.continuity_references||[]).map(id=>map.get(String(id))?.uid).filter(Boolean);sh.scaleReferenceUid=map.get(String(x.scale_reference||''))?.uid||'';sh.referenceUids=(x.additional_references||[]).map(id=>map.get(String(id))?.uid).filter(Boolean);sh.openingState=String(x.opening_state||'');sh.action=String(x.action||'');sh.soundEffects=String(x.sound_effects||'');const aiBeatMap=new Map();sh.timedBeats=(x.timed_beats||[]).map((b,bi)=>{const q={uid:uid('beat'),startSec:Number(b.start_seconds)||0,endSec:Number(b.end_seconds)||0,text:String(b.action||'')};aiBeatMap.set(String(b.id||`beat_${bi+1}`),q.uid);return q;});const c=x.camera||{};sh.camFraming=sanitizeEnumValue(c.framing,CAM_FRAMINGS,'');sh.camFocusUid=map.get(String(c.primary||''))?.uid||'';sh.camSecondaryFocusUid=map.get(String(c.secondary||''))?.uid||'';sh.camViewpoint=sanitizeEnumValue(c.view,CAM_VIEWPOINTS,'');sh.camViewpointCustom=String(c.custom_view||c.view_custom||'');sh.camAngle=sanitizeEnumValue(c.angle,CAM_ANGLES,'');sh.camAngleCustom=String(c.custom_angle||c.angle_custom||'');sh.camComposition=sanitizeEnumValue(c.composition,CAM_COMPOSITIONS,'');sh.camCompositionCustom=String(c.custom_composition||c.composition_custom||'');sh.camType=aiMovementToInternal(c.movement);sh.camTargetUid=map.get(String(c.movement_target||''))?.uid||'';sh.camTargetCustom=String(c.custom_target||'');sh.camSpd=aiSpeedToInternal(c.speed);sh.camTiming=sanitizeEnumValue(c.timing,CAM_TIMINGS,'after_opening_action');sh.camStability=sanitizeEnumValue(c.stability==='auto'?'':c.stability,CAM_STABILITY,'');sh.camLens=sanitizeEnumValue(c.lens,CAM_LENSES,'');sh.camDof=sanitizeEnumValue(c.depth_of_field,CAM_DOF,'');sh.camEndFraming=sanitizeEnumValue(c.end_framing,CAM_FRAMINGS,'');sh.camEndViewpoint=sanitizeEnumValue(c.end_view,CAM_VIEWPOINTS,'');sh.camEndViewpointCustom=String(c.end_custom_view||c.custom_end_view||'');sh.camEndAngle=sanitizeEnumValue(c.end_angle,CAM_ANGLES,'');sh.camEndAngleCustom=String(c.end_custom_angle||c.custom_end_angle||'');sh.camEndComposition=sanitizeEnumValue(c.end_composition,CAM_COMPOSITIONS,'');sh.camEndCompositionCustom=String(c.end_custom_composition||c.custom_end_composition||'');sh.camEndFocusUid=map.get(String(c.end_primary||''))?.uid||'';sh.camEndSecondaryFocusUid=map.get(String(c.end_secondary||''))?.uid||'';sh.camTrackRelation=['lead_front','follow_behind','side_left','side_right','front_3q','rear_3q','free'].includes(c.track_relationship)?c.track_relationship:'follow_behind';sh.camOrbitDirection=c.orbit_direction==='counterclockwise'?'counterclockwise':'clockwise';sh.camReveal=String(c.reveal||'');if(sh.camType==='Custom Movement')sh.camMovementCustom=String(c.custom_movement||'');sh.dlg=(x.dialogue||[]).map(d=>{const rr=map.get(String(d.speaker||'')),q=newDlg(rr?.uid||'');if(!rr&&d.speaker_name)q.who=String(d.speaker_name);q.delivery=String(d.delivery||'');q.lang=String(d.language||'English');q.text=String(d.text||'');q.afterAction=String(d.after_action||'');q.timedBeatUid=aiBeatMap.get(String(d.timed_beat||''))||'';q.offscreen=!!d.off_screen;q.vo=!!d.voiceover;q.cutoff=!!d.cutoff;return q;});sh.screenText=(x.on_screen_text||[]).map(t=>({desc:String(t.where||''),verb:String(t.verb||'reads'),text:String(t.text||'')}));return sanitizeCameraEnums(sh);});
+    cl.shots=srcShots.map((x,si)=>{const sh=newShot(si===0);const even=Math.round(durSec*1000*si/srcShots.length);sh.cutMs=si===0?null:(Number.isFinite(Number(x.cut_time_seconds))?Math.round(Number(x.cut_time_seconds)*1000):even);sh.cutVerb=CUT_VERBS.includes(x.transition)?x.transition:'the shot cuts to';sh.environmentUid=map.get(String(x.environment||''))?.uid||'';Object.entries(x.presence||{}).forEach(([id,v])=>{const rr=map.get(String(id));if(rr&&rr.kind==='Subject'&&subjectType(rr)!=='environment')sh.subjectPresence[rr.uid]=aiPresenceToInternal(v);});sh.continuityReferenceUids=(x.continuity_references||[]).map(id=>map.get(String(id))?.uid).filter(Boolean);sh.scaleReferenceUid=map.get(String(x.scale_reference||''))?.uid||'';sh.referenceUids=(x.additional_references||[]).map(id=>map.get(String(id))?.uid).filter(Boolean);sh.openingState=String(x.opening_state||'');sh.action=String(x.action||'');sh.soundEffects=String(x.sound_effects||'');const aiBeatMap=new Map(),dialogueBeatIds=new Set((x.dialogue||[]).map(d=>String(d.timed_beat||'')).filter(Boolean));sh.timedBeats=(x.timed_beats||[]).map((b,bi)=>({b,bi,id:String(b.id||`beat_${bi+1}`)})).filter(xb=>String(xb.b.action||'').trim()||dialogueBeatIds.has(xb.id)).map(xb=>{const b=xb.b,q={uid:uid('beat'),startSec:Number(b.start_seconds)||0,endSec:Number(b.end_seconds)||0,text:String(b.action||'')};aiBeatMap.set(xb.id,q.uid);return q;});const c=x.camera||{};sh.camFraming=sanitizeEnumValue(c.framing,CAM_FRAMINGS,'');sh.camFocusUid=map.get(String(c.primary||''))?.uid||'';sh.camSecondaryFocusUid=map.get(String(c.secondary||''))?.uid||'';sh.camViewpoint=sanitizeEnumValue(c.view,CAM_VIEWPOINTS,'');sh.camViewpointCustom=String(c.custom_view||c.view_custom||'');sh.camAngle=sanitizeEnumValue(c.angle,CAM_ANGLES,'');sh.camAngleCustom=String(c.custom_angle||c.angle_custom||'');sh.camComposition=sanitizeEnumValue(c.composition,CAM_COMPOSITIONS,'');sh.camCompositionCustom=String(c.custom_composition||c.composition_custom||'');sh.camType=aiMovementToInternal(c.movement);sh.camTargetUid=map.get(String(c.movement_target||''))?.uid||'';sh.camTargetCustom=String(c.custom_target||'');sh.camSpd=aiSpeedToInternal(c.speed);sh.camTiming=sanitizeEnumValue(c.timing,CAM_TIMINGS,'after_opening_action');sh.camStability=sanitizeEnumValue(c.stability==='auto'?'':c.stability,CAM_STABILITY,'');sh.camLens=sanitizeEnumValue(c.lens,CAM_LENSES,'');sh.camDof=sanitizeEnumValue(c.depth_of_field,CAM_DOF,'');sh.camEndFraming=sanitizeEnumValue(c.end_framing,CAM_FRAMINGS,'');sh.camEndViewpoint=sanitizeEnumValue(c.end_view,CAM_VIEWPOINTS,'');sh.camEndViewpointCustom=String(c.end_custom_view||c.custom_end_view||'');sh.camEndAngle=sanitizeEnumValue(c.end_angle,CAM_ANGLES,'');sh.camEndAngleCustom=String(c.end_custom_angle||c.custom_end_angle||'');sh.camEndComposition=sanitizeEnumValue(c.end_composition,CAM_COMPOSITIONS,'');sh.camEndCompositionCustom=String(c.end_custom_composition||c.custom_end_composition||'');sh.camEndFocusUid=map.get(String(c.end_primary||''))?.uid||'';sh.camEndSecondaryFocusUid=map.get(String(c.end_secondary||''))?.uid||'';sh.camTrackRelation=['lead_front','follow_behind','side_left','side_right','front_3q','rear_3q','free'].includes(c.track_relationship)?c.track_relationship:'follow_behind';sh.camOrbitDirection=c.orbit_direction==='counterclockwise'?'counterclockwise':'clockwise';sh.camReveal=String(c.reveal||'');if(sh.camType==='Custom Movement')sh.camMovementCustom=String(c.custom_movement||'');sh.dlg=(x.dialogue||[]).map(d=>{const rr=map.get(String(d.speaker||'')),q=newDlg(rr?.uid||'');if(!rr&&d.speaker_name)q.who=String(d.speaker_name);q.delivery=String(d.delivery||'');q.lang=String(d.language||'English');q.text=String(d.text||'');q.afterAction=String(d.after_action||'');q.timedBeatUid=aiBeatMap.get(String(d.timed_beat||''))||'';q.offscreen=!!d.off_screen;q.vo=!!d.voiceover;q.cutoff=!!d.cutoff;return q;});sh.screenText=(x.on_screen_text||[]).map(t=>({desc:String(t.where||''),verb:String(t.verb||'reads'),text:String(t.text||'')}));return sanitizeCameraEnums(sh);});
     // Resolve partial/missing cut times into a strictly increasing timeline.
     const endMs=Math.round(durSec*1000);let prev=0;cl.shots.forEach((sh,si)=>{if(si===0){sh.cutMs=null;return;}const remaining=cl.shots.length-si-1,min=prev+1,max=Math.max(min,endMs-1-remaining);let v=Number(sh.cutMs);if(!Number.isFinite(v)||v<min||v>max)v=Math.round(endMs*si/cl.shots.length);v=Math.min(max,Math.max(min,v));sh.cutMs=v;prev=v;});
     const wf=['none','performance_transfer','insert_subject','background_relight','continuation'].includes(g.edit_workflow)?g.edit_workflow:'none',es=g.edit_settings&&typeof g.edit_settings==='object'?g.edit_settings:{};cl.editWorkflow=wf;cl.editSettings={};
@@ -5509,7 +5994,32 @@ function projectToAIInterchange(){
   const generations=(S.clips||[]).map((cl,ci)=>({name:cl.name||`Generation ${ci+1}`,...(cl.summary?{summary:cl.summary}:{}),...editExport(cl),overall_ambience:cl.soundscape||'',...(cl.soundscapeExtra?{additional_ambience:cl.soundscapeExtra}:{}),music:cl.music||'N/A',shots:(cl.shots||[]).map((sh,si)=>{const beatIds=new Map((sh.timedBeats||[]).map((b,bi)=>[b.uid,`beat_${bi+1}`]));const x={cut_time_seconds:si===0?null:Number((Number(sh.cutMs||0)/1000).toFixed(3)),...(si>0&&sh.cutVerb?{transition:sh.cutVerb}:{}),environment:envIds.get(sh.environmentUid)||'',presence:{},continuity_references:shotSelectedContinuityReferenceUids(sh).map(u=>picIds.get(u)).filter(Boolean),opening_state:sh.openingState||'',action:sh.action||'',camera:{},dialogue:(sh.dlg||[]).map(d=>({speaker:subjIds.get(d.subjectUid)||'',...(d.who&&!d.subjectUid?{speaker_name:d.who}:{}),delivery:d.delivery||'',language:d.lang||'English',text:d.text||'',...(d.timedBeatUid&&beatIds.get(d.timedBeatUid)?{timed_beat:beatIds.get(d.timedBeatUid)}:{}),...(d.afterAction?{after_action:d.afterAction}:{}),...(d.offscreen?{off_screen:true}:{}),...(d.vo?{voiceover:true}:{}),...(d.cutoff?{cutoff:true}:{})})),on_screen_text:(sh.screenText||[]).map(t=>({where:t.desc||'',verb:t.verb||'reads',text:t.text||''})),sound_effects:sh.soundEffects||''};libraryIdentitySubjectRefs().forEach(r=>{const m=shotPresenceMode(sh,r.uid);if(m!=='auto')x.presence[subjIds.get(r.uid)]=aiPresenceFromInternal(m);});if(sh.scaleReferenceUid)x.scale_reference=picIds.get(sh.scaleReferenceUid)||'';if((sh.referenceUids||[]).length)x.additional_references=(sh.referenceUids||[]).map(refId).filter(Boolean);if((sh.timedBeats||[]).length)x.timed_beats=(sh.timedBeats||[]).map((b,bi)=>({id:`beat_${bi+1}`,start_seconds:Number(b.startSec)||0,end_seconds:Number(b.endSec)||0,action:b.text||''}));const c=x.camera;c.framing=sh.camFraming||'';c.primary=visId(sh.camFocusUid);if(sh.camSecondaryFocusUid)c.secondary=visId(sh.camSecondaryFocusUid);c.view=sh.camViewpoint||'';if(sh.camViewpoint==='custom'&&sh.camViewpointCustom)c.custom_view=sh.camViewpointCustom;c.angle=sh.camAngle||'';if(sh.camAngle==='custom'&&sh.camAngleCustom)c.custom_angle=sh.camAngleCustom;c.composition=sh.camComposition||'';if(sh.camComposition==='custom'&&sh.camCompositionCustom)c.custom_composition=sh.camCompositionCustom;c.movement=aiMovementFromInternal(sh.camType);if(sh.camTargetUid)c.movement_target=visId(sh.camTargetUid);if(sh.camTargetCustom)c.custom_target=sh.camTargetCustom;c.speed=aiSpeedFromInternal(sh.camSpd);c.timing=sh.camTiming||'after_opening_action';c.stability=sh.camStability||'auto';c.lens=sh.camLens||'';c.depth_of_field=sh.camDof||'';c.end_framing=sh.camEndFraming||'';c.end_view=sh.camEndViewpoint||'';if(sh.camEndViewpoint==='custom'&&sh.camEndViewpointCustom)c.end_custom_view=sh.camEndViewpointCustom;c.end_angle=sh.camEndAngle||'';if(sh.camEndAngle==='custom'&&sh.camEndAngleCustom)c.end_custom_angle=sh.camEndAngleCustom;c.end_composition=sh.camEndComposition||'';if(sh.camEndComposition==='custom'&&sh.camEndCompositionCustom)c.end_custom_composition=sh.camEndCompositionCustom;if(sh.camEndFocusUid)c.end_primary=visId(sh.camEndFocusUid);if(sh.camEndSecondaryFocusUid)c.end_secondary=visId(sh.camEndSecondaryFocusUid);if(sh.camType==='Tracking Shot')c.track_relationship=sh.camTrackRelation||'follow_behind';if(sh.camType==='Orbit / Arc')c.orbit_direction=sh.camOrbitDirection||'clockwise';if(sh.camReveal)c.reveal=sh.camReveal;if(sh.camType==='Custom Movement')c.custom_movement=sh.camMovementCustom||'';Object.keys(c).forEach(k=>(c[k]===''||c[k]==null)&&delete c[k]);Object.keys(x.presence).length||delete x.presence;x.environment||delete x.environment;x.continuity_references.length||delete x.continuity_references;x.dialogue.length||delete x.dialogue;x.on_screen_text.length||delete x.on_screen_text;x.sound_effects||delete x.sound_effects;return x;})}));
   return {format:AI_SETUP_FORMAT,schema_version:AI_SETUP_SCHEMA_VERSION,operation:'replace_project',project:{mode:S.mode,duration_seconds:S.dur,style:S.style,task_types:S.taskTypes||['reference generation']},assets,generations};
 }
-function saveJSON(){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`h3_prompt_v${APP_VERSION.replaceAll('.','_')}.json`;a.click();URL.revokeObjectURL(a.href);}
+function projectJSONFilename(){return `h3_prompt_v${APP_VERSION.replaceAll('.','_')}.json`;}
+function downloadProjectJSON(text,name){
+  const blob=new Blob([text],{type:'application/json'}),a=document.createElement('a'),u=URL.createObjectURL(blob);
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);
+}
+async function saveJSON(){
+  const text=JSON.stringify(S,null,2),name=projectJSONFilename();
+  if(typeof window.showSaveFilePicker==='function'){
+    try{
+      const handle=await window.showSaveFilePicker({
+        id:'h3-prompt-composer-project',
+        startIn:'documents',
+        suggestedName:name,
+        types:[{description:'H3 Prompt Composer project',accept:{'application/json':['.json']}}]
+      });
+      const writable=await handle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      return;
+    }catch(err){
+      if(err&&err.name==='AbortError')return;
+      console.warn('Native Save As failed; falling back to browser download.',err);
+    }
+  }
+  downloadProjectJSON(text,name);
+}
 function loadJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{backupProject();S=migrate(JSON.parse(r.result));render();}catch(err){alert('Could not read that file.');}};r.readAsText(f);e.target.value='';}
 
 function closeExamplePicker(){const p=document.getElementById('examplePicker');if(p)p.removeAttribute('open');}
@@ -5531,7 +6041,7 @@ function exampleReferenceScene(){
   const au2=exampleVoice(2,b,'Clean, dry speech from Eli only; no music or other voices.');
   const sh1=newShot(true);sh1.environmentUid=env.uid;sh1.openingState='<Subject 1> is seated at the kitchen island with the sealed envelope in both hands.';sh1.soundEffects='Soft paper handling and a quiet breath from <Subject 1>.';sh1.camFraming='medium';sh1.camFocusUid=a.uid;sh1.camViewpoint='front_3q_left';sh1.camType='Push In';sh1.camTargetUid=a.uid;sh1.camEndFraming='medium_close_up';sh1.camSpd='at slow speed';sh1.camStability='smooth';sh1.camTiming='during_dialogue';sh1.action='<Subject 1> sits at the kitchen island, turns a sealed envelope over in both hands, and looks toward the doorway before speaking.';
   const d1=newDlg(a.uid);d1.delivery='quietly, with a hesitant pause before the final words';d1.text='I don’t think I’m ready to open it.';d1.afterAction='She closes her lips, lowers the envelope to the counter, and waits in silence.';sh1.dlg=[d1];
-  const sh2=newShot(false);sh2.cutMs=5200;sh2.environmentUid=env.uid;sh2.openingState='<Subject 2> is standing in the open doorway while <Subject 1> remains seated at the island.';sh2.soundEffects='Soft footsteps and subtle clothing movement accompany <Subject 2> as he steps into the kitchen.';sh2.camFraming='medium';sh2.camFocusUid=b.uid;sh2.camViewpoint='front_3q_left';sh2.camType='Orbit / Arc';sh2.camTargetUid=b.uid;sh2.camOrbitDirection='clockwise';sh2.camEndFraming='medium_close_up';sh2.camEndViewpoint='front_3q_right';sh2.camSpd='at slow speed';sh2.camStability='smooth';sh2.camTiming='throughout_shot';sh2.action='<Subject 2> stands in the open doorway with one hand resting on the frame. He gives Maya a small reassuring smile.';
+  const sh2=newShot(false);sh2.cutMs=5200;sh2.environmentUid=env.uid;sh2.openingState='<Subject 2> is standing in the open doorway while <Subject 1> remains seated at the island.';sh2.soundEffects='Soft footsteps and subtle clothing movement accompany <Subject 2> as he steps into the kitchen.';sh2.camFraming='medium';sh2.camFocusUid=b.uid;sh2.camViewpoint='front_3q_left';sh2.camType='Orbit / Arc';sh2.camTargetUid=b.uid;sh2.camOrbitDirection='clockwise';sh2.camEndFraming='medium_close_up';sh2.camEndViewpoint='front_3q_right';sh2.camSpd='at slow speed';sh2.camStability='smooth';sh2.camTiming='throughout_shot';sh2.action='<Subject 2> stands in the open doorway with one hand resting on the frame. He gives <Subject 1> a small reassuring smile.';
   const d2=newDlg(b.uid);d2.delivery='gently and reassuringly';d2.text='Then don’t open it alone.';d2.afterAction='He steps into the kitchen as the camera settles into the ending frame.';sh2.dlg=[d2];
   S={version:APP_VERSION,mode:'REF',dur:10,style:'Live-action, cinematic, soft morning window light, natural skin tones, and restrained contrast',wired:{img:4,vid:0,aud:2},refs:[a,b,env,au1,au2],taskTypes:['reference generation','audio reference'],guardDistinct:true,uiMode:'basic',scaleRules:[],active:0,clips:[{name:'Two-character reference scene',summary:'<Subject 1> studies a sealed envelope at the kitchen island and speaks hesitantly. The shot cuts to <Subject 2> in the doorway, where he responds reassuringly and steps into the room.',editWorkflow:'none',editSettings:{},shots:[sh1,sh2],soundscape:'Quiet apartment room tone continues throughout, with distant traffic through the window.',soundscapeExtra:'',soundscapeMode:'custom',music:'N/A',musicMode:'none'}]};
   resetDerivedCaches();
@@ -5593,11 +6103,11 @@ function loadExampleWorkflow(kind){
 
 function boot(){
   try{
-    const priorProject=localStorage.getItem('h3_prompt_composer_v5_18_7')||localStorage.getItem('h3_prompt_composer_v5_18_6');
-    const priorBackup=localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup');
+    const priorProject=localStorage.getItem('h3_prompt_composer_v5_19_4')||localStorage.getItem('h3_prompt_composer_v5_19_3')||localStorage.getItem('h3_prompt_composer_v5_19_2_test')||localStorage.getItem('h3_prompt_composer_v5_19_1_test')||localStorage.getItem('h3_prompt_composer_v5_19_0')||localStorage.getItem('h3_prompt_composer_v5_18_8')||localStorage.getItem('h3_prompt_composer_v5_18_7')||localStorage.getItem('h3_prompt_composer_v5_18_6');
+    const priorBackup=localStorage.getItem('h3_prompt_composer_v5_19_4_backup')||localStorage.getItem('h3_prompt_composer_v5_19_3_backup')||localStorage.getItem('h3_prompt_composer_v5_19_2_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_1_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_0_backup')||localStorage.getItem('h3_prompt_composer_v5_18_8_backup')||localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup');
     if(!localStorage.getItem(STORAGE_KEY)&&priorProject)localStorage.setItem(STORAGE_KEY,priorProject);
     if(!localStorage.getItem(BACKUP_KEY)&&priorBackup)localStorage.setItem(BACKUP_KEY,priorBackup);
-    const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('h3_prompt_composer_v5_18_5')||localStorage.getItem('h3_prompt_composer_v5_18_4')||localStorage.getItem('h3_prompt_composer_v5_18_3')||localStorage.getItem('h3_prompt_composer_v5_18_2')||localStorage.getItem('h3_prompt_composer_v5_18_1')||localStorage.getItem('h3_prompt_composer_v5_18_0')||localStorage.getItem('h3_prompt_composer_v5_17_2')||localStorage.getItem('h3_prompt_composer_v5_17_1')||localStorage.getItem('h3_prompt_composer_v5_17_0')||localStorage.getItem('h3_prompt_composer_v5_16_1')||localStorage.getItem('h3_prompt_composer_v5_16_0')||localStorage.getItem('h3_prompt_composer_v5_15_1')||localStorage.getItem('h3_prompt_composer_v5_15_0')||localStorage.getItem('h3_prompt_composer_v5_14_3')||localStorage.getItem('h3_prompt_composer_v5_14_2')||localStorage.getItem('h3_prompt_composer_v5_14_1')||localStorage.getItem('h3_prompt_composer_v5_14_0')||localStorage.getItem('h3_prompt_composer_v5_13_0')||localStorage.getItem('h3_prompt_composer_v5_12_4')||localStorage.getItem('h3_prompt_composer_v5_12_3')||localStorage.getItem('h3_prompt_composer_v5_12_2')||localStorage.getItem('h3_prompt_composer_v5_12_1')||localStorage.getItem('h3_prompt_composer_v5_12_0')||localStorage.getItem('h3_prompt_composer_v5_11_1')||localStorage.getItem('h3_prompt_composer_v5_11_0')||localStorage.getItem('h3_prompt_composer_v5_10_6')||localStorage.getItem('h3_prompt_composer_v5_10_5')||localStorage.getItem('h3_prompt_composer_v5_10_4')||localStorage.getItem('h3_prompt_composer_v5_10_3')||localStorage.getItem('h3_prompt_composer_v5_10_2')||localStorage.getItem('h3_prompt_composer_v5_10_1')||localStorage.getItem('h3_prompt_composer_v5_10_0')||localStorage.getItem('h3_prompt_composer_v5_9_9')||localStorage.getItem('h3_prompt_composer_v5_9_8')||localStorage.getItem('h3_prompt_composer_v5_9_7')||localStorage.getItem('h3_prompt_composer_v5_9_6')||localStorage.getItem('h3_prompt_composer_v5_9_5')||localStorage.getItem('h3_prompt_composer_v5_9_4')||localStorage.getItem('h3_prompt_composer_v5_9_3')||localStorage.getItem('h3_prompt_composer_v5_9_2')||localStorage.getItem('h3_prompt_composer_v5_9_1')||localStorage.getItem('h3_prompt_composer_v5_9')||localStorage.getItem('h3_prompt_composer_v5_8_3')||localStorage.getItem('h3_prompt_composer_v5_8_2')||localStorage.getItem('h3_prompt_composer_v5_8_1')||localStorage.getItem('h3_prompt_composer_v5_8')||localStorage.getItem('h3_prompt_composer_v5_7_1')||localStorage.getItem('h3_prompt_composer_v5_7')||localStorage.getItem('h3_prompt_composer_v5_6')||localStorage.getItem('h3_prompt_composer_v5_5')||localStorage.getItem('h3_prompt_composer_v5_4')||localStorage.getItem('h3_prompt_composer_v5_3')||localStorage.getItem('h3_prompt_composer_v5_2')||localStorage.getItem('h3_prompt_composer_v5');
+    const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('h3_prompt_composer_v5_19_4')||localStorage.getItem('h3_prompt_composer_v5_19_3')||localStorage.getItem('h3_prompt_composer_v5_19_2_test')||localStorage.getItem('h3_prompt_composer_v5_19_1_test')||localStorage.getItem('h3_prompt_composer_v5_18_5')||localStorage.getItem('h3_prompt_composer_v5_18_4')||localStorage.getItem('h3_prompt_composer_v5_18_3')||localStorage.getItem('h3_prompt_composer_v5_18_2')||localStorage.getItem('h3_prompt_composer_v5_18_1')||localStorage.getItem('h3_prompt_composer_v5_18_0')||localStorage.getItem('h3_prompt_composer_v5_17_2')||localStorage.getItem('h3_prompt_composer_v5_17_1')||localStorage.getItem('h3_prompt_composer_v5_17_0')||localStorage.getItem('h3_prompt_composer_v5_16_1')||localStorage.getItem('h3_prompt_composer_v5_16_0')||localStorage.getItem('h3_prompt_composer_v5_15_1')||localStorage.getItem('h3_prompt_composer_v5_15_0')||localStorage.getItem('h3_prompt_composer_v5_14_3')||localStorage.getItem('h3_prompt_composer_v5_14_2')||localStorage.getItem('h3_prompt_composer_v5_14_1')||localStorage.getItem('h3_prompt_composer_v5_14_0')||localStorage.getItem('h3_prompt_composer_v5_13_0')||localStorage.getItem('h3_prompt_composer_v5_12_4')||localStorage.getItem('h3_prompt_composer_v5_12_3')||localStorage.getItem('h3_prompt_composer_v5_12_2')||localStorage.getItem('h3_prompt_composer_v5_12_1')||localStorage.getItem('h3_prompt_composer_v5_12_0')||localStorage.getItem('h3_prompt_composer_v5_11_1')||localStorage.getItem('h3_prompt_composer_v5_11_0')||localStorage.getItem('h3_prompt_composer_v5_10_6')||localStorage.getItem('h3_prompt_composer_v5_10_5')||localStorage.getItem('h3_prompt_composer_v5_10_4')||localStorage.getItem('h3_prompt_composer_v5_10_3')||localStorage.getItem('h3_prompt_composer_v5_10_2')||localStorage.getItem('h3_prompt_composer_v5_10_1')||localStorage.getItem('h3_prompt_composer_v5_10_0')||localStorage.getItem('h3_prompt_composer_v5_9_9')||localStorage.getItem('h3_prompt_composer_v5_9_8')||localStorage.getItem('h3_prompt_composer_v5_9_7')||localStorage.getItem('h3_prompt_composer_v5_9_6')||localStorage.getItem('h3_prompt_composer_v5_9_5')||localStorage.getItem('h3_prompt_composer_v5_9_4')||localStorage.getItem('h3_prompt_composer_v5_9_3')||localStorage.getItem('h3_prompt_composer_v5_9_2')||localStorage.getItem('h3_prompt_composer_v5_9_1')||localStorage.getItem('h3_prompt_composer_v5_9')||localStorage.getItem('h3_prompt_composer_v5_8_3')||localStorage.getItem('h3_prompt_composer_v5_8_2')||localStorage.getItem('h3_prompt_composer_v5_8_1')||localStorage.getItem('h3_prompt_composer_v5_8')||localStorage.getItem('h3_prompt_composer_v5_7_1')||localStorage.getItem('h3_prompt_composer_v5_7')||localStorage.getItem('h3_prompt_composer_v5_6')||localStorage.getItem('h3_prompt_composer_v5_5')||localStorage.getItem('h3_prompt_composer_v5_4')||localStorage.getItem('h3_prompt_composer_v5_3')||localStorage.getItem('h3_prompt_composer_v5_2')||localStorage.getItem('h3_prompt_composer_v5');
     if(raw) S=migrate(JSON.parse(raw));
     else S=migrate(S);
   }catch(e){S=migrate(S);}
