@@ -184,6 +184,10 @@ pre.out{background:#0e1015;border:1px solid var(--line);border-radius:7px;paddin
 .timeline-handle{position:absolute;top:-2px;bottom:-2px;width:6px;transform:translateX(-50%);cursor:ew-resize}
 .timeline-handle.shot{background:#b2a7ff}
 .timeline-handle.beat{background:#a7d6ff;top:-2px;bottom:-2px;width:6px}
+.timeline-handle.beat-edge{top:50%;bottom:auto;width:12px;height:14px;transform:translate(-50%,-50%);color:#a7d6ff;background:#202b45;border:1px solid #a7d6ff;font:700 13px/11px var(--mono);text-align:center;line-height:11px;z-index:2}
+.timeline-handle.beat-edge.adjacent-end{transform:translate(calc(-50% - 10px),-50%)}
+.timeline-handle.beat-edge.adjacent-start{transform:translate(calc(-50% + 10px),-50%)}
+.timeline-handle.beat-adjacent{z-index:3}
 .timeline-branch-area{position:relative;margin-top:10px;min-height:70px}
 .timeline-branch{position:absolute;width:1px;background:#4aa3f0;top:0}
 .timeline-branch.shot{background:#8b7cf6}
@@ -625,7 +629,7 @@ body[data-ui-mode="advanced"] .basic-only{display:none!important}
   <div id="timelineResizeGrip" class="timeline-resize-grip" title="Resize timeline"></div>
   <div class="timeline-dock-head">
     <b>Generation Timeline</b>
-    <span class="hint" id="timelineHint" style="margin:0">Light violet handles adjust Shots/Light blue handles adjust Beats, both in 0.1s steps. Click a shot or beat to locate it.</span>
+    <span class="hint" id="timelineHint" style="margin:0">Light violet handles adjust Shots/Light blue arrow handles adjust Beats, adjacent beats create a central drag handle to adjust them together, in 0.1s steps. Click a shot or beat to locate it.</span>
     <div class="sp"></div>
     <span id="timelineDuration" class="auto-pill">0.0s</span>
     <button class="btn sm ghost" id="timelineToggleBtn" onclick="toggleTimelineDock()">Hide</button>
@@ -760,6 +764,7 @@ const BACKUP_KEY  = 'h3_prompt_composer_v5_19_5_backup';
 const TIMELINE_PX_PER_SEC = 80;
 const TIMELINE_MIN_SHOT_SEC = 0.2;
 const TIMELINE_MIN_BEAT_SEC = 0.1;
+const TIMELINE_BEAT_SNAP_SEC = 0.3;
 const TIMELINE_DOCK_MIN_H = 120;
 let timelineDrag = null;
 
@@ -5026,6 +5031,9 @@ function timelineTotalSec(){
 function timelineSnapSec(sec){
   return Math.round(Number(sec||0)*10)/10;
 }
+function timelineSnapBeatBoundary(sec,targetSec){
+  return Number.isFinite(targetSec)&&Math.abs(sec-targetSec)<=TIMELINE_BEAT_SNAP_SEC?targetSec:sec;
+}
 function timelineClamp(sec,min,max){
   return Math.min(max,Math.max(min,sec));
 }
@@ -5072,16 +5080,21 @@ function timelinePointerMove(e){
     timelineTooltip(true,ms2ts(ms),e.clientX,e.clientY);
     return;
   }
-  if(timelineDrag.type==='beat-border'){
+  if(timelineDrag.type==='beat-edge'){
+    const sh=C().shots[timelineDrag.shotIndex],beats=timedActionBeats(sh);
+    const rawSec=timelineClamp(timelineSnapSec(timelineDrag.originSec+((e.clientX-timelineDrag.startX)/timelineDrag.localPxPerSec)),timelineDrag.minSec,timelineDrag.maxSec);
+    const sec=timelineClamp(timelineSnapBeatBoundary(rawSec,timelineDrag.snapSec),timelineDrag.minSec,timelineDrag.maxSec);
+    beats[timelineDrag.beatIndex][timelineDrag.edge]=sec;
+    timelineRefreshBeatGeometry(timelineDrag.beatHost,sh,timelineDrag.shotDur||1);
+    timelineTooltip(true,`${sec.toFixed(1)}s`,e.clientX,e.clientY);
+    return;
+  }
+  if(timelineDrag.type==='beat-adjacent'){
     const sh=C().shots[timelineDrag.shotIndex],beats=timedActionBeats(sh);
     const sec=timelineClamp(timelineSnapSec(timelineDrag.originSec+((e.clientX-timelineDrag.startX)/timelineDrag.localPxPerSec)),timelineDrag.minSec,timelineDrag.maxSec);
-    beats[timelineDrag.beatIndex].endSec=sec;beats[timelineDrag.beatIndex+1].startSec=sec;
-    const dur=timelineDrag.shotDur||1,a=beats[timelineDrag.beatIndex],b=beats[timelineDrag.beatIndex+1];
-    timelineDrag.leftSeg.style.left=`${timelineClamp((a.startSec/dur)*100,0,100)}%`;
-    timelineDrag.leftSeg.style.width=`${timelineClamp(((a.endSec-a.startSec)/dur)*100,0,100)}%`;
-    timelineDrag.rightSeg.style.left=`${timelineClamp((b.startSec/dur)*100,0,100)}%`;
-    timelineDrag.rightSeg.style.width=`${timelineClamp(((b.endSec-b.startSec)/dur)*100,0,100)}%`;
-    timelineDrag.handle.style.left=`${timelineClamp((sec/dur)*100,0,100)}%`;
+    beats[timelineDrag.beatIndex].endSec=sec;
+    beats[timelineDrag.beatIndex+1].startSec=sec;
+    timelineRefreshBeatGeometry(timelineDrag.beatHost,sh,timelineDrag.shotDur||1);
     timelineTooltip(true,`${sec.toFixed(1)}s`,e.clientX,e.clientY);
   }
 }
@@ -5132,8 +5145,18 @@ function timelineRefreshBeatGeometry(seg,sh,dur){
     const width=timelineClamp((Math.max(0,Number(b.endSec||0)-Number(b.startSec||0))/safeDur)*100,0,100);
     node.style.left=`${left}%`;node.style.width=`${width}%`;
   });
-  const beatHandles=[...seg.querySelectorAll('.timeline-handle.beat')];
+  const beatHandles=[...seg.querySelectorAll('.timeline-handle.beat-edge')];
   beatHandles.forEach(node=>{
+    const j=Number(node.dataset.beatIndex),b=beats[j];if(!b)return;
+    const sec=Number(b[node.dataset.edge]||0);
+    node.style.left=`${timelineClamp((sec/safeDur)*100,0,100)}%`;
+    const adjacent=node.dataset.edge==='startSec'?beats[j-1]?.endSec:beats[j+1]?.startSec;
+    const isAdjacent=Math.abs(sec-Number(adjacent))<=0.011;
+    node.classList.toggle('adjacent-start',node.dataset.edge==='startSec'&&isAdjacent);
+    node.classList.toggle('adjacent-end',node.dataset.edge==='endSec'&&isAdjacent);
+  });
+  const adjacencyMarkers=[...seg.querySelectorAll('.timeline-handle.beat-adjacent')];
+  adjacencyMarkers.forEach(node=>{
     const j=Number(node.dataset.beatIndex),a=beats[j],b=beats[j+1];if(!a||!b)return;
     const aa=Number(a.endSec||0),bb=Number(b.startSec||0);
     if(Math.abs(aa-bb)<=0.011){node.style.display='block';node.style.left=`${timelineClamp((aa/safeDur)*100,0,100)}%`;}else node.style.display='none';
@@ -5199,22 +5222,39 @@ function renderTimelineDock(){
       const center=start+((Number(b.startSec||0)+Number(b.endSec||0))/2);
       beatMarkers.push({x:center*pxPerSec,text:timelinePreviewSubjectNames((b.text||'').trim()||'Empty beat'),kind:'beat',shot:i,width:140});
     });
+    beats.forEach((b,j)=>{
+      [['startSec','<'],['endSec','>']].forEach(([edge,symbol])=>{
+        const h=document.createElement('div');h.className='timeline-handle beat beat-edge';h.dataset.shotIndex=String(i);h.dataset.beatIndex=String(j);h.dataset.edge=edge;
+        const adjacent=edge==='startSec'?beats[j-1]?.endSec:beats[j+1]?.startSec;
+        const isAdjacent=Math.abs(Number(b[edge]||0)-Number(adjacent))<=0.011;
+        h.classList.toggle('adjacent-start',edge==='startSec'&&isAdjacent);
+        h.classList.toggle('adjacent-end',edge==='endSec'&&isAdjacent);
+        h.style.left=`${timelineClamp((Number(b[edge]||0)/dur)*100,0,100)}%`;h.textContent=symbol;
+        h.onpointerdown=e=>{
+          e.preventDefault();
+          const opposite=Number(b[edge==='startSec'?'endSec':'startSec']||0);
+          const previousEnd=j>0?Number(beats[j-1].endSec||0):0;
+          const nextStart=j<beats.length-1?Number(beats[j+1].startSec||dur):dur;
+          timelineBeginDrag({type:'beat-edge',shotIndex:i,beatIndex:j,edge,startX:e.clientX,originSec:Number(b[edge]||0),
+            minSec:edge==='startSec'?previousEnd:opposite,maxSec:edge==='startSec'?opposite:nextStart,
+            snapSec:edge==='startSec'?(j>0?previousEnd:null):(j<beats.length-1?nextStart:null),
+            shotDur:dur,localPxPerSec:Math.max(1,(Math.round((end-start)*pxPerSec)-8)/dur),beatHost},e);
+        };
+        beatHost.appendChild(h);
+      });
+    });
     for(let j=0;j<beats.length-1;j++){
       const a=Number(beats[j].endSec||0),b=Number(beats[j+1].startSec||0);
       if(Math.abs(a-b)>0.011)continue;
-      const h=document.createElement('div');h.className='timeline-handle beat';h.dataset.shotIndex=String(i);h.dataset.beatIndex=String(j);
-      h.style.left=`${timelineClamp((a/dur)*100,0,100)}%`;
-      h.onpointerdown=e=>{
+      const marker=document.createElement('div');marker.className='timeline-handle beat beat-adjacent';marker.dataset.beatIndex=String(j);
+      marker.style.left=`${timelineClamp((a/dur)*100,0,100)}%`;
+      marker.onpointerdown=e=>{
         e.preventDefault();
-        timelineBeginDrag({type:'beat-border',shotIndex:i,beatIndex:j,startX:e.clientX,originSec:a,
-          minSec:Number(beats[j].startSec||0)+TIMELINE_MIN_BEAT_SEC,
-          maxSec:Number(beats[j+1].endSec||0)-TIMELINE_MIN_BEAT_SEC,
-          shotDur:dur,localPxPerSec:Math.max(1,(Math.round((end-start)*pxPerSec)-8)/dur),
-          leftSeg:beatHost.querySelector(`.timeline-beat-seg[data-shot-index="${i}"][data-beat-index="${j}"]`),
-          rightSeg:beatHost.querySelector(`.timeline-beat-seg[data-shot-index="${i}"][data-beat-index="${j+1}"]`),
-          handle:h},e);
+        timelineBeginDrag({type:'beat-adjacent',shotIndex:i,beatIndex:j,startX:e.clientX,originSec:a,
+          minSec:Number(beats[j].startSec||0),maxSec:Number(beats[j+1].endSec||0),
+          shotDur:dur,localPxPerSec:Math.max(1,(Math.round((end-start)*pxPerSec)-8)/dur),beatHost},e);
       };
-      beatHost.appendChild(h);
+      beatHost.appendChild(marker);
     }
     lane.appendChild(seg);
     const shotPreviewText=timelinePreviewSubjectNames(((sh.action||sh.openingState||'').trim()||`Shot ${i+1}`));
