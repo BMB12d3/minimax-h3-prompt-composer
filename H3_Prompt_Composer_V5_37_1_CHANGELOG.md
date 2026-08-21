@@ -1,15 +1,16 @@
-# H3 Prompt Composer V5.36.1
+# H3 Prompt Composer V5.37.1
 
-V5.36.1 is the new publication candidate after the repository's previous V5.19.5 release. It includes the accumulated workflow improvements through V5.36.0 and a final Targeted Edit camera-prompt refinement.
+V5.37.1 completes the reusable multi-location Environment workflow introduced in V5.37.0 and restores normal completion of Guided Reference Setup.
 
-## V5.36.1 change
+## V5.37.1 changes
 
-- Targeted Edit camera reconstruction now emits a shorter affirmative instruction.
-- The selected camera instruction leads the source-video edit wording.
-- One optional camera orientation/background cue disambiguates what the new view faces and reveals.
-- Defensive mirror and world-geometry language has been removed.
-- Video 1 remains authoritative for recorded performance, timing, subject motion, and location.
-
+- Restores the missing `closeReferenceWizard()` handler so **Create reference setup**, Close, and Cancel finish without a runtime error.
+- Separates the physical Environment Picture-input bank from persistent named Environment locations.
+- Supports up to 24 reusable project locations, with each location mapped to any non-empty subset of the reserved bank.
+- Adds compact Environment library tabs for switching locations and creating another location after setup.
+- Preserves permanent location/layout details separately from optional current lighting, atmosphere, and state.
+- Stores the bank in `environmentInputSlots` and infers it from legacy Environment cards when needed.
+- Corrects the setup review summary so it displays every named location and its exact Picture mapping.
 ## Camera authoring
 
 - Targeted Edit has one active camera-authoring method at a time:
@@ -23,7 +24,9 @@ V5.36.1 is the new publication candidate after the repository's previous V5.19.5
 ## Guided setup and reference routing
 
 - Guided Reference Setup begins with connected Picture, Video, and Audio inputs and reserves each one for a clear job.
-- Reusable Environment view banks can share physical Picture slots among inactive alternatives.
+- A shared physical Environment input bank is configured once, independently from reusable named locations.
+- Every location may select its own subset of the bank; the same slot can hold another location file in another Generation.
+- Compact Environment tabs switch saved locations and expose an Add environment action.
 - The Current Generation input map summarizes what to load in ComfyUI.
 - Environment setup, height/scale setup, continuity references, and Spatial Placement Maps use clearer ownership boundaries.
 - Spatial Placement Maps transfer selected coordinates/relationships only, never finished appearance or pixels.
@@ -63,15 +66,15 @@ V5.36.1 is the new publication candidate after the repository's previous V5.19.5
 
 ## Documentation
 
-- New full V5.36.1 User Guide.
-- New V5.36.1 Illustrated User Guide.
-- Eight current V5.36.1 screenshots.
+- New full V5.37.1 User Guide with the shared Environment-bank workflow.
+- New V5.37.1 Illustrated User Guide.
+- Eight current V5.37.1 screenshots, including the multi-location Environment setup.
 - Completely rewritten README covering the current interface and workflows.
 
 ## Compatibility and migration
 
-- Current local-storage keys: `h3_prompt_composer_v5_36_1` and `h3_prompt_composer_v5_36_1_backup`.
-- V5.36.0 project state and Restore Previous backup migrate first.
+- Current local-storage keys: `h3_prompt_composer_v5_37_1` and `h3_prompt_composer_v5_37_1_backup`.
+- V5.37.0 and V5.36.1 project state and Restore Previous backups migrate first.
 - The complete earlier-version migration and backup fallback chain remains available.
 - Project JSON remains the portable editable project format.
 
@@ -88,6 +91,7 @@ The supplied `VIDEO_PROMPT_WRITING_GUIDE_base_en.md` and `VIDEO_PROMPT_WRITING_G
 - Voiceover, closed-lip behavior, `<scenetrans>`, and `<cutoff>` pass.
 - `overall_soundscape` and `non_diegetic_music` remain separate.
 - Ref2VA emits all six required sections in the required order.
+- The new wizard creates multiple named Environment locations with independent Picture subsets, closes normally, renders location tabs, and supports adding another location.
 - All six built-in example workflows pass Prompt Check with zero errors.
 
 ## Runtime and layout audit
@@ -97,7 +101,7 @@ The supplied `VIDEO_PROMPT_WRITING_GUIDE_base_en.md` and `VIDEO_PROMPT_WRITING_G
 - No external network requests were made.
 - No live duplicate DOM IDs were found.
 - Layout passed at 390, 1280, 1440, 1920, and 2560 px without document, body, or column horizontal overflow.
-- Version markers, storage keys, and visible version labels all report V5.36.1.
+- Version markers, storage keys, and visible version labels all report V5.37.1.
 
 ## Offline/security audit
 

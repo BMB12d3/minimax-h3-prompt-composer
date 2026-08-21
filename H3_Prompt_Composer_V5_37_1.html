@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>H3 Prompt Composer V5.36.1</title>
+<title>H3 Prompt Composer V5.37.1</title>
 <style>
 :root{
   --bg:#14161c; --panel:#1b1e26; --panel2:#212530; --line:#2c313d;
@@ -488,7 +488,7 @@ body[data-edit-workflow="background_relight"] .source-environment-field{display:
 .ref-wizard-item{border:1px solid #343a49;border-radius:8px;background:#121720;padding:10px}.ref-wizard-item-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}.ref-wizard-item-head b{color:#f0edff;font-size:11px}.ref-wizard-item-head code{font-size:9px;color:#9e95d8;background:#211d35;padding:3px 6px;border-radius:999px}.ref-wizard-item-grid{display:grid;grid-template-columns:minmax(160px,1.15fr) minmax(140px,1fr) minmax(120px,.7fr);gap:8px;align-items:start}.ref-wizard-targets{grid-column:1/-1;border-top:1px solid #292f3b;padding-top:8px}.ref-wizard-target-grid{display:flex;flex-wrap:wrap;gap:5px}.ref-wizard-target-grid label{display:flex;align-items:center;gap:5px;border:1px solid #3b4354;background:#181e29;border-radius:999px;padding:5px 8px;font-size:10px;color:#bcc6d7}.ref-wizard-target-grid input{width:auto}.ref-wizard-map{display:grid;grid-template-columns:auto 1fr;gap:4px 9px;margin-top:6px;font-size:10px}.ref-wizard-map code{color:#a99eff}.ref-wizard-map span{color:#c1c9d7}.ref-wizard-warning{color:#ffc76c;font-size:10px;line-height:1.4;margin-top:6px}
 .ref-wizard-item input[type=text],.ref-wizard-item input:not([type]),.ref-wizard-item input[type=number],.ref-wizard-item select{background:#0f141d;color:#eef3fb;caret-color:#fff}.ref-wizard-item input::placeholder{color:#71809a;opacity:1}
 .ref-wizard-scale-order{grid-column:1/-1;border-top:1px solid #292f3b;padding-top:9px}.ref-wizard-scale-order>p{margin:0 0 8px;color:var(--dim);font-size:10px}.ref-wizard-order-list{display:grid;gap:6px}.ref-wizard-order-row{display:grid;grid-template-columns:125px minmax(180px,1fr) auto;gap:7px;align-items:center}.ref-wizard-order-row label{color:#c9d5e6;font-size:10px}.ref-wizard-order-row select{min-width:0}.ref-wizard-order-actions{display:flex;gap:6px;margin-top:7px}
-.environment-bank-tabs{display:flex;gap:5px;flex-wrap:wrap;padding:8px 9px;margin:0 0 8px;border:1px solid #324056;border-radius:7px;background:#111720}.environment-bank-tabs button{border:1px solid #3b4658;background:#171e29;color:#aeb9cb;border-radius:999px;padding:5px 9px;font-size:10px;cursor:pointer}.environment-bank-tabs button.on{background:#403479;border-color:#8d7cff;color:#fff}.environment-bank-note{width:100%;font-size:9.5px;color:var(--dimmer);margin-bottom:2px}
+.environment-bank-tabs{display:flex;gap:5px;flex-wrap:wrap;padding:8px 9px;margin:0 0 8px;border:1px solid #324056;border-radius:7px;background:#111720}.environment-bank-tabs button{border:1px solid #3b4658;background:#171e29;color:#aeb9cb;border-radius:999px;padding:5px 9px;font-size:10px;cursor:pointer}.environment-bank-tabs button.on{background:#403479;border-color:#8d7cff;color:#fff}.environment-bank-tabs button.add-environment-tab{border-style:dashed;border-color:#3f8f75;color:#8ee0c1;background:#11241f}.environment-bank-tabs button.add-environment-tab:hover{background:#17352d;color:#b8f4dd}.environment-bank-note{width:100%;font-size:9.5px;color:var(--dimmer);margin-bottom:2px}
 @media(max-width:760px){.ref-wizard-item-grid{grid-template-columns:1fr}.ref-wizard-targets{grid-column:1}.ref-wizard-modal{max-height:96vh}.ref-wizard-overlay{padding:7px}.ref-wizard-order-row{grid-template-columns:1fr}.ref-wizard-order-row .btn{justify-self:start}}
 .visual-camera-launch{display:flex;align-items:center;gap:8px;padding:8px 9px;margin-bottom:9px;border:1px solid #3d4d67;border-radius:7px;background:#131b26}
 .visual-camera-launch .sp{flex:1}.visual-camera-launch b{color:#cfe3ff}.visual-camera-launch span{font-size:10.5px;color:var(--dim)}
@@ -543,7 +543,7 @@ body[data-edit-workflow="background_relight"] .source-environment-field{display:
 <body>
 
 <header>
-  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.36.1</small></div>
+  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.37.1</small></div>
   <div class="tag" id="modeTag">T2VA</div>
   <div class="sp"></div>
   <span class="autosave" id="saveState">Auto-saved locally</span>
@@ -809,10 +809,12 @@ body[data-edit-workflow="background_relight"] .source-environment-field{display:
 
 <script>
 /* ============================================================
-   MiniMax H3 Prompt Composer V5.36.1
+   MiniMax H3 Prompt Composer V5.37.1
    Implements the schema from MiniMax's official prompt guides:
    VIDEO_PROMPT_WRITING_GUIDE_base_en.md  (T2VA/I2VA/FL2VA/L2VA)
    VIDEO_PROMPT_WRITING_GUIDE_ref_en.md   (full-reference mode)
+   V5.37.1: Restores the Guided Reference Setup close handler so Create Reference Setup completes normally.
+   V5.37.0: Guided Reference Setup separates reusable Environment locations from their shared Picture input bank. Create several named locations, map each to any subset of the reserved Environment inputs, and add more locations from the compact Environment tabs.
    V5.36.1: Targeted Edit camera reconstruction uses a shorter affirmative prompt: the Camera instruction leads, one optional orientation cue disambiguates the background, and defensive mirror/world-geometry language is removed.
    V5.36.0: Targeted Edit camera reconstruction adds one exclusive camera-authoring method: guided controls, Visual Planner, or custom instruction.
    V5.35.9: Targeted Edit camera reconstruction now uses one physical subject-relative camera relationship and avoids inferred screen-left/right wording.
@@ -984,9 +986,9 @@ const REF_KINDS = ['Subject','Picture','Video','Audio'];
 const RETENTION_V = ['fully_preserved','partially_preserved','attribute_transfer','weak_reference'];
 const TASK_TYPES = ['video editing','video continuation','keyframe completion',
   'reference generation','audio reuse','audio reference'];
-const APP_VERSION = '5.36.1';
-const STORAGE_KEY = 'h3_prompt_composer_v5_36_1';
-const BACKUP_KEY  = 'h3_prompt_composer_v5_36_1_backup';
+const APP_VERSION = '5.37.1';
+const STORAGE_KEY = 'h3_prompt_composer_v5_37_1';
+const BACKUP_KEY  = 'h3_prompt_composer_v5_37_1_backup';
 
 /* ---------------- state ---------------- */
 let S = blank();
@@ -996,7 +998,7 @@ function uid(prefix='r'){
 function blank(){
   return {suggestDismissed:[],
     version:APP_VERSION, mode:'T2VA', dur:10, style:'Live-action, cinematic',
-    wired:{img:0,vid:0,aud:0}, refs:[], taskTypes:['reference generation'],
+    wired:{img:0,vid:0,aud:0}, environmentInputSlots:[], refs:[], taskTypes:['reference generation'],
     guardDistinct:true, uiMode:'unified', scaleRules:[], clips:[ newClip('Generation 1') ], active:0
   };
 }
@@ -5127,7 +5129,7 @@ function appearanceContinuityHTML(r,i){
     </details>
   </div></details>`;
 }
-let referenceWizardDraft={images:[],videos:[],audio:[]};
+let referenceWizardDraft={images:[],videos:[],audio:[],environments:[],environmentCount:1};
 function referenceWizardGroupKey(name){return String(name||'').trim().replace(/\s+/g,' ').toLowerCase();}
 function referenceWizardGroupToken(name){const key=referenceWizardGroupKey(name);return key?`group:${encodeURIComponent(key)}`:'';}
 function referenceWizardVideoRowHTML(row,index){
@@ -5138,65 +5140,48 @@ function referenceWizardAudioRowHTML(row,index){
   const role=row.role||'voice',voice=['voice','exact_dialogue'].includes(role),shotScoped=role==='sfx',scopeTitle=voice?'Generation-wide speaker binding':role==='music'?'Generation-wide score reference':'Generation-wide scene-audio reference',scopeText=voice?'Applied automatically in every Shot where this Subject speaks; no separate Shot assignment is needed.':role==='music'?'Guides the non-diegetic score for the whole Generation.':'Applies to the Generation’s overall synchronized scene-audio layer.';
   return `<div class="ref-wizard-item"><div class="ref-wizard-item-head"><b>Audio ${index+1}</b><code>Audio slot assigned automatically</code></div><div class="ref-wizard-item-grid"><div class="fld"><label class="f">What should it provide?</label><select onchange="setReferenceWizardField('audio',${index},'role',this.value,true)">${[['voice','Voice timbre'],['exact_dialogue','Exact performed dialogue'],['music','Music style'],['sfx','Sound texture / effect'],['exact_soundtrack','Exact scene soundtrack'],['reuse','Reusable source audio']].map(([v,n])=>`<option value="${v}" ${role===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="fld"><label class="f">Short name</label><input value="${esc(row.name||'')}" oninput="setReferenceWizardField('audio',${index},'name',this.value)"></div><div class="fld"><label class="f">Duration</label><input type="number" min="2" max="15" step="0.1" value="${Number(row.duration)||5}" onchange="setReferenceWizardField('audio',${index},'duration',this.value)"></div>${voice?referenceWizardTargetSelect('audio',index,row,'Speaker Subject'):''}${shotScoped?`<div class="fld"><label class="f">Use in</label><select onchange="setReferenceWizardField('audio',${index},'shot',this.value)">${referenceWizardShotOptions(row.shot)}</select></div>`:`<div class="active-state"><b>${scopeTitle}</b><span>${scopeText}</span></div>`}</div></div>`;
 }
+
 function setReferenceWizardField(media,index,field,value,rerender=false){
   const row=referenceWizardDraft[media]?.[index];if(!row)return;if(['duration','environmentMainSlot'].includes(field))value=Number(value)||1;if(field==='singleTarget'){row.targets=value?[value]:[];}else row[field]=value;
   if(media==='images'&&field==='purpose'){
-    if(value==='subject_view'&&(!row.group||/^Environment \d+$/i.test(row.group)))row.group=`Character ${index+1}`;
+    if(value==='subject_view'&&(!row.group||/^Environment \d+$/i.test(row.group)))row.group='Character '+(index+1);
     if(value==='environment_slot'){
-      const groups=referenceWizardEnvironmentGroups((referenceWizardDraft.images||[]).filter((_,i)=>i!==index)),firstMain=groups[0]?.main;
-      row.viewRole=firstMain?'alternate view':'overall geography';row.environmentMainSlot=firstMain?Number(firstMain.slot):Number(row.slot||index+1);row.environmentName=row.environmentName||`Environment ${groups.length+1}`;
+      const existing=referenceWizardEnvironmentSlots((referenceWizardDraft.images||[]).filter((_,i)=>i!==index));
+      row.viewRole=existing.length?'alternate view':'overall geography';row.environmentMainSlot=existing[0]||Number(row.slot||index+1);
     }
     if(value==='scale'&&!(row.targets||[]).length)row.targets=referenceWizardTargetChoices().slice(0,2).map(x=>x.value);
-    row.slot=index+1;
+    row.slot=index+1;referenceWizardSyncEnvironments();
   }
-  if(media==='images'&&field==='viewRole'){
-    if(value==='overall geography'){row.environmentMainSlot=Number(row.slot);const groups=referenceWizardEnvironmentGroups();const pos=Math.max(1,groups.findIndex(g=>g.main===row)+1);row.environmentName=row.environmentName||`Environment ${pos}`;}
-    else{const main=referenceWizardEnvironmentGroups().map(g=>g.main).find(x=>x!==row);row.environmentMainSlot=Number(main?.slot)||Number(row.slot);}
-  }
+  if(media==='images'&&field==='viewRole'&&value==='overall geography')row.environmentMainSlot=Number(row.slot);
   if(media==='images'&&field==='scaleShorterTarget'&&value==='same')row.scaleLandmark='';
   if(rerender)syncReferenceWizard();else updateReferenceWizardSummary();
 }
+
 function referenceWizardPurposeText(media,row){
   if(media==='images')return ({subject_view:`Subject view → ${row.group||'unnamed Subject'}`,environment_view:`Environment view → ${row.group||'unnamed Environment'}`,scale:'Height / scale guide',continuity:`Continuity — ${(row.continuityType||'subject_blocking').replaceAll('_',' ')}`,composition:'Composition anchor',storyboard:'Storyboard reference',placement:'Spatial placement map',wardrobe:'Wardrobe reference',lighting:'Lighting integration',environment_state:'Environment-state reference',first_frame:'Exact first frame',keyframe:'Exact keyframe',last_frame:'Exact last frame'})[row.purpose]||row.purpose;
   return media==='videos'?(row.role||'video reference').replace(' reference',''):(row.role||'audio reference').replaceAll('_',' ');
 }
 function referenceWizardTargetLabel(token){return referenceWizardTargetChoices().find(x=>x.value===token)?.label||'';}
+
 function updateReferenceWizardSummary(){
   const summary=document.getElementById('refWizSummary');if(!summary)return;const chosen=[];
-  if(document.getElementById('refWizHasImages')?.checked)(referenceWizardDraft.images||[]).forEach((row,i)=>chosen.push([`Picture ${i+1}`,referenceWizardPurposeText('images',row)]));
-  referenceWizardEnvironmentGroups().forEach(g=>chosen.push([g.main.environmentName||'Unnamed environment',g.slots.map(n=>`Picture ${n}`).join(' + ')]));
-  if(document.getElementById('refWizHasVideo')?.checked)(referenceWizardDraft.videos||[]).forEach((row,i)=>chosen.push([`Video ${i+1}`,referenceWizardPurposeText('videos',row)]));
-  if(document.getElementById('refWizHasAudio')?.checked)(referenceWizardDraft.audio||[]).forEach((row,i)=>chosen.push([`Audio ${i+1}`,referenceWizardPurposeText('audio',row)]));
-  summary.innerHTML=chosen.length?`<b>Input map ready — Shot routing comes later</b><span class="ref-wizard-map">${chosen.map(([a,b])=>`<code>${esc(a)}</code><span>${esc(b)}</span>`).join('')}</span>`:'<b>Nothing selected yet</b><span>Choose the model inputs you will connect.</span>';
+  if(document.getElementById('refWizHasImages')?.checked)(referenceWizardDraft.images||[]).forEach((row,i)=>chosen.push(['Picture '+(i+1),referenceWizardPurposeText('images',row)]));
+  referenceWizardSyncEnvironments().forEach((env,i)=>chosen.push([env.name||('Environment '+(i+1)),(env.slots||[]).map(n=>'Picture '+n).join(' + ')||'No Environment input selected']));
+  if(document.getElementById('refWizHasVideo')?.checked)(referenceWizardDraft.videos||[]).forEach((row,i)=>chosen.push(['Video '+(i+1),referenceWizardPurposeText('videos',row)]));
+  if(document.getElementById('refWizHasAudio')?.checked)(referenceWizardDraft.audio||[]).forEach((row,i)=>chosen.push(['Audio '+(i+1),referenceWizardPurposeText('audio',row)]));
+  summary.innerHTML=chosen.length?'<b>Input map and reusable library ready — Shot routing comes later</b><span class="ref-wizard-map">'+chosen.map(([a,b])=>'<code>'+esc(a)+'</code><span>'+esc(b)+'</span>').join('')+'</span>':'<b>Nothing selected yet</b><span>Choose the model inputs you will connect.</span>';
 }
+
+
 function openReferenceWizard(){
   if(S.mode!=='REF'||editWorkflow()!=='none'){alert('Guided Reference Setup is available for the main Ref2VA workflow. Finish or leave the specialized video-editing wizard before opening it.');return;}
-  const modal=document.getElementById('referenceWizard');if(!modal)return;referenceWizardDraft={images:[],videos:[],audio:[]};
+  const modal=document.getElementById('referenceWizard');if(!modal)return;referenceWizardDraft={images:[],videos:[],audio:[],environments:[],environmentCount:1};
   ['refWizHasImages','refWizHasVideo','refWizHasAudio'].forEach(id=>{const n=document.getElementById(id);if(n)n.checked=false;});
-  document.getElementById('refWizImageCount').value=1;document.getElementById('refWizVideoCount').value=1;document.getElementById('refWizAudioCount').value=1;
+  document.getElementById('refWizImageCount').value=Math.max(1,Math.min(9,Number(S.wired?.img)||1));document.getElementById('refWizVideoCount').value=Math.max(1,Math.min(3,Number(S.wired?.vid)||1));document.getElementById('refWizAudioCount').value=Math.max(1,Math.min(3,Number(S.wired?.aud)||1));
   document.getElementById('refWizCollapse').checked=true;modal.hidden=false;syncReferenceWizard();document.getElementById('refWizHasImages')?.focus();
 }
+
 function closeReferenceWizard(){const modal=document.getElementById('referenceWizard');if(modal)modal.hidden=true;}
-function referenceWizardUsedSlots(kind){
-  const used=new Set();
-  orderedRefs().forEach(r=>{
-    if(kind==='Image'){if(r.kind==='Subject')sourcePicNumbers(r).forEach(n=>used.add(Number(n)));else if(r.kind==='Picture'){const n=physicalSlotFor(r);if(n)used.add(n);}}
-    else if(kind==='Video'){if(r.kind==='Subject')sourceVideoNumbers(r).forEach(n=>used.add(Number(n)));else if(r.kind==='Video'){const n=physicalSlotFor(r);if(n)used.add(n);}}
-    else if(r.kind==='Audio'&&(r.sourceType||'file')==='file'){const n=physicalSlotFor(r);if(n)used.add(n);}
-  });
-  return used;
-}
-function currentActiveReferenceFileKeys(){
-  resetDerivedCaches();const images=new Set(),videos=new Set(),audio=new Set();
-  orderedRefs().forEach(r=>{if(r.kind==='Subject'){sourcePicNumbers(r).forEach(n=>images.add(n));sourceVideoNumbers(r).forEach(n=>videos.add(n));}else if(r.kind==='Picture')images.add(physicalSlotFor(r));else if(r.kind==='Video')videos.add(physicalSlotFor(r));else if(r.kind==='Audio'&&(r.sourceType||'file')==='file')audio.add(physicalSlotFor(r));});
-  return new Set([...images].filter(Boolean).map(n=>`I:${n}`).concat([...videos].filter(Boolean).map(n=>`V:${n}`),[...audio].filter(Boolean).map(n=>`A:${n}`)));
-}
-function currentActiveReferenceFileCount(){return currentActiveReferenceFileKeys().size;}
-function currentActiveVisualReferenceFileCount(){
-  resetDerivedCaches();const images=new Set(),videos=new Set();
-  orderedRefs().forEach(r=>{if(r.kind==='Subject'){sourcePicNumbers(r).forEach(n=>images.add(n));sourceVideoNumbers(r).forEach(n=>videos.add(n));}else if(r.kind==='Picture')images.add(physicalSlotFor(r));else if(r.kind==='Video')videos.add(physicalSlotFor(r));});
-  return [...images,...videos].filter(Boolean).length;
-}
 function syncReferenceWizard(){
   const specs=[['Images','Image','images',H3_LIMITS.img],['Video','Video','videos',H3_LIMITS.vid],['Audio','Audio','audio',H3_LIMITS.aud]],html=[];
   specs.forEach(([checkKey,inputKey,media,max])=>{const on=!!document.getElementById(`refWizHas${checkKey}`)?.checked,opts=document.getElementById(`refWiz${inputKey}Options`);if(opts)opts.hidden=!on;const count=on?Math.max(1,Math.min(max,Math.floor(Number(document.getElementById(`refWiz${inputKey}Count`)?.value)||1))):0;referenceWizardResize(media,count);if(!on)return;html.push(`<div class="ref-wizard-media-head">${inputKey==='Image'?'Images':inputKey==='Video'?'Video':'Audio'}</div>`);html.push(...referenceWizardDraft[media].map((row,i)=>media==='images'?referenceWizardImageRowHTML(row,i):media==='videos'?referenceWizardVideoRowHTML(row,i):referenceWizardAudioRowHTML(row,i)));});
@@ -5397,7 +5382,7 @@ function referenceWizardEnvironmentLinkHTML(row,index){
 function referenceWizardImageRowHTML(row,index){
   const p=row.purpose||'subject_view',needsOne=['wardrobe','lighting'].includes(p),needsMany=p==='scale'||(p==='continuity'&&['subject_blocking','object_position','appearance_state'].includes(row.continuityType||'subject_blocking'));
   const subjectType=p==='subject_view'?`<div class="fld"><label class="f">What kind of Subject is this?</label><select onchange="setReferenceWizardField('images',${index},'subjectType',this.value,true)">${[['character','Character / person'],['creature','Creature / animal'],['vehicle','Vehicle'],['object','Object / prop'],['other','Other visual subject']].map(([v,n])=>`<option value="${v}" ${row.subjectType===v?'selected':''}>${n}</option>`).join('')}</select></div>`:'';
-  const envRole=p==='environment_slot'?`<div class="fld"><label class="f">What does this Environment input show?</label><select onchange="setReferenceWizardField('images',${index},'viewRole',this.value,true)">${[['overall geography','Main view / overall layout'],['alternate view','Another angle of the same location'],['structural detail','Important structural detail'],['lighting reference','Lighting / atmosphere only']].map(([v,n])=>`<option value="${v}" ${row.viewRole===v?'selected':''}>${n}</option>`).join('')}</select></div>${referenceWizardEnvironmentLinkHTML(row,index)}`:'';
+  const envRole=p==='environment_slot'?`<div class="fld"><label class="f">What does this Environment input show?</label><select onchange="setReferenceWizardField('images',${index},'viewRole',this.value,true)">${[['overall geography','Main view / overall layout'],['alternate view','Another angle of the same location'],['structural detail','Important structural detail'],['lighting reference','Lighting / atmosphere only']].map(([v,n])=>`<option value="${v}" ${row.viewRole===v?'selected':''}>${n}</option>`).join('')}</select></div>`:'';
   const continuity=p==='continuity'?`<div class="fld"><label class="f">What should carry forward from this image?</label><select onchange="setReferenceWizardField('images',${index},'continuityType',this.value,true)">${[['subject_blocking','Where Subjects begin / blocking'],['object_position','Where an object or vehicle is'],['environment_state','Condition of the location'],['appearance_state','A Subject’s current appearance'],['broad_scene','Overall scene continuity']].map(([v,n])=>`<option value="${v}" ${row.continuityType===v?'selected':''}>${n}</option>`).join('')}</select></div>`:'';
   const name=p==='subject_view'?`<div class="fld"><label class="f">Subject name</label><input type="text" value="${esc(row.group||'')}" placeholder="Maya" oninput="setReferenceWizardField('images',${index},'group',this.value)" onchange="syncReferenceWizard()"><p class="field-help">Use the same name on another Picture input only when both images show the same Subject.</p></div>`:p==='environment_slot'?`<div class="active-state"><b>${(row.viewRole||'overall geography')==='overall geography'?'Main Environment input':'Connected Environment view'}</b><span>${(row.viewRole||'overall geography')==='overall geography'?'Name and describe this location in the Environment setup below.':'This input joins the main Environment input selected below.'}</span></div>`:`<div class="fld"><label class="f">Short name</label><input type="text" value="${esc(row.name||'')}" placeholder="${esc(referenceWizardPurposeText('images',row))}" oninput="setReferenceWizardField('images',${index},'name',this.value)"></div>`;
   const groupKey=referenceWizardGroupKey(row.group||''),firstGroupIndex=(referenceWizardDraft.images||[]).findIndex(x=>x.purpose==='subject_view'&&referenceWizardGroupKey(x.group||'')===groupKey),firstInGroup=p==='subject_view'&&firstGroupIndex===index;
@@ -5414,17 +5399,55 @@ function referenceWizardAudioRowHTML(row,index){
   const role=row.role||'voice',voice=['voice','exact_dialogue'].includes(role);
   return `<div class="ref-wizard-item"><div class="ref-wizard-item-head"><b>Audio input ${index+1}</b><code>fixed model input</code></div><div class="ref-wizard-item-grid"><div class="fld"><label class="f">Reserve this input for</label><select onchange="setReferenceWizardField('audio',${index},'role',this.value,true)">${[['voice','Voice timbre'],['exact_dialogue','Exact performed dialogue'],['music','Music style'],['sfx','Sound texture / effect'],['exact_soundtrack','Exact scene soundtrack'],['reuse','Reusable source audio']].map(([v,n])=>`<option value="${v}" ${role===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="fld"><label class="f">Short name</label><input type="text" value="${esc(row.name||'')}" oninput="setReferenceWizardField('audio',${index},'name',this.value)"></div><div class="fld"><label class="f">Clip duration</label><input type="number" min="2" max="15" step="0.1" value="${Number(row.duration)||5}" onchange="setReferenceWizardField('audio',${index},'duration',this.value)"></div>${voice?referenceWizardTargetSelect('audio',index,row,'Speaker Subject'):''}<div class="active-state ref-wizard-targets"><b>${voice?'Automatic speaker binding':'Library setup only'}</b><span>${voice?'This reference activates later wherever the bound Subject speaks.':'Choose where this audio contributes later from the Generation or Shot audio controls.'}</span></div></div></div>`;
 }
+
+function referenceWizardEnvironmentSlots(rows=referenceWizardDraft.images||[]){
+  return [...new Set((rows||[]).filter(r=>r.purpose==='environment_slot').map(r=>Number(r.slot)).filter(Boolean))].sort((a,b)=>a-b);
+}
+function referenceWizardDefaultEnvironment(index,slots=referenceWizardEnvironmentSlots()){
+  return {name:'Environment '+(index+1),details:'',currentState:'',slots:slots.slice()};
+}
+function referenceWizardSyncEnvironments(){
+  const slots=referenceWizardEnvironmentSlots();
+  if(!Array.isArray(referenceWizardDraft.environments))referenceWizardDraft.environments=[];
+  if(!slots.length){referenceWizardDraft.environments=[];referenceWizardDraft.environmentCount=1;return [];}
+  let count=Math.max(1,Math.min(24,Math.floor(Number(referenceWizardDraft.environmentCount)||referenceWizardDraft.environments.length||1)));
+  referenceWizardDraft.environmentCount=count;
+  while(referenceWizardDraft.environments.length<count)referenceWizardDraft.environments.push(referenceWizardDefaultEnvironment(referenceWizardDraft.environments.length,slots));
+  if(referenceWizardDraft.environments.length>count)referenceWizardDraft.environments.length=count;
+  referenceWizardDraft.environments.forEach((env,i)=>{
+    env.name=String(env.name||('Environment '+(i+1)));env.details=String(env.details||'');env.currentState=String(env.currentState||'');
+    env.slots=[...new Set((Array.isArray(env.slots)?env.slots:slots).map(Number).filter(n=>slots.includes(n)))].sort((a,b)=>a-b);
+  });
+  return referenceWizardDraft.environments;
+}
+function setReferenceWizardEnvironmentCount(value){
+  referenceWizardDraft.environmentCount=Math.max(1,Math.min(24,Math.floor(Number(value)||1)));referenceWizardSyncEnvironments();syncReferenceWizard();
+}
+function setReferenceWizardEnvironmentField(index,field,value){
+  const env=referenceWizardDraft.environments?.[index];if(!env)return;env[field]=value;updateReferenceWizardSummary();
+}
+function toggleReferenceWizardEnvironmentSlot(index,slot,checked){
+  const env=referenceWizardDraft.environments?.[index];if(!env)return;const selected=new Set((env.slots||[]).map(Number));checked?selected.add(Number(slot)):selected.delete(Number(slot));env.slots=[...selected].sort((a,b)=>a-b);syncReferenceWizard();
+}
 function referenceWizardEnvironmentGroups(rows=referenceWizardDraft.images||[]){
-  const envs=rows.filter(r=>r.purpose==='environment_slot').sort((a,b)=>Number(a.slot)-Number(b.slot));if(!envs.length)return [];
-  if(!envs.some(r=>(r.viewRole||'')==='overall geography')){envs[0].viewRole='overall geography';envs[0].environmentMainSlot=Number(envs[0].slot);}
-  const mains=envs.filter(r=>(r.viewRole||'overall geography')==='overall geography');mains.forEach((r,i)=>{r.environmentMainSlot=Number(r.slot);r.environmentName=String(r.environmentName||`Environment ${i+1}`);r.environmentDetails=String(r.environmentDetails||'');r.environmentState=String(r.environmentState||'');});
-  const mainSlots=new Set(mains.map(r=>Number(r.slot))),fallback=Number(mains[0]?.slot)||Number(envs[0].slot);envs.forEach(r=>{if((r.viewRole||'overall geography')==='overall geography')return;let link=Number(r.environmentMainSlot);if(!mainSlots.has(link)||link===Number(r.slot))link=fallback;r.environmentMainSlot=link;});
-  return mains.map(main=>{const slot=Number(main.slot),groupRows=envs.filter(r=>Number(r.environmentMainSlot)===slot);return {main,rows:groupRows,slots:groupRows.map(r=>Number(r.slot)).filter(Boolean).sort((a,b)=>a-b)};});
+  const slots=referenceWizardEnvironmentSlots(rows);if(!slots.length)return [];
+  const slotRows=(rows||[]).filter(r=>r.purpose==='environment_slot').sort((a,b)=>Number(a.slot)-Number(b.slot));
+  return [{main:slotRows[0],rows:slotRows,slots}];
 }
 function referenceWizardEnvironmentRowsHTML(){
-  const groups=referenceWizardEnvironmentGroups();if(!groups.length)return '';
-  return `<div class="ref-wizard-media-head">Environment setup</div><div class="workflow-note"><b>Each location starts with one Main view.</b> Additional Environment inputs explicitly link to that main input as another angle, a structural detail, or a lighting reference. Choose Main view on another input when you truly need a separate location in the same setup.</div>${groups.map((g,i)=>{const row=g.main,index=(referenceWizardDraft.images||[]).indexOf(row),viewList=g.rows.map(r=>`Picture ${Number(r.slot)} — ${(r.viewRole||'overall geography')==='overall geography'?'main view':(r.viewRole||'alternate view')}`).join(' · ');return `<details class="adv ref-wizard-item environment-setup-item" open><summary>Environment ${i+1}: ${esc(row.environmentName||`Environment ${i+1}`)} <span class="mini">${esc(viewList)}</span></summary><div class="ref-wizard-item-grid" style="margin-top:9px"><div class="fld"><label class="f">Location name</label><input type="text" value="${esc(row.environmentName||'')}" placeholder="Kitchen, forest clearing, rooftop…" oninput="setReferenceWizardField('images',${index},'environmentName',this.value)"></div><div class="fld"><label class="f">Permanent location and layout</label><textarea rows="3" placeholder="Architecture, geography, room layout, permanent furniture, doors, windows, landmarks, and materials." oninput="setReferenceWizardField('images',${index},'environmentDetails',this.value)">${esc(row.environmentDetails||'')}</textarea><p class="field-help">Describe what should remain true whenever this Environment returns.</p></div><div class="fld"><label class="f">Current state, lighting, and atmosphere — optional</label><textarea rows="2" placeholder="Nighttime; soft blue moonlight through the windows; furniture undisturbed; faint haze." oninput="setReferenceWizardField('images',${index},'environmentState',this.value)">${esc(row.environmentState||'')}</textarea><p class="field-help">Use this for current conditions such as time of day, weather, practical lights, damage, mess, moved objects, or atmosphere.</p></div><div class="active-state"><b>Connected Picture inputs</b><span>${esc(viewList)}</span></div></div></details>`;}).join('')}`;
+  const slots=referenceWizardEnvironmentSlots();if(!slots.length)return '';
+  const envs=referenceWizardSyncEnvironments(),bank=slots.map(n=>'Picture '+n).join(' + ');
+  let html='<div class="ref-wizard-media-head">Reusable environments / locations</div>';
+  html+='<div class="workflow-note"><b>Environment inputs and locations are separate.</b> '+esc(bank)+' is the reusable Environment input bank. Choose how many different locations your project contains, then decide which of those Picture inputs each location uses. The same physical input can hold a different location file in a different Generation.</div>';
+  html+='<div class="ref-wizard-item"><div class="ref-wizard-item-grid"><div class="fld"><label class="f">How many different environments / locations will this project use?</label><input type="number" min="1" max="24" value="'+Number(referenceWizardDraft.environmentCount||1)+'" onchange="setReferenceWizardEnvironmentCount(this.value)"><p class="field-help">This is the number of reusable locations in your project—not the number of Picture inputs connected to H3.</p></div><div class="active-state"><b>Reserved Environment input bank</b><span>'+esc(bank)+'</span></div></div></div>';
+  html+=envs.map((env,i)=>{
+    const selected=new Set((env.slots||[]).map(Number));
+    const chips=slots.map(slot=>'<label><input type="checkbox" '+(selected.has(slot)?'checked':'')+' onchange="toggleReferenceWizardEnvironmentSlot('+i+','+slot+',this.checked)"> Picture '+slot+'</label>').join('');
+    return '<details class="adv ref-wizard-item environment-setup-item" open><summary>Environment '+(i+1)+': '+esc(env.name||('Environment '+(i+1)))+' <span class="mini">'+esc((env.slots||[]).map(n=>'Picture '+n).join(' + ')||'choose at least one input')+'</span></summary><div class="ref-wizard-item-grid" style="margin-top:9px"><div class="fld"><label class="f">Location name</label><input type="text" value="'+esc(env.name||'')+'" placeholder="Kitchen, forest clearing, rooftop…" oninput="setReferenceWizardEnvironmentField('+i+',\'name\',this.value)"></div><div class="fld"><label class="f">Permanent location and layout</label><textarea rows="3" placeholder="Architecture, geography, room layout, permanent furniture, doors, windows, landmarks, and materials." oninput="setReferenceWizardEnvironmentField('+i+',\'details\',this.value)">'+esc(env.details||'')+'</textarea><p class="field-help">Describe what should remain true whenever this location returns.</p></div><div class="fld"><label class="f">Current state, lighting, and atmosphere — optional</label><textarea rows="2" placeholder="Nighttime; soft blue moonlight through the windows; furniture undisturbed; faint haze." oninput="setReferenceWizardEnvironmentField('+i+',\'currentState\',this.value)">'+esc(env.currentState||'')+'</textarea><p class="field-help">These conditions can be changed later for a particular Generation.</p></div><div class="ref-wizard-targets"><label class="f">Which reserved Picture inputs will this location use?</label><div class="ref-wizard-target-grid">'+chips+'</div><p class="field-help">Select one or more. For example, one location can use Pictures 4–5 while another uses only Picture 5.</p></div></div></details>';
+  }).join('');
+  return html;
 }
+
 function setReferenceWizardField(media,index,field,value,rerender=false){
   const row=referenceWizardDraft[media]?.[index];if(!row)return;if(['duration','environmentMainSlot'].includes(field))value=Number(value)||1;if(field==='singleTarget'){row.targets=value?[value]:[];}else row[field]=value;
   if(media==='images'&&field==='purpose'){
@@ -5450,7 +5473,7 @@ function referenceWizardPurposeText(media,row){
 function updateReferenceWizardSummary(){
   const summary=document.getElementById('refWizSummary');if(!summary)return;const chosen=[];
   if(document.getElementById('refWizHasImages')?.checked)(referenceWizardDraft.images||[]).forEach((row,i)=>chosen.push([`Picture ${i+1}`,referenceWizardPurposeText('images',row)]));
-  referenceWizardEnvironmentGroups().forEach(g=>chosen.push([g.main.environmentName||'Unnamed environment',g.slots.map(n=>`Picture ${n}`).join(' + ')]));
+  referenceWizardSyncEnvironments().forEach((env,i)=>chosen.push([env.name||(`Environment ${i+1}`),(env.slots||[]).map(n=>`Picture ${n}`).join(' + ')||'No Environment input selected']));
   if(document.getElementById('refWizHasVideo')?.checked)(referenceWizardDraft.videos||[]).forEach((row,i)=>chosen.push([`Video ${i+1}`,referenceWizardPurposeText('videos',row)]));
   if(document.getElementById('refWizHasAudio')?.checked)(referenceWizardDraft.audio||[]).forEach((row,i)=>chosen.push([`Audio ${i+1}`,referenceWizardPurposeText('audio',row)]));
   summary.innerHTML=chosen.length?`<b>Input map ready — Shot routing comes later</b><span class="ref-wizard-map">${chosen.map(([a,b])=>`<code>${esc(a)}</code><span>${esc(b)}</span>`).join('')}</span>`:'<b>Nothing selected yet</b><span>Choose the model inputs you will connect.</span>';
@@ -5464,7 +5487,7 @@ function openReferenceWizard(){
 }
 function syncReferenceWizard(){
   const specs=[['Images','Image','images',H3_LIMITS.img],['Video','Video','videos',H3_LIMITS.vid],['Audio','Audio','audio',H3_LIMITS.aud]],html=[];
-  specs.forEach(([checkKey,inputKey,media,max])=>{const on=!!document.getElementById(`refWizHas${checkKey}`)?.checked,opts=document.getElementById(`refWiz${inputKey}Options`);if(opts)opts.hidden=!on;const count=on?Math.max(1,Math.min(max,Math.floor(Number(document.getElementById(`refWiz${inputKey}Count`)?.value)||1))):0;referenceWizardResize(media,count);referenceWizardDraft[media].forEach((r,i)=>r.slot=i+1);if(media==='images')referenceWizardEnvironmentGroups(referenceWizardDraft.images);if(!on)return;html.push(`<div class="ref-wizard-media-head">${inputKey==='Image'?'Picture inputs':inputKey==='Video'?'Video inputs':'Audio inputs'}</div>`);html.push(...referenceWizardDraft[media].map((row,i)=>media==='images'?referenceWizardImageRowHTML(row,i):media==='videos'?referenceWizardVideoRowHTML(row,i):referenceWizardAudioRowHTML(row,i)));if(media==='images')html.push(referenceWizardEnvironmentRowsHTML());});
+  specs.forEach(([checkKey,inputKey,media,max])=>{const on=!!document.getElementById(`refWizHas${checkKey}`)?.checked,opts=document.getElementById(`refWiz${inputKey}Options`);if(opts)opts.hidden=!on;const count=on?Math.max(1,Math.min(max,Math.floor(Number(document.getElementById(`refWiz${inputKey}Count`)?.value)||1))):0;referenceWizardResize(media,count);referenceWizardDraft[media].forEach((r,i)=>r.slot=i+1);if(media==='images')referenceWizardSyncEnvironments();if(!on)return;html.push(`<div class="ref-wizard-media-head">${inputKey==='Image'?'Picture inputs':inputKey==='Video'?'Video inputs':'Audio inputs'}</div>`);html.push(...referenceWizardDraft[media].map((row,i)=>media==='images'?referenceWizardImageRowHTML(row,i):media==='videos'?referenceWizardVideoRowHTML(row,i):referenceWizardAudioRowHTML(row,i)));if(media==='images')html.push(referenceWizardEnvironmentRowsHTML());});
   const host=document.getElementById('refWizAssignments');if(host)host.innerHTML=html.join('')||'<div class="empty">Choose at least one input type above.</div>';updateReferenceWizardSummary();
 }
 function buildReferenceWizardPlan(){
@@ -5472,7 +5495,7 @@ function buildReferenceWizardPlan(){
   if(!images.length&&!videos.length&&!audio.length)return {error:'Choose at least one Picture, Video, or Audio input.'};
   const subjectGroups=new Map();for(const [i,row] of images.entries()){if(row.purpose!=='subject_view')continue;const name=String(row.group||'').trim(),key=referenceWizardGroupKey(name);if(!key)return {error:`Picture input ${i+1} needs a Subject name.`};const g=subjectGroups.get(key)||{key,name,subjectType:row.subjectType||'character',rows:[],details:'',keyVisibleTraits:'',currentAppearance:'',firstAppearanceOverride:''};if(g.subjectType!==(row.subjectType||'character'))return {error:`Every Picture input grouped as “${name}” must use the same Subject type.`};g.rows.push(row);['details','keyVisibleTraits','currentAppearance','firstAppearanceOverride'].forEach(f=>{if(!g[f]&&String(row[f]||'').trim())g[f]=String(row[f]).trim();});subjectGroups.set(key,g);}
   const existingSubjectNames=new Set(currentClipIdentitySubjectRefs().map(r=>referenceWizardGroupKey(subjectName(r))));for(const g of subjectGroups.values())if(existingSubjectNames.has(g.key))return {error:`A Subject named “${g.name}” already exists. Edit that library card directly or use a different name in this new input setup.`};
-  const environmentGroups=referenceWizardEnvironmentGroups(images),environmentSlots=images.filter(r=>r.purpose==='environment_slot').map(r=>Number(r.slot)),environments=environmentGroups.map(g=>({name:String(g.main.environmentName||'').trim(),slots:g.slots.slice(),details:String(g.main.environmentDetails||'').trim(),currentState:String(g.main.environmentState||'').trim()}));
+  const environmentSlots=images.filter(r=>r.purpose==='environment_slot').map(r=>Number(r.slot)).filter(Boolean);referenceWizardSyncEnvironments();const environments=(referenceWizardDraft.environments||[]).map((env,i)=>({name:String(env.name||('Environment '+(i+1))).trim(),slots:[...new Set((env.slots||[]).map(Number).filter(n=>environmentSlots.includes(n)))].sort((a,b)=>a-b),details:String(env.details||'').trim(),currentState:String(env.currentState||'').trim()}));
   if(environmentSlots.length&&!environments.length)return {error:'Choose one Environment input as the Main view / overall layout.'};const envNames=new Set(libraryEnvironmentRefs().map(r=>referenceWizardGroupKey(subjectName(r))));for(const [i,row] of environments.entries()){if(!row.name)return {error:`Environment ${i+1} needs a location name.`};const key=referenceWizardGroupKey(row.name);if(envNames.has(key))return {error:`An Environment named “${row.name}” already exists. Use a different name or edit the existing Environment tab.`};if(!row.slots.length)return {error:`${row.name} needs at least one Picture input.`};envNames.add(key);}
   const validTokens=new Set(currentClipIdentitySubjectRefs().map(r=>`uid:${r.uid}`));subjectGroups.forEach((_,key)=>validTokens.add(referenceWizardGroupToken(key)));const required=(row,media)=>media==='videos'?(row.role||'')!=='camera movement reference':media==='audio'?['voice','exact_dialogue'].includes(row.role||'voice'):['scale','wardrobe','lighting'].includes(row.purpose||'')||((row.purpose||'')==='continuity'&&['subject_blocking','object_position','appearance_state'].includes(row.continuityType||'subject_blocking'));
   for(const [media,rows,label] of [['images',images,'Picture input'],['videos',videos,'Video input'],['audio',audio,'Audio input']])for(const [i,row] of rows.entries()){const targets=[...new Set(row.targets||[])];if(required(row,media)&&!targets.length)return {error:`${label} ${i+1} needs ${media==='audio'?'a speaker Subject':'at least one target Subject'}.`};if(targets.some(t=>!validTokens.has(t)))return {error:`${label} ${i+1} points to a Subject that is no longer available.`};if(['videos','audio'].includes(media)){const d=Number(row.duration);if(!Number.isFinite(d)||d<H3_LIMITS.clipMin||d>H3_LIMITS.clipMax)return {error:`${label} ${i+1} must be ${H3_LIMITS.clipMin}–${H3_LIMITS.clipMax} seconds.`};}}
@@ -5488,7 +5511,7 @@ function commitReferenceWizardPlan(plan){
     plan.images.forEach(row=>{if(['subject_view','environment_slot'].includes(row.purpose))return;const role=pictureRoles[row.purpose]||'composition anchor',targets=resolveTargets(row),ret=['scale','wardrobe','lighting'].includes(row.purpose)?'attribute_transfer':row.purpose==='continuity'?'partially_preserved':'weak_reference',ref={uid:uid('pic'),kind:'Picture',idx:Number(row.slot),inputSlot:'',sourceType:'file',sourceVideoUid:'',name:String(row.name||'').trim()||defaultNames[row.purpose]||`Picture ${row.slot} reference`,details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],subjectType:'character',speaker:'',boundSubjectUid:'',audioRole:'voice',durationSec:'',role,byClip:referenceWizardInputState(ret),collapsed:collapse};if(row.purpose==='scale'){ref.details=String(row.scaleDetails||'').trim();ref.scaleSubjectUids=targets.map(r=>r.uid);ref.scaleShorterSubjectUid=row.scaleShorterTarget==='same'?'same':(referenceWizardTargetRefFromToken(row.scaleShorterTarget,groupMap)?.uid||'');ref.scaleLandmark=ref.scaleShorterSubjectUid==='same'?'':String(row.scaleLandmark||'');ref.scaleAnchorObject=String(row.scaleAnchorObject||'').trim();ref.scaleAnchorLandmark=String(row.scaleAnchorLandmark||'').trim();ref.scaleEnvironmentUid='';ref.scaleUseEnvironmentAnchors=false;ref.scalePreserveBlocking=!!row.scalePlacement;}else if(row.purpose==='continuity'){ref.continuityType=row.continuityType||'subject_blocking';ref.continuitySubjectUids=targets.map(r=>r.uid);ref.continuityPreserveFraming=!!row.preserveFraming;}else if(['wardrobe','lighting'].includes(row.purpose))ref.targetSubjectUid=targets[0]?.uid||'';S.refs.push(ref);});
     plan.videos.forEach((row,i)=>{const target=resolveTargets(row)[0],performance=(row.role||'')!=='camera movement reference',ref={uid:uid('vid'),kind:'Video',idx:Number(row.slot),inputSlot:'',sourceType:'file',sourceVideoUid:'',name:String(row.name||'').trim()||`Reference video ${i+1}`,details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],role:row.role||'performance reference',durationSec:Number(row.duration),targetSubjectUid:performance?(target?.uid||''):'',transferFacial:performance,transferMouth:performance,transferHead:performance,transferEyeline:performance,transferUpperBody:performance,transferFullBody:false,transferCamera:(row.role||'')!=='performance reference',byClip:referenceWizardInputState('attribute_transfer'),collapsed:collapse};S.refs.push(ref);});
     plan.audio.forEach((row,i)=>{const voice=['voice','exact_dialogue'].includes(row.role||'voice'),target=resolveTargets(row)[0],ref={uid:uid('aud'),kind:'Audio',idx:nextLabelIndex('Audio'),inputSlot:Number(row.slot),sourceType:'file',sourceVideoUid:'',name:String(row.name||'').trim()||(voice?`Voice reference ${i+1}`:`Audio reference ${i+1}`),details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],boundSubjectUid:voice?(target?.uid||''):'',audioRole:row.role||'voice',durationSec:Number(row.duration),role:'',byClip:voice?{}:referenceWizardInputState(['exact_soundtrack','reuse'].includes(row.role)?'partially_copy':'weak_reference'),collapsed:collapse};S.refs.push(ref);normalizeAudioRetention(ref);});
-    S.wired.img=Math.max(Number(S.wired.img)||0,plan.images.length);S.wired.vid=Math.max(Number(S.wired.vid)||0,plan.videos.length);S.wired.aud=Math.max(Number(S.wired.aud)||0,plan.audio.length);resetDerivedCaches();rewriteCurrentClipAudioLabels(audioLabelsBefore);resetDerivedCaches();closeReferenceWizard();render();requestAnimationFrame(()=>document.getElementById('refList')?.scrollIntoView({behavior:'smooth',block:'start'}));return true;
+    S.wired.img=Math.max(Number(S.wired.img)||0,plan.images.length);S.wired.vid=Math.max(Number(S.wired.vid)||0,plan.videos.length);S.wired.aud=Math.max(Number(S.wired.aud)||0,plan.audio.length);S.environmentInputSlots=[...new Set((plan.environmentSlots||[]).map(Number).filter(Boolean))].sort((a,b)=>a-b);resetDerivedCaches();rewriteCurrentClipAudioLabels(audioLabelsBefore);resetDerivedCaches();closeReferenceWizard();render();requestAnimationFrame(()=>document.getElementById('refList')?.scrollIntoView({behavior:'smooth',block:'start'}));return true;
   }catch(error){S=migrate(JSON.parse(snapshot));resetDerivedCaches();render();alert(`The reference setup could not be created, so the project was left unchanged. ${error?.message||error}`);return false;}
 }
 function applyReferenceWizard(){const plan=buildReferenceWizardPlan();if(plan.error){alert(plan.error);return false;}return commitReferenceWizardPlan(plan);}
@@ -5657,7 +5680,7 @@ function renderRefs(){
   const rl=document.getElementById('refList');
   const refGroupInfo=r=>r.kind==='Subject'?(subjectType(r)==='environment'?[1,'Environments & locations','environments']:[0,'Subjects & characters','subjects']):r.kind==='Picture'?[2,'Pictures & continuity','pictures']:r.kind==='Audio'?[3,'Audio references','audio']:r.kind==='Video'?[4,'Video references','video']:[5,'Other','other'];
   const displayRefs=S.refs.map((r,i)=>({r,i,g:refGroupInfo(r)})).filter(x=>!x.r.workflowInternal).sort((a,b)=>a.g[0]-b.g[0]||a.i-b.i),environmentDisplayRefs=displayRefs.filter(x=>x.g[2]==='environments');let selectedEnvironmentLibraryUid=environmentDisplayRefs.some(x=>x.r.uid===S.uiEnvironmentLibraryUid)?S.uiEnvironmentLibraryUid:(environmentDisplayRefs.find(x=>refActiveInCurrentClip(x.r))?.r.uid||environmentDisplayRefs[0]?.r.uid||'');S.uiEnvironmentLibraryUid=selectedEnvironmentLibraryUid;let lastGroup='';
-  displayRefs.forEach(({r,i,g})=>{if(g[1]!==lastGroup){const gh=document.createElement('div');gh.className='ref-group-head';gh.textContent=g[1];gh.id=`ref-group-${g[2]}`;gh.dataset.refGroup=g[2];rl.appendChild(gh);if(g[2]==='environments'&&environmentDisplayRefs.length){const tabs=el(`<div class="environment-bank-tabs"><div class="environment-bank-note">One compact Environment library — choose a tab to edit its reusable input mapping.</div>${environmentDisplayRefs.map(x=>`<button class="${x.r.uid===selectedEnvironmentLibraryUid?'on':''}" data-environment-library-tab="${esc(x.r.uid)}">${esc(subjectName(x.r))}</button>`).join('')}</div>`);tabs.querySelectorAll('[data-environment-library-tab]').forEach(btn=>btn.onclick=()=>{S.uiEnvironmentLibraryUid=btn.dataset.environmentLibraryTab;render();});rl.appendChild(tabs);}lastGroup=g[1];}
+  displayRefs.forEach(({r,i,g})=>{if(g[1]!==lastGroup){const gh=document.createElement('div');gh.className='ref-group-head';gh.textContent=g[1];gh.id=`ref-group-${g[2]}`;gh.dataset.refGroup=g[2];rl.appendChild(gh);if(g[2]==='environments'&&environmentDisplayRefs.length){const bank=environmentInputBankSlots(),bankText=bank.length?bank.map(n=>'Picture '+n).join(' + '):'No Environment inputs reserved';const tabs=el('<div class="environment-bank-tabs"><div class="environment-bank-note"><b>Reusable Environment library.</b> Input bank: '+esc(bankText)+'. Choose a location tab to edit it, or add another location that reuses this bank.</div>'+environmentDisplayRefs.map(x=>'<button class="'+(x.r.uid===selectedEnvironmentLibraryUid?'on':'')+'" data-environment-library-tab="'+esc(x.r.uid)+'">'+esc(subjectName(x.r))+'</button>').join('')+'<button class="add-environment-tab" data-add-environment type="button">＋ Add environment</button></div>');tabs.querySelectorAll('[data-environment-library-tab]').forEach(btn=>btn.onclick=()=>{S.uiEnvironmentLibraryUid=btn.dataset.environmentLibraryTab;render();});const addBtn=tabs.querySelector('[data-add-environment]');if(addBtn)addBtn.onclick=addEnvironment;rl.appendChild(tabs);}lastGroup=g[1];}
     const lab=staticLabelOf(r,i)||labelOf(r,i),displayLab=refActiveInCurrentClip(r)?labelOf(r,i):'Library'; const scaleRef=r.kind==='Picture'&&(r.role||'')==='character scale reference'; const lightingRefPic=r.kind==='Picture'&&(r.role||'')==='lighting integration reference'; const continuityPic=r.kind==='Picture'&&(r.role||'')==='previous generation continuity'; const placementGuidePic=r.kind==='Picture'&&(r.role||'')==='placement composite guide'; const attributePicRef=scaleRef||lightingRefPic||placementGuidePic; const fixedRetentionPic=attributePicRef||continuityPic; const continuityCard=r.kind==='Picture'&&continuityPic,cls=r.kind==='Subject'?(subjectType(r)==='environment'?'ref-card-environment':'ref-card-subject'):r.kind==='Picture'?(continuityCard?'ref-card-continuity':'ref-card-picture'):r.kind==='Audio'?'ref-card-audio':'ref-card-video';
     const icon=subjectType(r)==='environment'?'⌂':continuityCard?'↻':r.kind==='Subject'?'◆':r.kind==='Picture'?'▣':r.kind==='Audio'?'♪':'▶',typeLabel=subjectType(r)==='environment'?'Environment':continuityCard?'Continuity':r.kind==='Subject'?(subjectType(r)==='character'?'Character':'Subject'):r.kind==='Picture'?'Picture':r.kind==='Audio'?'Audio':'Video';
     const opts=r.kind==='Audio'?audioRetentionOptions(r):(attributePicRef?['attribute_transfer']:continuityPic?['partially_preserved']:RETENTION_V);
@@ -5668,7 +5691,7 @@ function renderRefs(){
     let main='';
     if(r.kind==='Subject'){
       const selectedPicCount=sourcePicNumbers(r).length;
-      const picChips=[]; for(let n=1;n<=(S.wired.img||0);n++) picChips.push(`<div class="pb-cat ${sourcePicNumbers(r).includes(n)?'on':''}" data-pic="${n}">Picture ${n}</div>`);
+      const environmentPicChoices=subjectType(r)==='environment'?[...new Set((environmentInputBankSlots().length?environmentInputBankSlots():Array.from({length:Number(S.wired.img)||0},(_,n)=>n+1)).concat(sourcePicNumbers(r)))].sort((a,b)=>a-b):Array.from({length:Number(S.wired.img)||0},(_,n)=>n+1);const picChips=[];environmentPicChoices.forEach(n=>picChips.push(`<div class="pb-cat ${sourcePicNumbers(r).includes(n)?'on':''}" data-pic="${n}">Picture ${n}</div>`));
       const vidChips=[]; for(let n=1;n<=(S.wired.vid||0);n++) vidChips.push(`<div class="pb-cat ${sourceVideoNumbers(r).includes(n)?'on':''}" data-source-video="${n}">Video ${n}</div>`);
       const showSubjectVideos=Number(S.wired?.vid||0)>0||sourceVideoNumbers(r).length>0;
       main=`<div class="fld"><label class="f">Subject type</label><select data-f="subjectType" data-key="ref-${i}-subjectType">${[['character','Character / person'],['creature','Creature / animal'],['vehicle','Vehicle'],['object','Object / prop'],['environment','Environment / location'],['other','Other reusable visual subject']].map(([v,n])=>`<option value="${v}" ${v===subjectType(r)?'selected':''}>${n}</option>`).join('')}</select></div>
@@ -7089,12 +7112,17 @@ function addSubject(){
   const pic=nextFreeSlot('Picture');const n=nextSubjectNumber();
   const r={uid:uid('sub'),kind:'Subject',idx:n,name:`Character ${n}`,subjectType:'character',details:'',desc:'',useCustomDef:false,sourcePics:[pic],sourceVideos:[],role:'',byClip:{},collapsed:false};S.refs.push(r);render();
 }
+function environmentInputBankSlots(state=S){
+  const max=Math.min(H3_LIMITS.img,Math.max(0,Number(state?.wired?.img)||0)),configured=Array.isArray(state?.environmentInputSlots)?state.environmentInputSlots:[],inferred=(state?.refs||[]).filter(r=>r.kind==='Subject'&&subjectType(r)==='environment'&&!r.workflowInternal).flatMap(r=>sourcePicNumbers(r));
+  return [...new Set((configured.length?configured:inferred).map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=Math.max(max,1)))].sort((a,b)=>a-b);
+}
 function addEnvironment(){
   collapseExistingRefs();
-  const pic=nextFreeSlot('Picture');const n=nextSubjectNumber();
-  const r={uid:uid('env'),kind:'Subject',idx:n,name:`Environment ${libraryEnvironmentRefs().length+1}`,subjectType:'environment',details:'',desc:'',useCustomDef:false,sourcePics:[pic],sourceVideos:[],role:'',byClip:{},collapsed:false};
-  S.refs.push(r);
-  C().shots.forEach(sh=>{if(!sh.environmentUid)sh.environmentUid=r.uid;}); render();
+  let bank=environmentInputBankSlots();
+  if(!bank.length){const pic=nextFreeSlot('Picture');S.wired.img=Math.max(Number(S.wired.img)||0,pic);S.environmentInputSlots=[pic];bank=[pic];}
+  const n=nextSubjectNumber(),r={uid:uid('env'),kind:'Subject',idx:n,name:`Environment ${libraryEnvironmentRefs().length+1}`,subjectType:'environment',influencePreset:'environment',details:'',currentEnvironmentState:'',desc:'',useCustomDef:false,sourcePics:bank.slice(),sourceVideos:[],role:'',environmentViewRoles:{},environmentViewNames:{},byClip:{},collapsed:false};
+  bank.forEach((slot,i)=>{r.environmentViewRoles[String(slot)]=i===0?'overall geography':'alternate view';r.environmentViewNames[String(slot)]=`${r.name} view ${i+1}`;});S.refs.push(r);S.uiEnvironmentLibraryUid=r.uid;
+  if(libraryEnvironmentRefs().length===1)C().shots.forEach(sh=>{if(!sh.environmentUid)sh.environmentUid=r.uid;});render();
 }
 function addVoice(){
   collapseExistingRefs();
@@ -7264,7 +7292,7 @@ function migrate(o){
     o.active=0;delete o.shots;delete o.summary;delete o.soundscape;delete o.music;
   }
   o.version=APP_VERSION;o.mode=MODES[o.mode]?o.mode:'T2VA';o.dur=normalizeDuration(o.dur);o.style=o.style||'Live-action, cinematic';
-  o.active=Number.isInteger(o.active)?o.active:0;o.wired=o.wired||{img:0,vid:0,aud:0};o.refs=o.refs||[];
+  o.active=Number.isInteger(o.active)?o.active:0;o.wired=o.wired||{img:0,vid:0,aud:0};o.environmentInputSlots=Array.isArray(o.environmentInputSlots)?o.environmentInputSlots:[];o.refs=o.refs||[];
   o.taskTypes=o.taskTypes||['reference generation'];if(o.guardDistinct==null)o.guardDistinct=true;o.uiMode='unified';o.scaleRules=Array.isArray(o.scaleRules)?o.scaleRules:[];
 
   o.refs.forEach((r,i)=>{
@@ -7329,6 +7357,9 @@ function migrate(o){
     }
     delete r.shotSel;delete r.shots;delete r.ret;delete r.retNote;
   });
+
+  const inferredEnvironmentSlots=o.refs.filter(r=>r.kind==='Subject'&&r.subjectType==='environment'&&!r.workflowInternal).flatMap(r=>(r.sourcePics||[]).map(Number));
+  o.environmentInputSlots=[...new Set((o.environmentInputSlots.length?o.environmentInputSlots:inferredEnvironmentSlots).map(Number).filter(n=>Number.isInteger(n)&&n>=1&&n<=H3_LIMITS.img))].sort((a,b)=>a-b);
 
   o.scaleRules=o.scaleRules.map(x=>({uid:x.uid||uid('scale'),subjectAUid:x.subjectAUid||'',heightA:x.heightA||'',subjectBUid:x.subjectBUid||'',heightB:x.heightB||'',shorterSubjectUid:x.shorterSubjectUid==='same'?'same':(x.shorterSubjectUid||((x.landmark&&x.subjectBUid)?x.subjectAUid:'')),landmark:x.landmark||'',note:x.note||''}));
 
@@ -8061,6 +8092,10 @@ function loadExampleWorkflow(kind){
 
 function boot(){
   try{
+    const v5370Project=localStorage.getItem('h3_prompt_composer_v5_37_0');
+    const v5370Backup=localStorage.getItem('h3_prompt_composer_v5_37_0_backup');
+    const v5361Project=localStorage.getItem('h3_prompt_composer_v5_36_1');
+    const v5361Backup=localStorage.getItem('h3_prompt_composer_v5_36_1_backup');
     const v5360Project=localStorage.getItem('h3_prompt_composer_v5_36_0');
     const v5360Backup=localStorage.getItem('h3_prompt_composer_v5_36_0_backup');
     const v5359Project=localStorage.getItem('h3_prompt_composer_v5_35_9');
@@ -8113,8 +8148,8 @@ function boot(){
     const v524Backup=localStorage.getItem('h3_prompt_composer_v5_24_0_backup');
     const v523Project=localStorage.getItem('h3_prompt_composer_v5_23_0');
     const v523Backup=localStorage.getItem('h3_prompt_composer_v5_23_0_backup');
-    if(!localStorage.getItem(STORAGE_KEY)&&(v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project))localStorage.setItem(STORAGE_KEY,v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project);
-    if(!localStorage.getItem(BACKUP_KEY)&&(v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup))localStorage.setItem(BACKUP_KEY,v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup);
+    if(!localStorage.getItem(STORAGE_KEY)&&(v5370Project||v5361Project||v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project))localStorage.setItem(STORAGE_KEY,v5370Project||v5361Project||v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project);
+    if(!localStorage.getItem(BACKUP_KEY)&&(v5370Backup||v5361Backup||v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup))localStorage.setItem(BACKUP_KEY,v5370Backup||v5361Backup||v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup);
     const priorProject=localStorage.getItem('h3_prompt_composer_v5_22_3')||localStorage.getItem('h3_prompt_composer_v5_22_2')||localStorage.getItem('h3_prompt_composer_v5_22_1')||localStorage.getItem('h3_prompt_composer_v5_22_0')||localStorage.getItem('h3_prompt_composer_v5_21_0')||localStorage.getItem('h3_prompt_composer_v5_20_0')||localStorage.getItem('h3_prompt_composer_v5_19_5')||localStorage.getItem('h3_prompt_composer_v5_19_4')||localStorage.getItem('h3_prompt_composer_v5_19_3')||localStorage.getItem('h3_prompt_composer_v5_19_2_test')||localStorage.getItem('h3_prompt_composer_v5_19_1_test')||localStorage.getItem('h3_prompt_composer_v5_19_0')||localStorage.getItem('h3_prompt_composer_v5_18_8')||localStorage.getItem('h3_prompt_composer_v5_18_7')||localStorage.getItem('h3_prompt_composer_v5_18_6');
     const priorBackup=localStorage.getItem('h3_prompt_composer_v5_22_3_backup')||localStorage.getItem('h3_prompt_composer_v5_22_2_backup')||localStorage.getItem('h3_prompt_composer_v5_22_1_backup')||localStorage.getItem('h3_prompt_composer_v5_21_0_backup')||localStorage.getItem('h3_prompt_composer_v5_20_0_backup')||localStorage.getItem('h3_prompt_composer_v5_19_5_backup')||localStorage.getItem('h3_prompt_composer_v5_19_4_backup')||localStorage.getItem('h3_prompt_composer_v5_19_3_backup')||localStorage.getItem('h3_prompt_composer_v5_19_2_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_1_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_0_backup')||localStorage.getItem('h3_prompt_composer_v5_18_8_backup')||localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup');
     if(!localStorage.getItem(STORAGE_KEY)&&priorProject)localStorage.setItem(STORAGE_KEY,priorProject);
