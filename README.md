@@ -1,6 +1,6 @@
 # H3 Prompt Composer
 
-**Version 5.37.3**
+**Version 5.37.14**
 
 A free, standalone prompt-building app for **MiniMax H3** video generation and reference-guided image workflows.
 
@@ -59,7 +59,7 @@ Build a one-frame edit or composite prompt with explicit reference roles, reques
 
 ## Get started
 
-1. Download **[H3_Prompt_Composer_V5_37_3.html](H3_Prompt_Composer_V5_37_3.html)**.
+1. Download **[H3_Prompt_Composer_V5_37_14.html](H3_Prompt_Composer_V5_37_14.html)**.
 2. Open it in Chrome, Edge, Firefox, or another modern browser.
 3. Choose a mode, describe the Generation, and add only the references you need.
 4. Review **Check**, then click **Copy prompt** and paste the result into your H3 workflow.
@@ -79,7 +79,7 @@ The Composer describes media already connected to H3 or ComfyUI. It does not upl
 
 ## Current release
 
-V5.37.3 carries forward the V5.37.1 workflow and documentation with updated camera prompting behavior.
+V5.37.14 carries forward the V5.37.1 workflow and documentation with updated camera prompting and Guided Reference Setup behavior.
 
 See the **[V5.37.1 changelog](H3_Prompt_Composer_V5_37_1_CHANGELOG.md)** for the full release notes.
 
@@ -87,7 +87,7 @@ See the **[V5.37.1 changelog](H3_Prompt_Composer_V5_37_1_CHANGELOG.md)** for the
 
 - **[Full User Guide](H3_Prompt_Composer_V5_37_1_User_Guide.pdf)** — complete workflow and field reference.
 - **[Illustrated User Guide](H3_Prompt_Composer_V5_37_1_Illustrated_User_Guide.pdf)** — visual quick start and feature tour.
-- **[SHA-256 checksum](H3_Prompt_Composer_V5_37_2_SHA256.txt)** — verifies the standalone HTML file.
+- **[SHA-256 checksum](H3_Prompt_Composer_V5_37_14_SHA256.txt)** — verifies the standalone HTML file.
 
 ## Local and private by design
 
