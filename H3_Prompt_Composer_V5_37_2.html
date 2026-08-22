@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>H3 Prompt Composer V5.37.1</title>
+<title>H3 Prompt Composer V5.37.2</title>
 <style>
 :root{
   --bg:#14161c; --panel:#1b1e26; --panel2:#212530; --line:#2c313d;
@@ -543,7 +543,7 @@ body[data-edit-workflow="background_relight"] .source-environment-field{display:
 <body>
 
 <header>
-  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.37.1</small></div>
+  <div class="logo">H3 <span>Prompt Composer</span> <small>V5.37.2</small></div>
   <div class="tag" id="modeTag">T2VA</div>
   <div class="sp"></div>
   <span class="autosave" id="saveState">Auto-saved locally</span>
@@ -809,10 +809,11 @@ body[data-edit-workflow="background_relight"] .source-environment-field{display:
 
 <script>
 /* ============================================================
-   MiniMax H3 Prompt Composer V5.37.1
+   MiniMax H3 Prompt Composer V5.37.2
    Implements the schema from MiniMax's official prompt guides:
    VIDEO_PROMPT_WRITING_GUIDE_base_en.md  (T2VA/I2VA/FL2VA/L2VA)
    VIDEO_PROMPT_WRITING_GUIDE_ref_en.md   (full-reference mode)
+   V5.37.2: Video Editing Wizard setups are Generation-scoped across every edit type. Visual Camera Path corrects subject-side profile labels and explicitly carries per-position shot size and distance changes into the camera instruction.
    V5.37.1: Restores the Guided Reference Setup close handler so Create Reference Setup completes normally.
    V5.37.0: Guided Reference Setup separates reusable Environment locations from their shared Picture input bank. Create several named locations, map each to any subset of the reserved Environment inputs, and add more locations from the compact Environment tabs.
    V5.36.1: Targeted Edit camera reconstruction uses a shorter affirmative prompt: the Camera instruction leads, one optional orientation cue disambiguates the background, and defensive mirror/world-geometry language is removed.
@@ -986,9 +987,9 @@ const REF_KINDS = ['Subject','Picture','Video','Audio'];
 const RETENTION_V = ['fully_preserved','partially_preserved','attribute_transfer','weak_reference'];
 const TASK_TYPES = ['video editing','video continuation','keyframe completion',
   'reference generation','audio reuse','audio reference'];
-const APP_VERSION = '5.37.1';
-const STORAGE_KEY = 'h3_prompt_composer_v5_37_1';
-const BACKUP_KEY  = 'h3_prompt_composer_v5_37_1_backup';
+const APP_VERSION = '5.37.2';
+const STORAGE_KEY = 'h3_prompt_composer_v5_37_2';
+const BACKUP_KEY  = 'h3_prompt_composer_v5_37_2_backup';
 
 /* ---------------- state ---------------- */
 let S = blank();
@@ -3081,13 +3082,13 @@ function cameraFramingRadius(value){
 }
 function visualCameraPointFromManual(view,angle,framing){
   const radius=cameraFramingRadius(framing),diag=radius/Math.SQRT2;
-  const pos=({front:[0,-radius],front_3q_left:[diag,-diag],front_3q_right:[-diag,-diag],left_profile:[radius,0],right_profile:[-radius,0],rear_3q_left:[diag,diag],rear_3q_right:[-diag,diag],behind:[0,radius]})[view]||[0,-radius];
+  const pos=({front:[0,-radius],front_3q_left:[-diag,-diag],front_3q_right:[diag,-diag],left_profile:[-radius,0],right_profile:[radius,0],rear_3q_left:[-diag,diag],rear_3q_right:[diag,diag],behind:[0,radius]})[view]||[0,-radius];
   const h=({ground:.4,low:.8,slightly_low:1.2,waist_level:.95,chest_level:1.3,eye_level:1.65,slightly_high:2.4,high:3.25,overhead:4.7})[angle]||1.65;
   return {x:pos[0],z:pos[1],h};
 }
 function manualCameraViewFromPoint(k){
-  const x=Number(k.x)||0,z=Number(k.z)||0;if(Math.abs(x)<.65)return z>.65?'behind':'front';if(Math.abs(z)<.65)return x>0?'left_profile':'right_profile';
-  if(z<0)return x>0?'front_3q_left':'front_3q_right';return x>0?'rear_3q_left':'rear_3q_right';
+  const x=Number(k.x)||0,z=Number(k.z)||0;if(Math.abs(x)<.65)return z>.65?'behind':'front';if(Math.abs(z)<.65)return x>0?'right_profile':'left_profile';
+  if(z<0)return x>0?'front_3q_right':'front_3q_left';return x>0?'rear_3q_right':'rear_3q_left';
 }
 function manualCameraAngleFromPoint(k){
   const h=Number(k.h)||1.65;return h<.65?'ground':h<1.05?'low':h<1.4?'slightly_low':h<2.05?'eye_level':h<2.85?'slightly_high':h<4?'high':'overhead';
@@ -3143,8 +3144,8 @@ function visualCameraElevationLabel(value){
   const h=Number(value)||1.6;return h<.9?'very low':h<1.35?'below eye level':h<2.05?'near eye level':h<3.1?'above eye level':h<4.3?'high elevation':'very high elevation';
 }
 function visualCameraPositionPhrase(k){
-  const x=Number(k.x)||0,z=Number(k.z)||0,h=Number(k.h)||1.6,dist=Math.hypot(x,z);let side=Math.abs(x)<.65?'centered':x<0?'toward frame-right':'toward frame-left';let depth=Math.abs(z)<.65?'alongside':z<0?'in front':'behind';
-  if(side==='centered'&&depth==='alongside')depth='near the subject';const relation=side==='centered'?depth:depth==='alongside'?side:`${depth} and ${side}`;const range=dist<1.7?'close':dist<3.7?'at a medium distance':'farther away';return `${visualCameraElevationLabel(h)}, ${relation}, ${range}`;
+  const x=Number(k.x)||0,z=Number(k.z)||0,h=Number(k.h)||1.6;let side=Math.abs(x)<.65?'centered':x<0?'toward frame-right':'toward frame-left';let depth=Math.abs(z)<.65?'alongside':z<0?'in front':'behind';
+  if(side==='centered'&&depth==='alongside')depth='near the subject';const relation=side==='centered'?depth:depth==='alongside'?side:depth+' and '+side;return visualCameraElevationLabel(h)+', '+relation+', with '+visualCameraGuideFramingLabel(k)+' framing';
 }
 function visualCameraTimeText(value){const n=Math.max(0,Number(value)||0);if(n===0)return '0.0';const digits=n<.1?3:n<1?2:1;return n.toFixed(digits).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');}
 function visualCameraAxisOutput(field,value){
@@ -3192,7 +3193,10 @@ function visualCameraOrientationPhrase(sh,target){
 function visualCameraForwardAxisLabel(sh){return 'shot front';}
 function visualCameraAxisLabels(sh){return {front:'FRONT',back:'BEHIND',left:'FRAME RIGHT',right:'FRAME LEFT'};}
 function visualCameraAxisHelp(sh){
-  return 'The grid keeps one orientation for the whole shot: left is frame-left, right is frame-right, and the green arrow points toward the front of the shot.';
+  const base='The grid keeps one orientation for the whole shot: left is frame-left, right is frame-right, and the green arrow points toward the front of the shot.';
+  return sh.camVisualAnchorMode==='subject_relative'
+    ? base+' A camera on frame-left sees the subject\'s right side; a camera on frame-right sees the subject\'s left side.'
+    : base;
 }
 function visualCameraRelationPhrase(sh,target){
   if(sh.camVisualAnchorMode==='scene_space')return `Keep the camera on this fixed path through the location; pan as needed to keep ${target} framed.`;
@@ -3201,27 +3205,29 @@ function visualCameraRelationPhrase(sh,target){
 function visualCameraStabilitySentence(sh){
   return ({locked:'Keep the move rigidly stable and shake-free.',smooth:'Keep the move smoothly stabilized.',subtle_handheld:'Add subtle handheld motion.',strong_handheld:'Add pronounced handheld shake.',documentary:'Use loose documentary-style handheld motion.',floating:'Add a gentle floating drift.'})[sh.camStability]||'';
 }
+function visualCameraGuideFramingLabel(k){
+  return ({extreme_close_up:'extreme close-up',close_up:'close-up',medium_close_up:'medium close-up',medium:'medium shot',medium_wide:'medium-wide shot',wide:'wide shot',extreme_wide:'extreme-wide shot'})[manualCameraFramingFromPoint(k)]||'medium shot';
+}
 function visualCameraGuideView(k,sideAware=false){
-  const x=Number(k.x)||0,z=Number(k.z)||0,h=Number(k.h)||1.6,dist=Math.hypot(x,z);
-  const range=dist<1.7?'close':dist<3.7?'medium':'wide';
-  const elevation=h<.9?'very low-angle':h<1.35?'low-angle':h<2.05?'eye-level':h<3.1?'high-angle':'high-elevation';
-  const side=x<0?'right':'left';let view='';
+  const x=Number(k.x)||0,z=Number(k.z)||0,h=Number(k.h)||1.6;
+  const range=visualCameraGuideFramingLabel(k),elevation=h<.9?'very low-angle':h<1.35?'low-angle':h<2.05?'eye-level':h<3.1?'high-angle':'high-elevation';
+  const side=x>0?'right':'left';let view='';
   if(Math.abs(x)<.65)view=z<-.65?'frontal':z>.65?'rear':'side';
-  else if(Math.abs(z)<.65)view=sideAware?`${side}-profile`:'profile';
-  else view=sideAware?`${side}-${z<0?'front':'rear'} three-quarter`:`${z<0?'front':'rear'} three-quarter`;
-  return `${range} ${elevation} ${view} view`;
+  else if(Math.abs(z)<.65)view=sideAware?side+'-profile':'profile';
+  else view=sideAware?side+'-'+(z<0?'front':'rear')+' three-quarter':(z<0?'front':'rear')+' three-quarter';
+  return range+', '+elevation+' '+view+' view';
 }
 function visualCameraGuideReveal(k,target,ending=true){
   const x=Number(k.x)||0,z=Number(k.z)||0,verb=ending?'revealing':'showing';
-  if(Math.abs(x)>=.65)return `${verb} more of ${target}'s ${x<0?'right':'left'} side`;
-  if(z>.65)return `${verb} the back of ${target}`;
-  if(z<-.65)return `${verb} ${target} face-on`;
+  if(Math.abs(x)>=.65)return verb+' more of '+target+"'s "+(x>0?'right':'left')+' side';
+  if(z>.65)return verb+' the back of '+target;
+  if(z<-.65)return verb+' '+target+' face-on';
   return '';
 }
 function visualCameraGuideMotionParts(keys,subjectRelative=false){
   if(!keys||keys.length<2)return [];
   const a=keys[0],b=keys[keys.length-1],dx=Number(b.x)-Number(a.x),dh=Number(b.h)-Number(a.h),dr=Math.hypot(Number(b.x),Number(b.z))-Math.hypot(Number(a.x),Number(a.z)),moves=[];
-  if(Math.abs(dx)>=.65)moves.push({score:Math.abs(dx),text:subjectRelative?`moves toward the subject's physical ${dx<0?'right':'left'} side`:`dollies sideways toward frame-${dx<0?'right':'left'}`});
+  if(Math.abs(dx)>=.65)moves.push({score:Math.abs(dx),text:subjectRelative?`moves toward the subject's physical ${dx>0?'right':'left'} side`:`dollies sideways toward frame-${dx<0?'right':'left'}`});
   if(Math.abs(dh)>=.35)moves.push({score:Math.abs(dh)*1.2,text:`cranes ${dh>0?'upward':'downward'}`});
   if(Math.abs(dr)>=.55)moves.push({score:Math.abs(dr),text:dr<0?'pushes in':'pulls back'});
   moves.sort((a,b)=>b.score-a.score);if(!moves.length)return [];
@@ -3238,6 +3244,11 @@ function visualCameraArcGuide(sh,keys){
   const amplitude=degrees<60?'a slight arc':degrees<130?'about a quarter turn':degrees<230?'about a half turn':'a wide arc';
   return {direction,amplitude};
 }
+function visualCameraGuideDistanceTransition(a,b,target){
+  const from=visualCameraGuideFramingLabel(a),to=visualCameraGuideFramingLabel(b),da=Math.hypot(Number(a.x)||0,Number(a.z)||0),db=Math.hypot(Number(b.x)||0,Number(b.z)||0);
+  if(from===to||Math.abs(db-da)<.55)return '';
+  return db>da?'Move the camera farther from '+target+', opening the framing from '+indefinitePhrase(from)+' to '+indefinitePhrase(to)+'.':'Move the camera closer to '+target+', tightening the framing from '+indefinitePhrase(from)+' to '+indefinitePhrase(to)+'.';
+}
 function visualCameraGuideOrientation(sh,target){
   if(sh.camVisualAnchorMode==='scene_space')return `Keep the camera on this fixed path through the location; pan as needed to keep ${target} framed.`;
   return `If ${target} moves, keep this camera move attached to the subject.`;
@@ -3248,14 +3259,15 @@ function visualCameraInstruction(sh,clip=null,shotIndex=null,commit=false,target
   const target=targetOverride||(targetedCameraChangeActive()?String(sh.camTargetCustom||editSettings().cameraSubject||'the primary subject in Video 1').trim():(S.mode!=='REF'?(baseModeSubjectPhrase(sh)||'the main subject'):cameraRefLabel(sh.camVisualSubjectUid,'','the central subject'))),samples=visualCameraPathSamples(sh,keys),useArc=sh.camVisualPathGeometry==='arc'&&!samples.arcFallback;
   const feel=({smooth:'smooth',direct:'precise',floating:'gentle floating',energetic:'quick stabilized'})[sh.camVisualPathStyle]||'smooth';
   const first=keys[0],last=keys[keys.length-1],sideAware=sh.camVisualAnchorMode==='subject_relative',startView=visualCameraGuideView(first,sideAware),endView=visualCameraGuideView(last,sideAware),pace=visualCameraGuidePace(sh),moves=visualCameraGuideMotionParts(keys,sideAware),parts=[];
-  parts.push(`Start with a ${startView} of ${target}.`);
+  parts.push(`Start with ${indefinitePhrase(startView)} of ${target}.`);
   if(useArc){
     const arc=visualCameraArcGuide(sh,keys);parts.push(`Use a ${feel} ${arc.direction} Arc Shot around ${target}, covering ${arc.amplitude}${pace?` ${pace}`:''}.`);
   }else if(moves.length){
     let move=`Use a ${feel} straight tracking move that ${moves[0]}`;if(moves[1])move+=` while it ${moves[1]}`;if(pace)move+=` ${pace}`;parts.push(ensureSentence(move));
   }else if(sh.camVisualAnchorMode==='subject_relative')parts.push(`Travel with ${target} while holding the same camera-to-subject position and framing.`);else parts.push(`Keep the camera locked-off on ${target}.`);
-  if(keys.length>2)keys.slice(1,-1).forEach(k=>parts.push(`At ${visualCameraTimeText(k.time)} seconds into the shot, pass through a ${visualCameraGuideView(k,sideAware)}.`));
-  parts.push(`End on a ${endView}.`);
+  const distanceChange=visualCameraGuideDistanceTransition(first,last,target);if(distanceChange)parts.push(distanceChange);
+  if(keys.length>2)keys.slice(1,-1).forEach(k=>parts.push(`At ${visualCameraTimeText(k.time)} seconds into the shot, pass through ${indefinitePhrase(visualCameraGuideView(k,sideAware))}.`));
+  parts.push(`End on ${indefinitePhrase(endView)}.`);
   const duration=visualCameraShotDuration(sh,clip,shotIndex),fullSpan=Math.abs(Number(first.time))<.001&&Math.abs(Number(last.time)-duration)<.02;
   if(!fullSpan)parts.push(`Begin at ${visualCameraTimeText(first.time)} seconds and arrive at ${visualCameraTimeText(last.time)} seconds into the shot.`);
   parts.push(visualCameraGuideOrientation(sh,target));
@@ -5473,7 +5485,7 @@ function referenceWizardPurposeText(media,row){
 function updateReferenceWizardSummary(){
   const summary=document.getElementById('refWizSummary');if(!summary)return;const chosen=[];
   if(document.getElementById('refWizHasImages')?.checked)(referenceWizardDraft.images||[]).forEach((row,i)=>chosen.push([`Picture ${i+1}`,referenceWizardPurposeText('images',row)]));
-  referenceWizardSyncEnvironments().forEach((env,i)=>chosen.push([env.name||(`Environment ${i+1}`),(env.slots||[]).map(n=>`Picture ${n}`).join(' + ')||'No Environment input selected']));
+  referenceWizardEnvironmentGroups().forEach(g=>chosen.push([g.main.environmentName||'Unnamed environment',g.slots.map(n=>`Picture ${n}`).join(' + ')]));
   if(document.getElementById('refWizHasVideo')?.checked)(referenceWizardDraft.videos||[]).forEach((row,i)=>chosen.push([`Video ${i+1}`,referenceWizardPurposeText('videos',row)]));
   if(document.getElementById('refWizHasAudio')?.checked)(referenceWizardDraft.audio||[]).forEach((row,i)=>chosen.push([`Audio ${i+1}`,referenceWizardPurposeText('audio',row)]));
   summary.innerHTML=chosen.length?`<b>Input map ready — Shot routing comes later</b><span class="ref-wizard-map">${chosen.map(([a,b])=>`<code>${esc(a)}</code><span>${esc(b)}</span>`).join('')}</span>`:'<b>Nothing selected yet</b><span>Choose the model inputs you will connect.</span>';
@@ -7009,38 +7021,39 @@ function removeLightingIntegrationReference(){
   const r=editRef('lightingReferenceUid');if(!r)return;editSettings().lightingReferenceUid='';detachRef(r);S.refs=S.refs.filter(x=>x!==r);render();
 }
 function startVideoContinuation(){
-  if(!presetResetOkay('Continue Existing Video'))return;backupProject();
-  const vid={uid:uid('vid'),kind:'Video',idx:1,name:'continuation source',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],role:'continuation source',durationSec:10,byClip:{'0':{shotSel:[],shots:'',ret:'partially_preserved',retNote:'',active:true}}};
+  if(!prepareCurrentEditPass('Continue existing video'))return;
+  const cl=C(),vid={uid:uid('vid'),kind:'Video',idx:1,name:'continuation source',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],role:'continuation source',durationSec:Number(S.dur)||10,workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('partially_preserved',false)};
   const sh=newShot(true);sh.action='Continue naturally from the source ending into the next action without repeating the final source movement.';
-  S={version:APP_VERSION,mode:'REF',dur:10,style:'Live-action, cinematic',wired:{img:0,vid:1,aud:0},refs:[vid],taskTypes:['video continuation'],guardDistinct:true,uiMode:'basic',scaleRules:[],active:0,clips:[{name:'Continue existing video',summary:'',editWorkflow:'continuation',editSettings:{continuationVideoUid:vid.uid,preserveSubjectMotion:true,preserveCameraMotion:true,preserveEnvironment:true,avoidReplay:true,audioHandoff:'continue',handoffNotes:''},shots:[sh],soundscape:'Continue the established ambience naturally into the new action.',soundscapeMode:'custom',music:'N/A',musicMode:'none'}]};
-  S=migrate(S);render();
+  S.refs.push(vid);S.wired.vid=Math.max(Number(S.wired.vid)||0,1);S.taskTypes=['video continuation'];
+  cl.editWorkflow='continuation';cl.editSettings={continuationVideoUid:vid.uid,preserveSubjectMotion:true,preserveCameraMotion:true,preserveEnvironment:true,avoidReplay:true,audioHandoff:'continue',handoffNotes:''};cl.shots=[sh];cl.soundscape='Continue the established ambience naturally into the new action.';cl.soundscapeMode='custom';cl.music='N/A';cl.musicMode='none';render();
 }
 function startPerformanceTransfer(){
-  if(!presetResetOkay('Transfer Performance or Camera'))return;backupProject();
-  const sub={uid:uid('sub'),kind:'Subject',idx:1,name:'Target character',subjectType:'character',influencePreset:'character_sheet',details:'',desc:'',useCustomDef:false,sourcePics:[1],sourceVideos:[],role:'',byClip:{'0':{shotSel:[1],shots:'',ret:'fully_preserved',retNote:''}}};
-  const vid={uid:uid('vid'),kind:'Video',idx:1,name:'filmed performance',targetSubjectUid:sub.uid,role:'performance reference',transferFacial:true,transferMouth:true,transferHead:true,transferEyeline:true,transferUpperBody:true,transferFullBody:false,transferCamera:false,durationSec:10,details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],byClip:{'0':{shotSel:[1],shots:'',ret:'attribute_transfer',retNote:''}}};
-  const aud={uid:uid('aud'),kind:'Audio',idx:1,inputSlot:'',sourceType:'embedded_video',sourceVideoUid:vid.uid,name:'paired performance audio',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],boundSubjectUid:sub.uid,audioRole:'voice',durationSec:'',role:'',byClip:{'0':{shotSel:[],shots:'',ret:'reference',retNote:'',activeMode:'off'}}};
-  const sh=newShot(true);sh.action='<Subject 1> performs the filmed emotional beat in the target scene.';sh.dlg=[];
-  S={version:APP_VERSION,mode:'REF',dur:10,style:'The target video is live-action and cinematic',wired:{img:1,vid:1,aud:0},refs:[sub,vid,aud],taskTypes:['reference generation'],guardDistinct:true,uiMode:'basic',active:0,clips:[{name:'Performance transfer',summary:'',editWorkflow:'performance_transfer',editSettings:{targetSubjectUid:sub.uid,performanceVideoUid:vid.uid,performanceAudioUid:aud.uid,dialogueTreatment:'none'},shots:[sh],soundscape:'Natural ambience and physical movement sounds appropriate to the target environment accompany the transferred action; no spoken dialogue is added.',soundscapeMode:'custom',music:'N/A',musicMode:'none'}]};
-  S=migrate(S);render();
+  if(!prepareCurrentEditPass('Performance transfer'))return;
+  const cl=C(),sub={uid:uid('sub'),kind:'Subject',idx:nextSubjectNumber(),name:'Target character',subjectType:'character',influencePreset:'character_sheet',details:'',desc:'',useCustomDef:false,sourcePics:[1],sourceVideos:[],role:'',workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('fully_preserved',true)};
+  const vid={uid:uid('vid'),kind:'Video',idx:1,name:'filmed performance',targetSubjectUid:sub.uid,role:'performance reference',transferFacial:true,transferMouth:true,transferHead:true,transferEyeline:true,transferUpperBody:true,transferFullBody:false,transferCamera:false,durationSec:Number(S.dur)||10,details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('attribute_transfer',true)};
+  const aud={uid:uid('aud'),kind:'Audio',idx:nextLabelIndex('Audio'),inputSlot:'',sourceType:'embedded_video',sourceVideoUid:vid.uid,name:'paired performance audio',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],boundSubjectUid:sub.uid,audioRole:'voice',durationSec:'',role:'',workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('reference',false)};rc(aud).activeMode='off';
+  const sh=newShot(true);sh.action=labelOf(sub,refIndex(sub))+' performs the filmed emotional beat in the target scene.';sh.dlg=[];
+  S.refs.push(sub,vid,aud);S.wired.img=Math.max(Number(S.wired.img)||0,1);S.wired.vid=Math.max(Number(S.wired.vid)||0,1);S.taskTypes=['reference generation'];
+  cl.editWorkflow='performance_transfer';cl.editSettings={targetSubjectUid:sub.uid,performanceVideoUid:vid.uid,performanceAudioUid:aud.uid,dialogueTreatment:'none'};cl.shots=[sh];cl.soundscape='Natural ambience and physical movement sounds appropriate to the target environment accompany the transferred action; no spoken dialogue is added.';cl.soundscapeMode='custom';cl.music='N/A';cl.musicMode='none';S.guardDistinct=true;render();
 }
 function startReplaceSubjectEdit(){
-  if(!presetResetOkay('Replace Subject In Existing Footage'))return;backupProject();
-  const sub={uid:uid('sub'),kind:'Subject',idx:1,name:'Replacement subject',subjectType:'character',influencePreset:'character_sheet',details:'',desc:'',useCustomDef:false,sourcePics:[1],sourceVideos:[],role:'',byClip:{'0':{shotSel:[1],shots:'',ret:'fully_preserved',retNote:''}}};
-  const sceneLook={uid:uid('sub'),kind:'Subject',idx:2,name:'source environment with transferred scene look',subjectType:'environment',influencePreset:'custom',details:'',desc:'',useCustomDef:false,sourcePics:[2],sourceVideos:[1],role:'',workflowInternal:true,byClip:{'0':{shotSel:[1],shots:'',ret:'partially_preserved',retNote:'',active:false,activeMode:'off'}}};
-  const vid={uid:uid('vid'),kind:'Video',idx:1,name:'source footage',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],role:'source video for subject replacement',durationSec:10,byClip:{'0':{shotSel:[1],shots:'',ret:'fully_preserved',retNote:'',active:true}}};
-  const aud={uid:uid('aud'),kind:'Audio',idx:1,inputSlot:'',sourceType:'embedded_video',sourceVideoUid:vid.uid,autoWorkflowAudio:true,name:'source audio',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],boundSubjectUid:'',audioRole:'reuse',durationSec:'',role:'',byClip:{'0':{shotSel:[],shots:'',ret:'fully_copy',retNote:''}}};
+  if(!prepareCurrentEditPass('Replace subject'))return;
+  const cl=C(),firstIdx=nextSubjectNumber();
+  const sub={uid:uid('sub'),kind:'Subject',idx:firstIdx,name:'Replacement subject',subjectType:'character',influencePreset:'character_sheet',details:'',desc:'',useCustomDef:false,sourcePics:[1],sourceVideos:[],role:'',workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('fully_preserved',true)};
+  const sceneLook={uid:uid('sub'),kind:'Subject',idx:firstIdx+1,name:'source environment with transferred scene look',subjectType:'environment',influencePreset:'custom',details:'',desc:'',useCustomDef:false,sourcePics:[2],sourceVideos:[1],role:'',workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('partially_preserved',false)};rc(sceneLook).active=false;rc(sceneLook).activeMode='off';
+  const vid={uid:uid('vid'),kind:'Video',idx:1,name:'source footage',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],role:'source video for subject replacement',durationSec:Number(S.dur)||10,workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('fully_preserved',true)};
+  const aud={uid:uid('aud'),kind:'Audio',idx:nextLabelIndex('Audio'),inputSlot:'',sourceType:'embedded_video',sourceVideoUid:vid.uid,autoWorkflowAudio:true,name:'source audio',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],boundSubjectUid:'',audioRole:'reuse',durationSec:'',role:'',workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('fully_copy',false)};
   const sh=newShot(true);
-  S={version:APP_VERSION,mode:'REF',dur:10,style:'Live-action, cinematic',wired:{img:2,vid:1,aud:0},refs:[sub,sceneLook,vid,aud],taskTypes:['video editing','reference generation'],guardDistinct:true,uiMode:'basic',scaleRules:[],active:0,clips:[{name:'Replace subject',summary:'',editWorkflow:'replace_subject',editSettings:{sourceVideoUid:vid.uid,sourceAudioUid:aud.uid,sourceAudioMode:'full',replacementSubjectUid:sub.uid,sceneLookEnvironmentUid:sceneLook.uid,sceneLookMode:'unchanged',sceneLookText:'',replaceTargetDescription:'the identified source subject',preserveAudio:true,preservePlate:true,preservePoseMotion:true,preserveFaceMouth:true,preserveInteractions:true,matchIntegration:true,protectedElements:''},shots:[sh],soundscape:'The copied ambience and physical sound layer from <Audio 1> continues throughout without alteration.',soundscapeMode:'custom',music:'N/A',musicMode:'none'}]};
-  S=migrate(S);render();
+  S.refs.push(sub,sceneLook,vid,aud);S.wired.img=Math.max(Number(S.wired.img)||0,2);S.wired.vid=Math.max(Number(S.wired.vid)||0,1);S.taskTypes=['video editing','reference generation'];
+  cl.editWorkflow='replace_subject';cl.editSettings={sourceVideoUid:vid.uid,sourceAudioUid:aud.uid,sourceAudioMode:'full',replacementSubjectUid:sub.uid,sceneLookEnvironmentUid:sceneLook.uid,sceneLookMode:'unchanged',sceneLookText:'',replaceTargetDescription:'the identified source subject',preserveAudio:true,preservePlate:true,preservePoseMotion:true,preserveFaceMouth:true,preserveInteractions:true,matchIntegration:true,protectedElements:''};cl.shots=[sh];cl.soundscape='The copied ambience and physical sound layer from <Audio 1> continues throughout without alteration.';cl.soundscapeMode='custom';cl.music='N/A';cl.musicMode='none';S.guardDistinct=true;render();
 }
 function startTargetedVideoEdit(){
-  if(!presetResetOkay('Targeted Video Edit'))return;backupProject();
-  const vid={uid:uid('vid'),kind:'Video',idx:1,name:'source footage',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],role:'source video for the edit',durationSec:10,byClip:{'0':{shotSel:[1],shots:'',ret:'fully_preserved',retNote:'',active:true}}};
-  const aud={uid:uid('aud'),kind:'Audio',idx:1,inputSlot:'',sourceType:'embedded_video',sourceVideoUid:vid.uid,autoWorkflowAudio:true,name:'source audio',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],boundSubjectUid:'',audioRole:'reuse',durationSec:'',role:'',byClip:{'0':{shotSel:[],shots:'',ret:'fully_copy',retNote:''}}};
+  if(!prepareCurrentEditPass('Targeted source-video edit'))return;
+  const cl=C(),vid={uid:uid('vid'),kind:'Video',idx:1,name:'source footage',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],role:'source video for the edit',durationSec:Number(S.dur)||10,workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('fully_preserved',true)};
+  const aud={uid:uid('aud'),kind:'Audio',idx:nextLabelIndex('Audio'),inputSlot:'',sourceType:'embedded_video',sourceVideoUid:vid.uid,autoWorkflowAudio:true,name:'source audio',details:'',desc:'',useCustomDef:false,sourcePics:[],sourceVideos:[],boundSubjectUid:'',audioRole:'reuse',durationSec:'',role:'',workflowInternal:true,workflowOwnerUid:cl.uid,byClip:workflowClipState('fully_copy',false)};
   const sh=newShot(true);
-  S={version:APP_VERSION,mode:'REF',dur:10,style:'Live-action, cinematic',wired:{img:0,vid:1,aud:0},refs:[vid,aud],taskTypes:['video editing','reference generation'],guardDistinct:true,uiMode:'basic',scaleRules:[],active:0,clips:[{name:'Targeted source-video edit',summary:'',editWorkflow:'targeted_edit',editSettings:{sourceVideoUid:vid.uid,sourceAudioUid:aud.uid,sourceAudioMode:'full',editTarget:'the specified target',requestedChange:'',cameraChangeEnabled:false,cameraChangeType:'new_view',cameraRelation:'locked',cameraSubject:'the primary subject in Video 1',cameraInstructions:'',cameraAuthoringMode:'builder',cameraEnvironmentContext:'',cameraFraming:'wide',cameraRelationship:'right_profile',cameraMotion:'Tracking Shot',cameraSpeed:'',cameraAim:'keep_framed',preserveAudio:true,preservePlate:true,matchIntegration:true,protectedElements:''},shots:[sh],soundscape:'The copied ambience and physical sound layer from <Audio 1> continues throughout without alteration.',soundscapeMode:'custom',music:'N/A',musicMode:'none'}]};
-  S=migrate(S);render();
+  S.refs.push(vid,aud);S.wired.vid=Math.max(Number(S.wired.vid)||0,1);S.taskTypes=['video editing','reference generation'];
+  cl.editWorkflow='targeted_edit';cl.editSettings={sourceVideoUid:vid.uid,sourceAudioUid:aud.uid,sourceAudioMode:'full',editTarget:'the specified target',requestedChange:'',cameraChangeEnabled:false,cameraChangeType:'new_view',cameraRelation:'locked',cameraSubject:'the primary subject in Video 1',cameraInstructions:'',cameraAuthoringMode:'builder',cameraEnvironmentContext:'',cameraFraming:'wide',cameraRelationship:'right_profile',cameraMotion:'Tracking Shot',cameraSpeed:'',cameraAim:'keep_framed',preserveAudio:true,preservePlate:true,matchIntegration:true,protectedElements:''};cl.shots=[sh];cl.soundscape='The copied ambience and physical sound layer from <Audio 1> continues throughout without alteration.';cl.soundscapeMode='custom';cl.music='N/A';cl.musicMode='none';S.guardDistinct=true;render();
 }
 function startInsertSubjectEdit(){
   if(!prepareCurrentEditPass('Insert subject'))return;
@@ -8092,6 +8105,8 @@ function loadExampleWorkflow(kind){
 
 function boot(){
   try{
+    const v5371Project=localStorage.getItem('h3_prompt_composer_v5_37_1');
+    const v5371Backup=localStorage.getItem('h3_prompt_composer_v5_37_1_backup');
     const v5370Project=localStorage.getItem('h3_prompt_composer_v5_37_0');
     const v5370Backup=localStorage.getItem('h3_prompt_composer_v5_37_0_backup');
     const v5361Project=localStorage.getItem('h3_prompt_composer_v5_36_1');
@@ -8148,8 +8163,8 @@ function boot(){
     const v524Backup=localStorage.getItem('h3_prompt_composer_v5_24_0_backup');
     const v523Project=localStorage.getItem('h3_prompt_composer_v5_23_0');
     const v523Backup=localStorage.getItem('h3_prompt_composer_v5_23_0_backup');
-    if(!localStorage.getItem(STORAGE_KEY)&&(v5370Project||v5361Project||v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project))localStorage.setItem(STORAGE_KEY,v5370Project||v5361Project||v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project);
-    if(!localStorage.getItem(BACKUP_KEY)&&(v5370Backup||v5361Backup||v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup))localStorage.setItem(BACKUP_KEY,v5370Backup||v5361Backup||v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup);
+    if(!localStorage.getItem(STORAGE_KEY)&&(v5371Project||v5370Project||v5361Project||v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project))localStorage.setItem(STORAGE_KEY,v5371Project||v5370Project||v5361Project||v5360Project||v5359Project||v5358Project||v5357Project||v5356Project||v5355Project||v5354Project||v5353Project||v5352Project||v5351Project||v535Project||v5342Project||v5341Project||v534Project||v533Project||v5321Project||v532Project||v531Project||v530Project||v529Project||v528Project||v527Project||v526Project||v525Project||v524Project||v523Project);
+    if(!localStorage.getItem(BACKUP_KEY)&&(v5371Backup||v5370Backup||v5361Backup||v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup))localStorage.setItem(BACKUP_KEY,v5371Backup||v5370Backup||v5361Backup||v5360Backup||v5359Backup||v5358Backup||v5357Backup||v5356Backup||v5355Backup||v5354Backup||v5353Backup||v5352Backup||v5351Backup||v535Backup||v5342Backup||v5341Backup||v534Backup||v533Backup||v5321Backup||v532Backup||v531Backup||v530Backup||v529Backup||v528Backup||v527Backup||v526Backup||v525Backup||v524Backup||v523Backup);
     const priorProject=localStorage.getItem('h3_prompt_composer_v5_22_3')||localStorage.getItem('h3_prompt_composer_v5_22_2')||localStorage.getItem('h3_prompt_composer_v5_22_1')||localStorage.getItem('h3_prompt_composer_v5_22_0')||localStorage.getItem('h3_prompt_composer_v5_21_0')||localStorage.getItem('h3_prompt_composer_v5_20_0')||localStorage.getItem('h3_prompt_composer_v5_19_5')||localStorage.getItem('h3_prompt_composer_v5_19_4')||localStorage.getItem('h3_prompt_composer_v5_19_3')||localStorage.getItem('h3_prompt_composer_v5_19_2_test')||localStorage.getItem('h3_prompt_composer_v5_19_1_test')||localStorage.getItem('h3_prompt_composer_v5_19_0')||localStorage.getItem('h3_prompt_composer_v5_18_8')||localStorage.getItem('h3_prompt_composer_v5_18_7')||localStorage.getItem('h3_prompt_composer_v5_18_6');
     const priorBackup=localStorage.getItem('h3_prompt_composer_v5_22_3_backup')||localStorage.getItem('h3_prompt_composer_v5_22_2_backup')||localStorage.getItem('h3_prompt_composer_v5_22_1_backup')||localStorage.getItem('h3_prompt_composer_v5_21_0_backup')||localStorage.getItem('h3_prompt_composer_v5_20_0_backup')||localStorage.getItem('h3_prompt_composer_v5_19_5_backup')||localStorage.getItem('h3_prompt_composer_v5_19_4_backup')||localStorage.getItem('h3_prompt_composer_v5_19_3_backup')||localStorage.getItem('h3_prompt_composer_v5_19_2_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_1_test_backup')||localStorage.getItem('h3_prompt_composer_v5_19_0_backup')||localStorage.getItem('h3_prompt_composer_v5_18_8_backup')||localStorage.getItem('h3_prompt_composer_v5_18_7_backup')||localStorage.getItem('h3_prompt_composer_v5_18_6_backup');
     if(!localStorage.getItem(STORAGE_KEY)&&priorProject)localStorage.setItem(STORAGE_KEY,priorProject);
