@@ -2,6 +2,8 @@
 
 **Version 5.37.14**
 
+**🌐 Languages:** [English](README.md) · [中文 (简体)](README-zh.md)
+
 A free, standalone prompt-building app for **MiniMax H3** video generation and reference-guided image workflows.
 
 **One HTML file · no installation · runs locally in your browser**
