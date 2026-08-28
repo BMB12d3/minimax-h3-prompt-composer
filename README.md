@@ -14,6 +14,12 @@ A free, standalone prompt-building app for **MiniMax H3** video generation and r
 
 **[Watch the V5.37.1 tutorial on YouTube](https://youtu.be/Aywx3Sf5Yk0)**
 
+### Short walkthrough for recent updates
+
+[![Short walkthrough for recent updates, including improved camera control in Light mode](https://img.youtube.com/vi/SJM6KiHoejY/hqdefault.jpg)](https://youtu.be/SJM6KiHoejY)
+
+**[Watch the short walkthrough for recent updates, including improved camera control in Light mode](https://youtu.be/SJM6KiHoejY)**
+
 ## What it does
 
 H3 Prompt Composer turns your filmmaking choices into structured H3 prompts. You work with visual controls for references, Shots, timing, camera movement, dialogue, continuity, editing, and sound; the app assembles the correct prompt structure and checks it before generation.
