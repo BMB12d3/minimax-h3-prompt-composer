@@ -1,6 +1,6 @@
 # H3 Prompt Composer
 
-**Version 5.40.2**
+**Version 5.43.4**
 
 A free, standalone prompt-building app for **MiniMax H3** video generation and reference-guided image workflows.
 
@@ -59,7 +59,7 @@ Build a one-frame edit or composite prompt with explicit reference roles, reques
 
 ## Get started
 
-1. Download **[H3_Prompt_Composer_V5_40_2.html](H3_Prompt_Composer_V5_40_2.html)**.
+1. Download **[Prompt_Composer.html](Prompt_Composer.html)**.
 2. Open it in Chrome, Edge, Firefox, or another modern browser.
 3. Choose a mode, describe the Generation, and add only the references you need.
 4. Review **Check**, then click **Copy prompt** and paste the result into your H3 workflow.
@@ -79,15 +79,17 @@ The Composer describes media already connected to H3 or ComfyUI. It does not upl
 
 ## Current release
 
-V5.40.2 carries forward the V5.37.1 workflow and documentation with a unified camera compiler, consistent Manual and Visual Planner output, and V5.40.1 project migration.
+V5.43.4 includes the current unified camera system and corrects the Visual Planner grid orientation and perspective without changing camera coordinates or generated prompt text.
 
-See the **[V5.37.1 changelog](H3_Prompt_Composer_V5_37_1_CHANGELOG.md)** for the full release notes.
+The standalone app now keeps the permanent filename **`Prompt_Composer.html`** across releases. Bookmarks, shared links, and external references can continue pointing to the same file while the version number remains visible inside the app.
+
+See the **[changelog](CHANGELOG.md)** for current and historical release notes.
 
 ## Manuals and downloads
 
 - **[Full User Guide](H3_Prompt_Composer_V5_37_1_User_Guide.pdf)** — complete workflow and field reference.
 - **[Illustrated User Guide](H3_Prompt_Composer_V5_37_1_Illustrated_User_Guide.pdf)** — visual quick start and feature tour.
-- **[SHA-256 checksum](H3_Prompt_Composer_V5_40_2_SHA256.txt)** — verifies the standalone HTML file.
+- **[SHA-256 checksum](Prompt_Composer_SHA256.txt)** — verifies the standalone HTML file.
 
 ## Local and private by design
 
